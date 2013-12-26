@@ -1,0 +1,12 @@
+<hr />
+{$themes_descr}<br />
+<form id="themesfrm">
+    <select name="theme">
+    {loop="themes_a"}
+        <option value="{$value.tplno_n}" {if="$value.tplno_n == $mytplno_n"} selected {/if}>{$value.tplname_n}</option>
+    {/loop}
+    </select>&nbsp;&nbsp;
+    <input type="submit" value="{$edit}" />&nbsp;
+    <input type="hidden" name="tok" value="{$tok_n}" />
+</form>
+<br /><br />
