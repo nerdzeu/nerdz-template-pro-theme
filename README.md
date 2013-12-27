@@ -107,3 +107,7 @@ Obbligatoria la class `.img_frame`, che è la classe CSS che sarà attribuita al
 
 Obbligatoria la class `.img_frame-extended`, che è la classe CSS attribuita alle immagini ingrandite. Tendenzialmente elimina le limitazioni di dimensione delle miniature
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/nerdzeu/nerdztemplateblack/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
