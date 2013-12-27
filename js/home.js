@@ -46,7 +46,9 @@ $(document).ready(function() {
                   for(key in pids)
                     hid += pids[key]+"|";
                   hid = hid.substr(0,hid.length-1);
-                  $($(this).data("id")).show();
+                  $($(this).data("id")).show(0,function(){ 
+                              $.each($(this).find(".img_frame>img"),function(){$(this).css("margin-top", (117-$(this).height())/2)})
+                            });
                   localStorage.setItem("hid",hid);
                   if(hid=="") 
                   {
@@ -100,6 +102,7 @@ $(document).ready(function() {
         {
             lock.eq(0).click();
         }
+        hideHidden();
     });
 
     $("#profilePostList").on('click',function() {
