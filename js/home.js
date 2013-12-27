@@ -31,7 +31,7 @@ $(document).ready(function() {
                 if(el.length) {
                   el.hide();
                   lnk = eval("lnk"+pids[i].replace("post","")).replace("/","");
-                  html += "<tr><td><a target='_blank' href='"+lnk+"'>"+lnk+"</a>"+
+                  html += "<tr><td><a target='_blank' href='"+lnk+"'>"+decodeURIComponent(lnk)+"</a>"+
                           "<a style='float:right' class='show' data-id='#"+pids[i]+"' data-i='"+i+"'>x</a></td></tr>";
                 }
             }
