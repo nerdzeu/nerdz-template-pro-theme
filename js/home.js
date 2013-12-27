@@ -9,14 +9,11 @@ $(document).ready(function() {
     var fixHeights = function() {
         plist.find(".nerdz_message").each (function() {
             var el = $(this).find('div:first');
-            if ((el.height() > 200 || el.find ('.gistLoad').length > 0) && !el.attr('data-parsed'))
+            if ((el.height() >= 200 || el.find ('.gistLoad').length > 0) && !el.attr('data-parsed'))
             {
-                el.height (200);
-                el.find (".userimage").slice (1).hide();
-                var n = el.parent().find ('div:last');
-                n.append ('<div class="more">&gt;&gt; ' + n.data ('expand') + ' &lt;&lt;</div>');
-                n.css ('background-color', '#000');
-                n.css ('position', 'relative');
+                el.addClass("compressed");
+                var n = el.next();
+                n.prepend ('<p class="more">&gt;&gt;' + n.data ('expand') + '&lt;&lt;</p>');
             }
             el.attr('data-parsed','1');
         });
@@ -24,32 +21,65 @@ $(document).ready(function() {
 
     var hideHidden = function() {
         var hidden = localStorage.getItem('hid');
-
+        html="";
         if(hidden != null)
         {
-            var pids = hidden.split("|");
+            var pids = hidden.split("|").sort();
             for(var i in pids)
             {
                 var el = plist.find("#"+pids[i]);
-                if(el)
-                    el.hide();
+                if(el.length) {
+                  el.hide();
+                  lnk = eval("lnk"+pids[i].replace("post","")).replace("/","");
+                  html += "<tr><td><a target='_blank' href='"+lnk+"'>"+lnk+"</a>"+
+                          "<a style='float:right' class='show' data-id='#"+pids[i]+"' data-i='"+i+"'>x</a></td></tr>";
+                }
             }
+            if(html=="") return;
+            html = "<div class='title' onclick='$(\"#hptable\").toggle();'>Hidden Posts</div> <table class='box' style='display:none' id='hptable'>"+html+"</table>";
+            if(!$("#hiddenposts").length)
+              $("<div>"+html+"</div>")
+                .attr("id","hiddenposts")
+                .on("click",".show",function(){
+                  pids.splice( $(this).data("i"), 1 );
+                  hid = "";
+                  for(key in pids)
+                    hid += pids[key]+"|";
+                  hid = hid.substr(0,hid.length-1);
+                  $($(this).data("id")).show();
+                  localStorage.setItem("hid",hid);
+                  if(hid=="") 
+                  {
+                    localStorage.removeItem("hid");
+                    $("#hiddenposts").remove();
+                  }
+                  $(this).parent().parent().remove();
+                })
+                .appendTo("#right_col");
+              else
+                $("#hiddenposts").html(html);
         }
         fixHeights();
     };
 
+
+    plist.on('click',".spoiler",function(){
+      if($(this).data("parsed")) return;
+      $.each($(this).find("img"),function(){
+        m = (117-$(this).height())/2;
+        if (m>1)
+          $(this).css("margin-top", m)
+      })
+      $(this).data("parsed","1");
+    });
+    
     plist.on('click','.more',function() {
-        var me = $(this), par = me.parent(), jenk = par.parent().find ('div:first');
-        jenk.css ('height', '100%'); var fHeight = jenk.height();
-        jenk.height (200).animate ({ height: fHeight }, 500, function() {
-            jenk.css ('height', 'auto');
-            par.css('background-color', '#000');
-            par.css('color', '#FFF');
-            me.slideUp ('slow', function() {
-                me.remove();
-            });
+        var me = $(this), par = me.parent(), jenk = par.prev();
+        par.removeClass("shadowed");
+        jenk.removeClass("compressed")
+        me.slideUp ('slow', function() {
+            me.remove();
         });
-        jenk.find (".userimage").slideDown();
     });
 
     plist.on('click',".hide",function() {

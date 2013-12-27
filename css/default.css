@@ -90,6 +90,19 @@
     text-align: left;
 }
 
+.nerdz_message > div
+{
+    box-shadow: 0 0 0 #000;
+}
+
+.nerdz_message > div.compressed
+{
+    width:100%;
+    max-height:200px;
+    overflow:hidden;
+    box-shadow: inset 0 -30px 30px -30px #ccc;
+}
+
 #notify_list
 {
     position: fixed;
@@ -320,6 +333,7 @@ html, #body
     background-color: #BDBDBD;
     color: #000;
     margin-bottom: 8px;
+    max-width: 98%;
 }
 
 .nerdz_comments br, .nerdz_message br
@@ -367,6 +381,7 @@ html, #body
 
 .img_frame, .yt_frame
 {
+  clear:both;
   float:left;
   display: table-cell;
   vertical-align: bottom;
@@ -480,6 +495,7 @@ pre
 {
     text-transform: uppercase;
 }
+
 
 .prettyprint
 {
