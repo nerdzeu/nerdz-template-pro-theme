@@ -6,7 +6,8 @@
 	 */
 	// CSS section
 	"css": {
-		"default": "css/default.css"
+		"default": "css/default.css",
+        "faq": "css/faq.css"
 	},
 	// JS section
 	"js": {
