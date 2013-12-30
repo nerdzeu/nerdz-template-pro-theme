@@ -382,12 +382,11 @@ html, #body
 .img_frame, .yt_frame
 {
   clear:both;
-  float:left;
-  display: table-cell;
-  vertical-align: bottom;
-  text-align: center;
-  float:left;
-  margin-top:0px; 
+  text-align:center;
+  overflow:hidden;
+  display: block !important;
+  background-color: transparent;
+  margin-top:.2em; 
   cursor: pointer; 
   border: 1px solid #FFF;
   width: 132px;
@@ -407,7 +406,7 @@ html, #body
 
 .img_frame img, .yt_frame img
 {
-    display: inline;
+    display: block;
     max-height:115px;
     max-width:130px;
     margin: auto;
@@ -415,27 +414,25 @@ html, #body
 
 .img_frame-extended
 {
+  display:auto;
   width: auto;
   height: auto;
   border: none;
   max-width: 100%;
   max-height: 100%;
+} 
+.img_frame.img_frame-extended img {
+  float: left;
+  width: auto;
+  height: auto;
+  max-height: 100%;
+  max-width:100%;
+  margin-top: 0px !important;
 }
-
 .img_frame-extended span
 {
   display: none;
 }
-
-.img_frame-extended img
-{
-  width:auto;
-  height: auto;
-  max-height: 1000px;
-  max-width:100%;
-  margin-top: 0px !important;
-}
-
 .error
 {
     color: #FF0000;
@@ -495,7 +492,6 @@ pre
 {
     text-transform: uppercase;
 }
-
 
 .prettyprint
 {
