@@ -30,7 +30,7 @@ $(document).ready(function() {
                 var el = plist.find("#"+pids[i]);
                 if(el.length) {
                   el.hide();
-                  lnk = eval("lnk"+pids[i].replace("post","")).replace("/","");
+                  lnk = window["lnk"+pids[i].replace("post","")].slice(1);
                   html += "<tr><td><a target='_blank' href='"+lnk+"'>"+decodeURIComponent(lnk)+"</a>"+
                           "<a style='float:right' class='show' data-id='#"+pids[i]+"' data-i='"+i+"'>x</a></td></tr>";
                 }
