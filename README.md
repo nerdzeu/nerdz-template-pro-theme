@@ -23,10 +23,12 @@ This file allows the template creator to specify javascript and css files to be 
 > codelist.php, error.php, faq.php, home.php, index.php, informations.php, list.php, pm.php, preferences.php, profile.php, project.php, rank.php, reset.php, share.php, stats.php, terms.php  
 
 Most important, note that in the two `javascript` and `css` sections it's possible to specify the default css and js file:  
-`default: js/default.js;`  
-`default: css/default.css;`  
+`default: "js/default.js"`  
+`default: "css/default.css"`  
 
 The file specified will be included in every page listed above and always before other files. By doing so you can create general css rules in the default file and then overwrite them with more specific rules when needed.  
+
+Recently the possibility of including static variables and language strings directly from this file. Please see the example in the default template. You will need an updated core.
 
 The file also includes a `langs` section, which is used to specify *only* the default language. The syntax `%lang%` is mandatory so that you can create json language files organized by language.  
   
