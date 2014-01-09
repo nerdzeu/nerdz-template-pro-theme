@@ -28,7 +28,7 @@ Most important, note that in the two `javascript` and `css` sections it's possib
 
 The file specified will be included in every page listed above and always before other files. By doing so you can create general css rules in the default file and then overwrite them with more specific rules when needed.  
 
-Recently the possibility of including static variables and language strings directly from this file. Please see the example in the default template. You will need an updated core.
+Recently the possibility of including static variables and language strings directly from this file was added. Please see the example in the default template. You will need an updated core.
 
 The file also includes a `langs` section, which is used to specify *only* the default language. The syntax `%lang%` is mandatory so that you can create json language files organized by language.  
   
