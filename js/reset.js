@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $("#resfrm").submit(function(e) {
-        $("#error").html($("#loadtxt").data('loading'));
+        $("#error").html (N.getLangData().LOADING);
         e.preventDefault();
         N.json.resetPassword($(this).serialize(),function(d) {
             $("#error").html(d.message);

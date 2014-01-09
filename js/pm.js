@@ -1,6 +1,6 @@
 $(document).ready(function() {
     var c_from, c_to;
-    var loadtxt = $("#loadtxt").data('loading')+'...';
+    var loadtxt = N.getLangData().LOADING + '...';
 
     $("#content").on('submit',"#convfrm",function(e) {
         e.preventDefault();

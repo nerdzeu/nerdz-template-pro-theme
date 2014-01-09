@@ -1,9 +1,7 @@
 $(document).ready(function() {
-    var loading = $("#loadtxt").data('loading'); //il div è nell'header
-
-    //elementi singoli
-    $("iframe").attr('scrolling','no'); //dato che il validatore non li vuole e con i css overflow:hidden non funge
-    $("body").append($('<br />')); //per fare funzionare infinte scrolling sempre
+    var loading = N.getLangData().LOADING;
+    $("iframe").attr('scrolling','no');
+    $("body").append($('<br />'));
     // append version information
     if ($("#left_col").length && window.location.pathname == "/home.php" && typeof Nversion !== 'undefined' && Nversion != 'null')
         // according to stackoverflow, using 'target' in HTML5 is alright so let's do it

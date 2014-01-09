@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var loading = $("#loadtxt").data('loading'); //il div è nell'header
+    var loading = N.getLangData().LOADING;
 
     $("#stdfrm").on('submit',function(event) {
         event.preventDefault();

@@ -1,7 +1,7 @@
 $(document).ready(function() {
     //tutti gli eventi ajax che evvengono in plist sono nel formato pilst.on(evento,[selettore],function(...){...});
     var plist = $("#postlist");
-    var loading = $("#loadtxt").data('loading'); //il div è nell'header
+    var loading = N.getLangData().LOADING;
     var lang = null; /* globale dato che la uso anche altrove */
     var load = false; //gestisce i caricamenti ed evita sovrapposizioni. Dichiarata qui che è il foglio che viene incluso di default ovunque e per primo
     plist.html('<h1>'+loading+'...</h1>');

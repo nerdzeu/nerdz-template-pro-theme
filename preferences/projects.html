@@ -31,7 +31,7 @@
 $(document).ready(function() {
     $(".manage").on('click',function(e){
         e.preventDefault();
-        $("#cont").html($("#loadtxt").data('loading'));
+        $("#cont").html(N.getLangData().LOADING);
         N.html.post('/pages/preferences/projects.html.html.php',{id: $(this).data('id')},function(data) {
             $("#cont").html(data);
         });
