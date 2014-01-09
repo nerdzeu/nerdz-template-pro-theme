@@ -5,8 +5,9 @@ $(document).ready(function() {
     $("iframe").attr('scrolling','no'); //dato che il validatore non li vuole e con i css overflow:hidden non funge
     $("body").append($('<br />')); //per fare funzionare infinte scrolling sempre
     // append version information
-    if ($("#left_col").length && window.location.pathname == "/home.php")
-        $("#left_col .title").eq (0).append (" <span style='font-weight: normal'><a href='/NERDZilla:690' style='color: #000 !important'>[" + N.getVersion() + "]</a></span>");
+    if ($("#left_col").length && window.location.pathname == "/home.php" && typeof Nversion !== 'undefined' && Nversion != 'null')
+        // according to stackoverflow, using 'target' in HTML5 is alright so let's do it
+        $("#left_col .title").eq (0).append (" <span class='small' style='font-weight: normal; vertical-align: middle'><a href='https://github.com/nerdzeu/nerdz.eu/commit/" + Nversion + "' target='wowsoversion' style='color: #000 !important'>[" + Nversion + "]</a></span>").find ('a').css ('vertical-align', 'middle');
     // load the prettyprinter
     var append_theme = "", _h = $("head");
     if (localStorage.getItem ("has-dark-theme") == 'yep')

@@ -9,57 +9,71 @@ $(document).ready(function() {
     var fixHeights = function() {
         plist.find(".nerdz_message").each (function() {
             var el = $(this).find('div:first');
+            // TODO: switch from attr('data-parsed') to data('parsed')
             if ((el.height() >= 200 || el.find ('.gistLoad').length > 0) && !el.attr('data-parsed'))
             {
-                el.addClass("compressed");
+                el.data ('real-height', el.height()).addClass ("compressed");
                 var n = el.next();
-                n.prepend ('<p class="more">&gt;&gt;' + n.data ('expand') + '&lt;&lt;</p>');
+                n.prepend ('<p class="more">&gt;&gt; ' + n.data ('expand') + ' &lt;&lt;</p>'); // Spaces master race.
             }
             el.attr('data-parsed','1');
         });
     };
 
-    var hideHidden = function() {
-        var hidden = localStorage.getItem('hid');
-        html="";
-        if(hidden != null)
+    var onRemoveHiddenPost = function() {
+        var me = $(this), target = me.data ("target"), lv = localStorage.getItem ("hid").split ("|"), serialized = "";
+        $("#" + target).slideToggle (function() {
+            $(this).find (".img_frame > img").each (function() {
+                $(this).css ("margin-top", (117 - $(this).height()) / 2);
+            });
+        });
+        me.parent().remove();
+        for (var zxcvbn in lv)
+            if (lv[zxcvbn] != target)
+                serialized += lv[zxcvbn] + "|";
+        if (serialized != "")
+            localStorage.setItem ("hid", serialized.slice (0, -1));
+        else
         {
-            var pids = hidden.split("|").sort();
-            for(var i in pids)
+            localStorage.removeItem ("hid");
+            $("#hp-cnt").remove();
+            $("#hp-title").remove();
+        }
+    };
+
+    var hideHidden = function() {
+        var hidden = localStorage.getItem ("hid");
+        if (hidden != null)
+        {
+            var pids = hidden.split ("|").sort().reverse(), len = pids.length;
+            while (len--)
             {
-                var el = plist.find("#"+pids[i]);
-                if(el.length) {
-                  el.hide();
-                  lnk = window["lnk"+pids[i].replace("post","")].slice(1);
-                  html += "<tr><td><a target='_blank' href='"+lnk+"'>"+decodeURIComponent(lnk)+"</a>"+
-                          "<a style='float:right' class='show' data-id='#"+pids[i]+"' data-i='"+i+"'>x</a></td></tr>";
+                var post = plist.find ("#" + pids[len]);
+                if (post.length)
+                {
+                    post.hide();
+                    var pLink = window[pids[len].replace (/post/, "lnk")];
+                    pids[len] = $(document.createElement("li"))
+                        .append ($(document.createElement("a")).attr ("href", pLink).text (decodeURIComponent (pLink.substr (1))))
+                        .append ($(document.createElement("a")).data ("target", pids[len]).css ("float", "right").html ("X").click (onRemoveHiddenPost));
                 }
+                else
+                    pids.splice (len, 1);
             }
-            if(html=="") return;
-            html = "<div class='title' onclick='$(\"#hptable\").toggle();'>Hidden Posts</div> <table class='box' style='display:none' id='hptable'>"+html+"</table>";
-            if(!$("#hiddenposts").length)
-              $("<div>"+html+"</div>")
-                .attr("id","hiddenposts")
-                .on("click",".show",function(){
-                  pids.splice( $(this).data("i"), 1 );
-                  hid = "";
-                  for(key in pids)
-                    hid += pids[key]+"|";
-                  hid = hid.substr(0,hid.length-1);
-                  $($(this).data("id")).show(0,function(){ 
-                              $.each($(this).find(".img_frame>img"),function(){$(this).css("margin-top", (117-$(this).height())/2)})
-                            });
-                  localStorage.setItem("hid",hid);
-                  if(hid=="") 
-                  {
-                    localStorage.removeItem("hid");
-                    $("#hiddenposts").remove();
-                  }
-                  $(this).parent().parent().remove();
-                })
-                .appendTo("#right_col");
-              else
-                $("#hiddenposts").html(html);
+            if (pids.length)
+            {
+                if (!$("#hp-cnt").length)
+                {
+                    // create the hidden posts box
+                    $(document.createElement("div")).addClass ("title").click (function() {
+                        $("#hp-cnt").slideToggle();
+                    }).html (N.getStaticData().lang.HIDDEN_POSTS).attr ("id", "hp-title").appendTo ("#right_col");
+                    $(document.createElement("div")).hide().addClass ("box").attr ("id", "hp-cnt")
+                        .append ($(document.createElement ("ul")).html (pids)).appendTo ("#right_col");
+                }
+                else
+                    $("#hp-cnt ul").html (pids);
+            }
         }
         fixHeights();
     };
@@ -77,16 +91,20 @@ $(document).ready(function() {
     
     plist.on('click','.more',function() {
         var me = $(this), par = me.parent(), jenk = par.prev();
-        par.removeClass("shadowed");
-        jenk.removeClass("compressed")
-        me.slideUp ('slow', function() {
-            me.remove();
+        if (me.data ('busy') == 'godyes') return;
+        me.data ('busy', 'godyes');
+        // obtain the real height of the post and do some hardcore animations
+        //jenk.removeClass ("compressed"); var realHeight = jenk.height();
+        jenk.animate ({ maxHeight: jenk.data ('real-height') }, 500, function() {
+            jenk.removeClass ("compressed").css ("max-height", "none");
+            me.slideUp ('slow', function() {
+                me.remove();
+            });
         });
     });
 
     plist.on('click',".hide",function() {
         var pid = $(this).data('postid');
-        $("#"+pid).hide();
         var hidden = localStorage.getItem('hid');
         if(hidden == null) {
             localStorage.setItem('hid',pid);
@@ -102,7 +120,7 @@ $(document).ready(function() {
         {
             lock.eq(0).click();
         }
-        hideHidden();
+        $("#"+pid).slideUp (hideHidden);
     });
 
     $("#profilePostList").on('click',function() {
