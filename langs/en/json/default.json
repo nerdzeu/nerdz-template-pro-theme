@@ -219,5 +219,6 @@
     "EXPAND": "Expand",
     "EVERY_COMMENT": "All comments",
     "EVERY_MSG": "All messages",
-    "USER_MENU": "User Menu"
+    "USER_MENU": "User Menu",
+    "HIDDEN_POSTS": "Hidden posts"
 }

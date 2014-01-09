@@ -1,29 +1,33 @@
 {
-	/*
-	 * template.values - define here the corrispective JS/CSS files for your template
-	 * This is just plain JSON (with the support of comments).
-	 * Available sections: CSS, JS
-	 */
-	// CSS section
-	"css": {
-		"default": "css/default.css",
+    /*
+     * template.values - define here the JS/CSS files for your template
+     * This is just plain JSON (with the support of comments).
+     */
+    // CSS section
+    "css": {
+        "default": "css/default.css",
         "faq": "css/faq.css"
-	},
-	// JS section
-	"js": {
-		"default": "js/default.js",
-		"home": "js/home.js",
+    },
+    // JS section
+    "js": {
+        "default": [ "js/default.js", {
+            "lang": [ "LOADING" ]
+        } ],
+        "home": [ "js/home.js", {
+            "lang": [ "HIDDEN_POSTS" ],
+            "outputVersion": true // you should probably not change this
+        } ],
         "preferences": "js/preferences.js",
-		"profile": "js/profile.js",
-		"project": "js/project.js",
-		"pm": "js/pm.js",
-		"userslist": "js/userslist.js",
-		"projectslist": "js/projectslist.js",
-		"bookmarks": "js/bookmarks.js",
+        "profile": "js/profile.js",
+        "project": "js/project.js",
+        "pm": "js/pm.js",
+        "userslist": "js/userslist.js",
+        "projectslist": "js/projectslist.js",
+        "bookmarks": "js/bookmarks.js",
         "reset": "js/reset.js",
-		"share": "js/share.js"
-	},
-    //LANGS section [acceppt only "default" : "path/%lang%/path/path ... path/file.json], where %path% will be replaced with it, en, de, pt, ...
+        "share": "js/share.js"
+    },
+    // LANGS section - accepts only "default": "path/%lang%/path/to/file.json" where %lang% will be replaced with each available language.
     "langs": {
         "default": "langs/%lang%/json/default.json"
     }
