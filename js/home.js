@@ -14,7 +14,7 @@ $(document).ready(function() {
             {
                 el.data ('real-height', el.height()).addClass ("compressed");
                 var n = el.next();
-                n.prepend ('<p class="more">&gt;&gt; ' + n.data ('expand') + ' &lt;&lt;</p>'); // Spaces master race.
+                n.prepend ('<p class="more">&gt;&gt; ' + N.getLangData().EXPAND + ' &lt;&lt;</p>'); // Spaces master race.
             }
             el.attr('data-parsed','1');
         });
