@@ -1,8 +1,8 @@
 {
 	/*
-	 * template.values - define here the corrispective JS/CSS files for your template
-	 * This is just plain JSON (with the support of comments).
-	 * Available sections: CSS, JS
+	 * template.values - define here the JS/CSS files to be used in your template.
+	 * This is just standard JSON with comment support.
+	 * Available sections: CSS, JS, LANGS
 	 */
 	// CSS section
 	"css": {
@@ -23,7 +23,8 @@
         "reset": "js/reset.js",
 		"share": "js/share.js"
 	},
-    //LANGS section [acceppt only "default" : "path/%lang%/path/path ... path/file.json], where %path% will be replaced with it, en, de, pt, ...
+    // LANGS section
+    // This section only accepts default language as "path/%lang%/path/path ... path/file.json", where %path% will be replaced with it, en, de, pt,
     "langs": {
         "default": "langs/%lang%/json/default.json"
     }
