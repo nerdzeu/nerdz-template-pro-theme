@@ -7,9 +7,9 @@ $(document).ready(function() {
         // according to stackoverflow, using 'target' in HTML5 is alright so let's do it
         $("#left_col .title").eq (0).append (" <span class='small' style='font-weight: normal; vertical-align: middle'><a href='https://github.com/nerdzeu/nerdz.eu/commit/" + Nversion + "' target='wowsoversion' style='color: #000 !important'>[" + Nversion + "]</a></span>").find ('a').css ('vertical-align', 'middle');
     // load the prettyprinter
-    var append_theme = "", _h = $("head");
-    if (localStorage.getItem ("has-dark-theme") == 'yep')
-        append_theme = "?skin=sons-of-obsidian";
+    var append_theme = "?skin=sons-of-obsidian", _h = $("head");
+    if (localStorage.getItem ("has-light-theme") == 'yep')
+        append_theme = "";
     var prettify = document.createElement ("script");
     prettify.type = "text/javascript";
     prettify.src  = 'https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js' + append_theme;
@@ -556,7 +556,7 @@ $(document).ready(function() {
     });
 
     plist.on ('click', '.nerdz-code-title', function() {
-        localStorage.setItem ('has-dark-theme', ( localStorage.getItem ('has-dark-theme') == 'yep' ? 'nope' : 'yep' ));
+        localStorage.setItem ('has-light-theme', ( localStorage.getItem ('has-light-theme') == 'yep' ? 'nope' : 'yep' ));
         document.location.reload();
     });
 
