@@ -8,14 +8,12 @@
             :
             {/if}
             <span class="nerdz_date">
-                {$value.datetime_n}
+                #{$value.pid_n}&nbsp;|&nbsp;
+                <time>{$value.datetime_n}</time>
             </span>
         </div>
         <div class="{if="$value.news_b"}news{else}nerdz_message{/if}">
             <div>
-                <span class="nerdz_date" style="font-size: 7pt">
-                    #{$value.pid_n}
-                </span>
                 {$value.message_n}
             </div>
             <div style="clear:both; padding-top: 5px" class="small">

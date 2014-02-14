@@ -7,14 +7,12 @@
         :
         {/if}
         <span class="nerdz_date">
-            {$datetime_n}
+            #{$pid_n}&nbsp;|&nbsp;
+            <time>{$datetime_n}</time>
         </span>
     </div>
     <div class="{if="$news_b"}news{else}nerdz_message{/if}">
         <div>
-            <span class="nerdz_date" style="font-size: 7pt">
-                #{$pid_n}
-            </span>
             {$message_n}
         </div>
         <div style="clear:both; padding-top: 5px" class="small">
@@ -28,7 +26,7 @@
             {if="$canremovepost_b"}
                 <a class="delpost" data-hpid="{$hpid_n}" data-refto="post{$hpid_n}">{$remove}</a>
             {/if}
-            {if="$canremovepost_b && $caneditpost_b"} | {/if}
+            {if="$canremovepost_b && $caneditpost_b"}&nbsp;|&nbsp;{/if}
             {if="$caneditpost_b"}
                 <a class="editpost" data-hpid="{$hpid_n}" data-refto="post{$hpid_n}">{$edit}</a>
             {/if}
