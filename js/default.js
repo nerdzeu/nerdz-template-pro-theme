@@ -446,11 +446,10 @@ $(document).ready(function() {
                                  {
                                       refto.slideToggle("slow");
                                       N.html[plist.data('type')].getPost({hpid: hpid}, function(o) {
-                                            var elm = refto.find (".hide");
                                             refto.html(o);
                                             refto.slideToggle("slow");
                                             if(refto.data("hide").length) {
-                                                $(refto.find("div.small")[0]).prepend(elm);
+                                                $(refto.find("div.small")[0]).prepend('<a class="hide" style="float:right; margin-left:3px" data-postid="post'+hpid+'">'+refto.data("hide")+'</a>');
                                             }
                                       });
                                  }
