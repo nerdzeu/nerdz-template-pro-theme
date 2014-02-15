@@ -219,18 +219,21 @@ $(document).ready(function() {
     });
 
     plist.on('click',".delcomment",function() {
-        var refto = $('#' + $(this).data('refto'));
-        refto.html(loading+'...');
-
-          N.json[plist.data('type')].delComment({ hcid: $(this).data('hcid') },function(d) {
-            if(d.status == 'ok')
-            {
-                refto.remove();
-            }
+        var me = $(this);
+        if (!me.hasClass ("delcomment-such-transform")) // confirm the deletion
+        {
+            me.addClass ("delcomment-such-transform");
+            return;
+        }
+        var refto = $('#' + me.data('refto'));
+        refto.html (loading + '...');
+        N.json[plist.data('type')].delComment ({ hcid: me.data('hcid') }, function(d) {
+            if (d.status == 'ok')
+                refto.slideUp ("slow", function() {
+                    refto.remove();
+                });
             else
-            {
                 refto.html(d.message);
-            }
         });
     });
 
@@ -443,10 +446,11 @@ $(document).ready(function() {
                                  {
                                       refto.slideToggle("slow");
                                       N.html[plist.data('type')].getPost({hpid: hpid}, function(o) {
+                                            var elm = refto.find (".hide");
                                             refto.html(o);
                                             refto.slideToggle("slow");
                                             if(refto.data("hide").length) {
-                                                $(refto.find("div.small")[0]).prepend('<a class="hide" style="float:right; margin-left:3px" data-postid="post'+hpid+'">'+refto.data("hide")+'</a>');
+                                                $(refto.find("div.small")[0]).prepend(elm);
                                             }
                                       });
                                  }

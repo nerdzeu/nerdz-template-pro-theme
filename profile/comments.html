@@ -6,7 +6,7 @@
 {loop="list_a"}
 <div id="{$value.uid_n}" data-hcid="{$value.hcid_n}" class="singlecomment">
     <a href="/{$value.from4link_n}" style="vertical-align:top">
-        <img src="{$value.gravatarurl_n}?s=30#" alt="{$value.from_n}" height="30" width="30" onerror="this.src = '{$onerrorimgurl_n}'" style="float:left; padding-right:2px; padding-top: 3px" />
+        <img src="{$value.gravatarurl_n}?s=30#" alt="{$value.from_n}" onerror="this.src = '{$onerrorimgurl_n}'" class="gravatar" />
     </a>
     <div class="nerdz_from">
         <a href="/{$value.from4link_n}" style="vertical-align:top">
@@ -36,13 +36,11 @@
 {ignore}Il form non viene caricato, quando si gettano i commenti dopo uno specifico hcid{/ignore}
 {if="$showform_b"}
 <div>
-    <div style="width:33px; float:left; ">
         <a href="/{$currentuserprofile_n}" style="vertical-align:top">
-            <img src="{$currentusergravatar_n}?s=30#" alt="{$currentusername_n}" height="30" width="30" onerror="this.src = '{$onerrorimgurl_n}'" style="float:left; padding-right:2px" />
+            <img src="{$currentusergravatar_n}?s=30#" alt="{$currentusername_n}" onerror="this.src = '{$onerrorimgurl_n}'" class="gravatar gravatar-current-user" />
         </a>
-    </div>
     <form style="overflow:hidden; width:auto" class="frmcomment" data-hpid="{$hpid_n}">
-        <textarea id="commentto{$hpid_n}" name="message" style="width: 99.5%; height: 60px"></textarea>
+        <textarea id="commentto{$hpid_n}" name="message" style="width: 100%; height: 60px"></textarea>
         <input type="submit" value="{$nerdz_it}" style="float: right;margin-top:5px" />
         <button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#commentto{$hpid_n}">{$preview}</button>
         <button type="button" style="float:left; margin-top:5px" onclick="window.open('/bbcode.php')">BBCode</button>

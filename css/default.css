@@ -222,13 +222,7 @@ textarea
 
 input[value="Nerdz!"]
 {
-    margin-left: 2px;
-    margin-right: 2px;
-}
-
-#stdfrm input
-{
-    margin-right: 0px;
+    margin-left: 1px;
 }
 
 button, input[type=submit], .page th, .title
@@ -581,4 +575,28 @@ hr
     background-color: #fff;
     height: 1px;
     border: 0;
+}
+
+.delcomment
+{
+    -webkit-transition: -webkit-transform 1s;
+    transition: transform 1s;
+}
+
+.delcomment-such-transform
+{
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.gravatar
+{
+    float: left;
+    padding-top: 5px;
+    padding-right: 2px;
+}
+
+.gravatar-current-user
+{
+    padding-top: 2px;
 }
