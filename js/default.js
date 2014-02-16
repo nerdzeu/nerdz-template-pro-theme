@@ -3,9 +3,8 @@ $(document).ready(function() {
     $("iframe").attr('scrolling','no');
     $("body").append($('<br />'));
     // append version information
-    if ($("#left_col").length && window.location.pathname == "/home.php" && typeof Nversion !== 'undefined' && Nversion != 'null')
-        // according to stackoverflow, using 'target' in HTML5 is alright so let's do it
-        $("#left_col .title").eq (0).append (" <span class='small' style='font-weight: normal; vertical-align: middle'><a href='https://github.com/nerdzeu/nerdz.eu/commit/" + Nversion + "' target='wowsoversion' style='color: #000 !important'>[" + Nversion + "]</a></span>").find ('a').css ('vertical-align', 'middle');
+    if ($("#left_col").length && typeof Nversion !== 'undefined' && Nversion != 'null')
+        $("#left_col .title").eq (0).append (" <span class='small' style='font-weight: normal'><a href='https://github.com/nerdzeu/nerdz.eu/commit/" + Nversion + "' target='wowsoversion' style='color: #000 !important'>[" + Nversion + "]</a></span>").find ('a').css ('vertical-align', 'middle');
     // load the prettyprinter
     var append_theme = "?skin=sons-of-obsidian", _h = $("head");
     if (localStorage.getItem ("has-light-theme") == 'yep')
@@ -418,47 +417,48 @@ $(document).ready(function() {
         });
     });
 
-    plist.on('click',".editpost",function(e) {
+    plist.on('click',".editpost", function(e) {
         e.preventDefault();
-        var refto = $('#' + $(this).data('refto')), hpid = $(this).data('hpid');
-        var editlang = $(this).html();
-        var form = function(fid,hpid,message,edlang,prev) {
-                    return     '<form style="margin-bottom:40px" id="' +fid+ '" data-hpid="'+hpid+'">' +
-                               '<textarea id="'+fid+'abc" autofocus style="width:99%; height:125px">' +message+ '</textarea><br />' +
-                               '<input type="submit" value="' + edlang +'" style="float: right; margin-top:5px" />' +
-                                '<button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#'+fid+'abc">'+prev+'</button>'+
-                               '<button type="button" style="float:left; margin-top:5px" onclick="window.open(\'/bbcode.php\')">BBCode</button>' +
-                           '</form>';
-                    };
-            N.json[plist.data('type')].getPost({hpid: hpid},function(d) {
-                 var fid = refto.attr('id') + 'editform';
-                 refto.html(form(fid,hpid,d.message,editlang,$(".preview").html()));
-
-                 $('#'+fid).on('submit',function(e) {
-                      e.preventDefault();
-                      N.json[plist.data('type')].editPost(
-                            {
-                                 hpid: $(this).data('hpid'),
-                                 message: $(this).children('textarea').val()
-                            },function(d)
-                            {
-                                 if(d.status == 'ok')
-                                 {
-                                      refto.slideToggle("slow");
-                                      N.html[plist.data('type')].getPost({hpid: hpid}, function(o) {
-                                            refto.html(o);
-                                            refto.slideToggle("slow");
-                                            if(refto.data("hide").length) {
-                                                $(refto.find("div.small")[0]).prepend('<a class="hide" style="float:right; margin-left:3px" data-postid="post'+hpid+'">'+refto.data("hide")+'</a>');
-                                            }
-                                      });
-                                 }
-                                 else {
-                                      alert(d.message);
-                                 }
-                      });
-                 });
+        var refto = $('#' + $(this).data('refto')), hpid = $(this).data('hpid'),
+            editlang = $(this).html(),
+            form = function (fid, hpid, message, edlang, prev) {
+                return '<form style="margin-bottom:40px" id="' +fid+ '" data-hpid="'+hpid+'">' +
+                    '<textarea id="'+fid+'abc" autofocus style="width:100%; height:125px">' +message+ '</textarea><br />' +
+                    '<input type="submit" value="' + edlang +'" style="float: right; margin-top:5px" />' +
+                    '<button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#'+fid+'abc">'+prev+'</button>'+
+                    '<button type="button" style="float:left; margin-top:5px" onclick="window.open(\'/bbcode.php\')">BBCode</button>' +
+                    '</form>';
+            };
+        N.json[plist.data('type')].getPost ({ hpid: hpid }, function(d) {
+            var fid = refto.attr ('id') + 'editform';
+            refto.html (form (fid, hpid, d.message, editlang, $(".preview").html()));
+            $('#' + fid).on ('submit', function(e) {
+                e.preventDefault();
+                N.json[plist.data('type')].editPost ({
+                    hpid: $(this).data('hpid'),
+                    message: $(this).children('textarea').val()
+                }, function (d) {
+                    if(d.status == 'ok')
+                    {
+                        refto.hide();
+                        N.html[plist.data('type')].getPost({ hpid: hpid }, function(o) {
+                            refto.html(o);
+                            refto.slideToggle("slow");
+                            var separator = refto.find (".delpost") ? "|&nbsp;" : "";
+                            if(refto.data("hide").length)
+                                $(refto.find("div.small")[0]).prepend (
+                                    '<a class="hide" style="float:right; margin-left:3px" data-postid="post'+hpid+'">'
+                                    + separator
+                                    + refto.data("hide")
+                                    + '</a>'
+                                );
+                        });
+                    }
+                    else
+                        alert(d.message);
+                });
             });
+        });
     });
 
     plist.on('click',".imglocked",function() {

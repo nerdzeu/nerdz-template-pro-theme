@@ -46,7 +46,7 @@
 
 #center_col
 {
-    width: 71%;
+    width: 72%;
     float:left;
     display: inline;
     padding: 4px;
@@ -102,7 +102,7 @@
 
 .nerdz_message > div.compressed
 {
-    max-height: 200px;
+    max-height: 210px;
     overflow: hidden;
     width: auto;
 }
@@ -150,7 +150,7 @@
 #main
 {
     margin: auto;
-    width: 98%;
+    width: 99%;
     margin-right: 0.2%;
     word-wrap: break-word;
 }
@@ -419,8 +419,7 @@ html, #body
 
 .qu_main
 {
-    margin-left: 3%;
-    margin-right: 1%;
+    margin: 0 auto;
     width: 95%;
     border: solid #AFAFAF 1px;
     overflow: hidden;
@@ -554,7 +553,7 @@ pre
 .prettyprint
 {
     padding: 3px;
-    font-family: "Consolas", "monospace", "Courier New";
+    /*font-family: "Consolas", "monospace", "Courier New"; let the browser decide */
 }
 
 #footersearch
