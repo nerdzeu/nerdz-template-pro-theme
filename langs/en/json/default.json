@@ -220,5 +220,8 @@
     "EVERY_COMMENT": "All comments",
     "EVERY_MSG": "All messages",
     "USER_MENU": "User Menu",
-    "HIDDEN_POSTS": "Hidden posts"
+    "HIDDEN_POSTS": "Hidden posts",
+    "MOBILEAVAILABLE":"NERDZ also has a mobile site. Would you like to visit it?",
+    "GOTOMOBILE": "Go to mobile version",
+    "STAYONDESKTOP":"Stay on desktop website"
 }

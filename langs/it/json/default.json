@@ -219,5 +219,8 @@
     "EVERY_COMMENT": "Tutti i commenti",
     "EVERY_MSG": "Tutti i messaggi",
     "USER_MENU": "Men\u00f9 Utente",
-    "HIDDEN_POSTS": "Post nascosti"
+    "HIDDEN_POSTS": "Post nascosti",
+    "MOBILEAVAILABLE":"NERDZ ha anche una versione mobile, vuoi provarla?",
+    "GOTOMOBILE": "Vai alla versione mobile",
+    "STAYONDESKTOP":"Resta sul sito desktop"
 }

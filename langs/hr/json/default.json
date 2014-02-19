@@ -219,5 +219,8 @@
     "EVERY_COMMENT": "Svi komentari",
     "EVERY_MSG": "Svi postovi",
     "USER_MENU": "korisni\u010dki izbornik",
-    "HIDDEN_POSTS": "Post skrivena"
+    "HIDDEN_POSTS": "Post skrivena",
+    "MOBILEAVAILABLE":"Idi na mobilnim stranicama?",
+    "GOTOMOBILE": "Idi na mobilnoj mjestu",
+    "STAYONDESKTOP":"Ostani na desktop mjestu"
 }

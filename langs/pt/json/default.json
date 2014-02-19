@@ -219,5 +219,8 @@
     "EVERY_COMMENT": "Todos os coment\u00e1rios",
     "EVERY_MSG": "Todos os posts",
     "USER_MENU": "menu do usu\u00e1rio",
-    "HIDDEN_POSTS": "Mensagem escondida"
+    "HIDDEN_POSTS": "Mensagem escondida",
+    "MOBILEAVAILABLE":"Vá no site móvel?",
+    "GOTOMOBILE": "Vá no site móvel",
+    "STAYONDESKTOP":"Fique no site desktop"
 }

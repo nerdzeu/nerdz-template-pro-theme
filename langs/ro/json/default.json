@@ -219,5 +219,8 @@
     "EVERY_COMMENT": "Toate comentariile",
     "EVERY_MSG": "Toate posturile",
     "USER_MENU": "meniul de utilizator",
-    "HIDDEN_POSTS": "Mesaj ascuns"
+    "HIDDEN_POSTS": "Mesaj ascuns",
+    "MOBILEAVAILABLE":"Du-te pe site-ul mobil?",
+    "GOTOMOBILE": "Du-te pe site-ul mobil",
+    "STAYONDESKTOP":"Rămâi pe site-ul desktop"
 }

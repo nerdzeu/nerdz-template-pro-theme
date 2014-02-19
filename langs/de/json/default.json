@@ -219,5 +219,8 @@
     "EVERY_COMMENT": "Alle kommentare",
     "EVERY_MSG": "Alle beitr\u00e4ge",
     "USER_MENU": "Benutzermen\u00fc",
-    "HIDDEN_POSTS": "Beitrag versteckt"
+    "HIDDEN_POSTS": "Beitrag versteckt",
+    "MOBILEAVAILABLE":"Gehen Sie auf mobile Website?",
+    "GOTOMOBILE": "Gehen Sie auf mobile Website",
+    "STAYONDESKTOP":"Bleiben Sie auf der Desktop-Seite"
 }
