@@ -1,84 +1,76 @@
 $(document).ready(function() {
-    //tutti gli eventi ajax che evvengono in plist sono nel formato pilst.on(evento,[selettore],function(...){...});
-    var plist = $("#postlist");
-    var loading = N.getLangData().LOADING;
-    var lang = null; /* globale dato che la uso anche altrove */
-    var load = false; //gestisce i caricamenti ed evita sovrapposizioni. Dichiarata qui che è il foglio che viene incluso di default ovunque e per primo
-    plist.html('<h1>'+loading+'...</h1>');
-
-    var fixHeights = function() {
-        plist.find(".nerdz_message").each (function() {
-            var el = $(this).find('div:first');
-            // TODO: switch from attr('data-parsed') to data('parsed')
-            if ((el.height() >= 200 || el.find ('.gistLoad').length > 0) && !el.attr('data-parsed'))
-            {
-                el.data ('real-height', el.height()).addClass ("compressed");
-                var n = el.next();
-                n.prepend ('<p class="more">&gt;&gt; ' + N.getLangData().EXPAND + ' &lt;&lt;</p>'); // Spaces master race.
-            }
-            el.attr('data-parsed','1');
-        });
-    };
-
-    var onRemoveHiddenPost = function() {
-        var me = $(this), target = me.data ("target"), lv = localStorage.getItem ("hid").split ("|"), serialized = "";
-        $("#" + target).slideToggle (function() {
-            $(this).find (".img_frame > img").each (function() {
-                $(this).css ("margin-top", (117 - $(this).height()) / 2);
+    var plist      = $("#postlist"),
+        loading    = N.getLangData().LOADING,
+        lang       = null,
+        load       = false,
+        fixHeights = function() {
+            plist.find(".nerdz_message").each (function() {
+                var el = $(this).find('div:first');
+                if (!el.data ('parsed') && (el.height() >= 210 || el.find ('.gistLoad').length > 0))
+                    // revert: real-height set in .data, this is not good because
+                    // the actual height may change after this JS is executed
+                    el.addClass ("compressed")
+                        .next().prepend ('<p class="more">&gt;&gt; ' + N.getLangData().EXPAND + ' &lt;&lt;</p>');
+                el.data ('parsed', 'wow');
             });
-        });
-        me.parent().remove();
-        for (var zxcvbn in lv)
-            if (lv[zxcvbn] != target)
-                serialized += lv[zxcvbn] + "|";
-        if (serialized != "")
-            localStorage.setItem ("hid", serialized.slice (0, -1));
-        else
-        {
-            localStorage.removeItem ("hid");
-            $("#hp-cnt").remove();
-            $("#hp-title").remove();
-        }
-    };
-
-    var hideHidden = function() {
-        var hidden = localStorage.getItem ("hid");
-        if (hidden != null)
-        {
-            var pids = hidden.split ("|").sort().reverse(), len = pids.length;
-            while (len--)
+        },
+        onRemoveHiddenPost = function() {
+            var me = $(this), target = me.data ("target"), lv = localStorage.getItem ("hid").split ("|"), serialized = "";
+            $("#" + target).slideToggle (function() {
+                $(this).find (".img_frame > img").each (function() {
+                    $(this).css ("margin-top", (117 - $(this).height()) / 2);
+                });
+            });
+            me.parent().remove();
+            for (var zxcvbn in lv)
+                if (lv[zxcvbn] != target)
+                    serialized += lv[zxcvbn] + "|";
+            if (serialized != "")
+                localStorage.setItem ("hid", serialized.slice (0, -1));
+            else
             {
-                var post = plist.find ("#" + pids[len]);
-                if (post.length)
-                {
-                    post.hide();
-                    var pLink = window[pids[len].replace (/post/, "lnk")];
-                    pids[len] = $(document.createElement("li"))
-                        .append ($(document.createElement("a")).attr ("href", pLink).text (decodeURIComponent (pLink.substr (1))))
-                        .append ($(document.createElement("a")).data ("target", pids[len]).css ("float", "right").html ("X").click (onRemoveHiddenPost));
-                }
-                else
-                    pids.splice (len, 1);
+                localStorage.removeItem ("hid");
+                $("#hp-cnt").remove();
+                $("#hp-title").remove();
             }
-            if (pids.length)
+        },
+        hideHidden = function() {
+            var hidden = localStorage.getItem ("hid");
+            if (hidden != null)
             {
-                if (!$("#hp-cnt").length)
+                var pids = hidden.split ("|").sort().reverse(), len = pids.length;
+                while (len--)
                 {
-                    // create the hidden posts box
-                    $(document.createElement("div")).addClass ("title").click (function() {
-                        $("#hp-cnt").slideToggle();
-                    }).html (N.getStaticData().lang.HIDDEN_POSTS).attr ("id", "hp-title").appendTo ("#right_col");
-                    $(document.createElement("div")).hide().addClass ("box").attr ("id", "hp-cnt")
-                        .append ($(document.createElement ("ul")).html (pids)).appendTo ("#right_col");
+                    var post = plist.find ("#" + pids[len]);
+                    if (post.length)
+                    {
+                        post.hide();
+                        var pLink = window[pids[len].replace (/post/, "lnk")];
+                        pids[len] = $(document.createElement("li"))
+                            .append ($(document.createElement("a")).attr ("href", pLink).text (decodeURIComponent (pLink.substr (1))))
+                            .append ($(document.createElement("a")).data ("target", pids[len]).css ("float", "right").html ("X").click (onRemoveHiddenPost));
+                    }
+                    else
+                        pids.splice (len, 1);
                 }
-                else
-                    $("#hp-cnt ul").html (pids);
+                if (pids.length)
+                {
+                    if (!$("#hp-cnt").length)
+                    {
+                        // create the hidden posts box
+                        $(document.createElement("div")).addClass ("title").click (function() {
+                            $("#hp-cnt").slideToggle();
+                        }).html (N.getStaticData().lang.HIDDEN_POSTS).attr ("id", "hp-title").appendTo ("#right_col");
+                        $(document.createElement("div")).hide().addClass ("box").attr ("id", "hp-cnt")
+                            .append ($(document.createElement ("ul")).html (pids)).appendTo ("#right_col");
+                    }
+                    else
+                        $("#hp-cnt ul").html (pids);
+                }
             }
-        }
-        fixHeights();
-    };
-
-
+            fixHeights();
+        };
+    plist.html('<h1>'+loading+'...</h1>');
     plist.on('click',".spoiler",function(){
       if($(this).data("parsed")) return;
       $.each($(this).find("img"),function(){
@@ -93,11 +85,11 @@ $(document).ready(function() {
         var me = $(this), par = me.parent(), jenk = par.prev();
         if (me.data ('busy') == 'godyes') return;
         me.data ('busy', 'godyes');
-        // obtain the real height of the post and do some hardcore animations
-        //jenk.removeClass ("compressed"); var realHeight = jenk.height();
-        jenk.animate ({ maxHeight: jenk.data ('real-height') }, 500, function() {
+        // switching back to the old hack
+        var suchHeight = jenk.removeClass ("compressed").height();
+        jenk.addClass ("compressed").animate ({ maxHeight: suchHeight }, function() {
             jenk.removeClass ("compressed").css ("max-height", "none");
-            me.slideUp ('slow', function() {
+            me.slideUp ("slow", function() {
                 me.remove();
             });
         });
