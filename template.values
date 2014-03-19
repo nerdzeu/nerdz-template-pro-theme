@@ -6,9 +6,7 @@
     // CSS section
     "css": {
         "default": "css/default.css",
-        "faq": "css/faq.css",
-        "preferences": "css/reset_center_col_color.css",
-        "index": "css/reset_center_col_color.css"
+        "faq": "css/faq.css"
     },
     // JS section
     "js": {
