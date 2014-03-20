@@ -40,8 +40,8 @@
     float: left;
     width: 12.5%;
     margin-right: 1%;
+    margin-top: 5px;
     display: inline;
-    /*overflow-x: hidden;*/
 }
 
 #center_col
@@ -49,8 +49,8 @@
     width: 72%;
     float:left;
     display: inline;
-    padding: 4px;
     font-size: 100%;
+    margin-top: 5px;
 }
 
 #right_col
@@ -59,6 +59,7 @@
     float: left;
     display: inline;
     margin-left: 1%;
+    margin-top: 5px;
 }
 
 #left_col ul, #right_col ul
@@ -156,12 +157,7 @@
 #gotopm
 {
     float:left;
-    margin-top: -16px;
-    margin-left: -40px;
-    cursor: pointer;
-    font-weight: bold;
-    font-style: italic;
-    width:20px;
+    margin-left: -44px;
     text-align: right;
 }
 
