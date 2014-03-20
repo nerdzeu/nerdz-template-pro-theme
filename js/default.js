@@ -568,7 +568,8 @@ $(document).ready(function() {
     // to read the code. Otherwise don't be a bad guy and try to find it by yourself.
     if($("nav div").length) {
         var code = [ 38, 38, 40, 40, 37, 39, 37, 39, 66, 65 ], pressed = [];
-        window._NERDZ_NICK = $.trim (/,(.+)/.exec ($("nav div").text())[1]);
+        var nick  = /,(.+)/.exec ($("nav div").text());
+        window._NERDZ_NICK = (nick != null) && typeof nick[1] != "undefined" ? $.trim(nick[1]) : 'You n00b';
         $(window).keydown (function dEv (e) {
             pressed.push (e.keyCode);
             while (pressed.length > code.length) pressed.shift();
