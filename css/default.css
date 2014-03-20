@@ -50,7 +50,7 @@
     float:left;
     display: inline;
     padding: 4px;
-    font-size: 105%;
+    font-size: 100%;
 }
 
 #right_col
@@ -258,7 +258,7 @@ body
 
 html, button, input, textarea
 {
-    font-family: 'Tahoma', 'Dejavu Sans', 'Helvetica Neue', Helvetica, Arial, 'lucida grande', verdana, arial, sans-serif;
+    font-family: 'Dejavu Sans', 'Tahoma', 'Helvetica Neue', Helvetica, Arial, 'lucida grande', verdana, arial, sans-serif;
 }
 
 img
