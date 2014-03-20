@@ -6,7 +6,7 @@
 {loop="list_a"}
 <div id="{$value.uid_n}" data-hcid="{$value.hcid_n}" class="singlecomment">
     <a href="/{$value.from4link_n}" style="vertical-align:top">
-        <img src="{$value.gravatarurl_n}?s=30#" alt="{$value.from_n}" onerror="this.src = '{$onerrorimgurl_n}'" class="gravatar" />
+        <img src="{$value.gravatarurl_n}?s=30#" alt="" onerror="this.src = '{$onerrorimgurl_n}'" class="gravatar" />
     </a>
     <div class="nerdz_from">
         <a href="/{$value.from4link_n}" style="vertical-align:top">
@@ -37,7 +37,7 @@
 {if="$showform_b"}
 <div>
     <a href="/{$currentuserprofile_n}" style="vertical-align:top">
-        <img src="{$currentusergravatar_n}?s=30#" alt="{$currentusername_n}" onerror="this.src = '{$onerrorimgurl_n}'" class="gravatar gravatar-current-user" />
+        <img src="{$currentusergravatar_n}?s=30#" alt="" onerror="this.src = '{$onerrorimgurl_n}'" class="gravatar gravatar-current-user" />
     </a>
     <form style="overflow:hidden; width:auto" class="frmcomment" data-hpid="{$hpid_n}">
         <textarea id="commentto{$hpid_n}" name="message" style="width: 100%; height: 60px"></textarea>

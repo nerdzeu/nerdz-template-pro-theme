@@ -41,7 +41,6 @@
     width: 12.5%;
     margin-right: 1%;
     display: inline;
-    /*overflow-x: hidden;*/
 }
 
 #center_col
@@ -369,7 +368,6 @@ html, #body
     background-color: #BDBDBD;
     color: #000;
     margin-bottom: 8px;
-    /*max-width: 98%;*/
 }
 
 .nerdz_comments br, .nerdz_message br
@@ -427,27 +425,27 @@ html, #body
 
 .img_frame, .yt_frame
 {
-  clear:both;
-  text-align:center;
-  overflow:hidden;
-  display: block !important;
-  background-color: transparent;
-  margin-top:.2em; 
-  cursor: pointer; 
-  border: 1px solid #FFF;
-  width: 132px;
-  height: 132px;
+    clear:both;
+    text-align:center;
+    overflow:hidden;
+    display: block !important;
+    background-color: transparent;
+    margin-top:.2em; 
+    cursor: pointer; 
+    border: 1px solid #FFF;
+    width: 132px;
+    height: 132px;
 }
 
 .img_frame span, .yt_frame span
 {
-  height: 17px;
-  display:block;
-  background-color: #FFF;
-  text-align:center;
-  width:132px;
-  color:#000;
-  font-weight: bold;
+    height: 17px;
+    display:block;
+    background-color: #FFF;
+    text-align:center;
+    width:132px;
+    color:#000;
+    font-weight: bold;
 }
 
 .img_frame img, .yt_frame img
@@ -460,25 +458,26 @@ html, #body
 
 .img_frame-extended
 {
-  display: auto;
-  width: auto;
-  height: auto;
-  border: none;
-  overflow: visible;
-  max-width: 100%;
-  max-height: 100%;
-} 
-.img_frame.img_frame-extended img {
-  float: left;
-  width: auto;
-  height: auto;
-  max-height: 100%;
-  max-width:100%;
-  margin-top: 0px !important;
+    width: auto;
+    height: auto;
+    border: none;
+    overflow: visible;
+    max-width: 100%;
+    max-height: 100%;
 }
+
+.img_frame.img_frame-extended img {
+    float: left;
+    width: auto;
+    height: auto;
+    max-height: 100%;
+    max-width:100%;
+    margin-top: 0px !important;
+}
+
 .img_frame-extended span
 {
-  display: none;
+    display: none;
 }
 
 .error
@@ -553,7 +552,6 @@ pre
 .prettyprint
 {
     padding: 3px;
-    /*font-family: "Consolas", "monospace", "Courier New"; let the browser decide */
 }
 
 #footersearch
