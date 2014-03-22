@@ -6,9 +6,40 @@
         {else}
         :
         {/if}
-        <span class="nerdz_date">
-            {$datetime_n}
-        </span>
+        <div class="nerdz_date">
+                <time>{$datetime_n}</time>
+                &nbsp;|&nbsp;
+                {if="$thumbs_n > 0"}
+                  <span id="thumbsNum{$hpid_n}" class="nerdz_thumbsNumPos">
+                {else}
+                  {if="$thumbs_n == 0"}
+                    <span id="thumbsNum{$hpid_n}">
+                  {else}
+                    <span id="thumbsNum{$hpid_n}" class="nerdz_thumbsNumNeg">
+                  {/if}
+                {/if}
+                {$thumbs_n}
+                </span>
+                &nbsp;&nbsp;
+                <div class="nerdz_thumbs">
+                {if="$uthumb_n == 1"}
+                  <span class="nerdz_thumbsUp" id="thumbsUp{$hpid_n}" data-thumbs="Up" data-hpid="{$hpid_n}">
+                {else}
+                  <span class="nerdz_thumbsNorm" id="thumbsUp{$hpid_n}" data-thumbs="Up" data-hpid="{$hpid_n}">
+                {/if}
+                    &#9650;
+                  </span>
+                &nbsp;&nbsp;
+                {if="$uthumb_n == -1"}
+                  <span class="nerdz_thumbsDown" id="thumbsDown{$hpid_n}" data-thumbs="Down" data-hpid="{$hpid_n}">
+                {else}
+                  <span class="nerdz_thumbsNorm" id="thumbsDown{$hpid_n}" data-thumbs="Down" data-hpid="{$hpid_n}">
+                {/if}
+                    &#9660;
+                  </span>
+                &nbsp;
+                </div>
+        </div>
     </div>
     <div class="{if="$news_b"}news{else}nerdz_message{/if}">
         <div>
