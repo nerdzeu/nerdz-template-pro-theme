@@ -6,17 +6,34 @@ $(document).ready(function() {
     if ($("#left_col").length && typeof Nversion !== 'undefined' && Nversion != 'null')
         $("#left_col .title").eq (0).append (" <span class='small' style='font-weight: normal'><a href='https://github.com/nerdzeu/nerdz.eu/commit/" + Nversion + "' target='wowsoversion' style='color: #000 !important'>[" + Nversion + "]</a></span>").find ('a').css ('vertical-align', 'middle');
     // load the prettyprinter
-    var append_theme = "?skin=sons-of-obsidian", _h = $("head");
+    var append_theme = "skin=sons-of-obsidian&", _h = $("head");
     if (localStorage.getItem ("has-light-theme") == 'yep')
         append_theme = "";
     var prettify = document.createElement ("script");
     prettify.type = "text/javascript";
-    prettify.src  = 'https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js' + append_theme;
+    prettify.src  = '//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?' + append_theme + 'callback=pt_onPrettyPrint';
     _h.append (prettify);
     if (append_theme != "")
         _h.append ('<style type="text/css">.nerdz-code-wrapper { background-color: #000; color: #FFF; }</style>');
     else
         _h.append ('<style type="text/css">.nerdz-code-wrapper { background-color: #FFF; color: #000; }</style>');
+    if (typeof window.exports !== 'object')
+        window.exports = {};
+    window['pt_onPrettyPrint'] = window.exports['pt_onPrettyPrint'] = function() {
+        // apply our fixes to the [code] tag output
+        $(".nerdz-code-wrapper:not(.pt-processed)").each (function() {
+            var me = $(this), textVersion = me.find ("a");
+            me.addClass ("pt-processed");
+            if (textVersion.length)
+            {
+                textVersion
+                    .remove()
+                    .addClass ("nerdz-code-text-version")
+                    .click (function (e) { e.stopPropagation(); })
+                    .appendTo (me.find (".nerdz-code-title"));
+            }
+        });
+    };
     
     $("#notifycounter").on('click',function(e) {
         e.preventDefault();

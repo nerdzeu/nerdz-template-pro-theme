@@ -1,3 +1,17 @@
+/* load our fonts */
+@font-face {
+    font-family: 'Droid Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Droid Sans'), local('DroidSans'), url(http://themes.googleusercontent.com/static/fonts/droidsans/v4/s-BiyweUPV0v-yRb-cjciBsxEYwM7FgeyaSgU71cLG0.woff) format('woff');
+}
+@font-face {
+    font-family: 'Droid Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Droid Sans Bold'), local('DroidSans-Bold'), url(http://themes.googleusercontent.com/static/fonts/droidsans/v4/EFpQQyG9GqCrobXxL-KRMQFhaRv2pGgT5Kf0An0s4MM.woff) format('woff');
+}
+
 #site_title
 {
     color: #000;
@@ -259,7 +273,7 @@ body
 
 html, button, input, textarea
 {
-    font-family: 'Dejavu Sans', 'Tahoma', 'Helvetica Neue', Helvetica, Arial, 'lucida grande', verdana, arial, sans-serif;
+    font-family: 'Droid Sans', 'Dejavu Sans', 'Helvetica Neue', Helvetica, Arial, 'lucida grande', verdana, arial, sans-serif;
 }
 
 img
@@ -346,7 +360,7 @@ html, #body
     width: auto;
     background-color: #000;
     border-radius: 2.5px;
-    font-size: 90%;
+    font-size: 95%;
     overflow: hidden;
     padding: 2px;
     border: 1px #FFFFFF solid;
@@ -541,7 +555,7 @@ pre
     font-weight: bold;
     cursor: pointer;
     border-bottom: 1px solid white;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 .nerdz-code-title:first-letter
@@ -549,9 +563,16 @@ pre
     text-transform: uppercase;
 }
 
+.nerdz-code-text-version
+{
+    float: right;
+    padding-right: 2px;
+}
+
 .prettyprint
 {
     padding: 3px;
+    margin-bottom: 0;
 }
 
 #footersearch
