@@ -36,7 +36,7 @@ $(document).ready(function() {
         },
         hideHidden = function() {
             var hidden = localStorage.getItem ("hid");
-            if (hidden != null)
+            if (hidden != null && hidden != "")
             {
                 var pids = hidden.split ("|").sort().reverse(), len = pids.length;
                 while (len--)
