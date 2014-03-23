@@ -71,14 +71,22 @@ $(document).ready(function() {
             fixHeights();
         };
     plist.html('<h1>'+loading+'...</h1>');
+
+    plist.on('click', '.img_frame', function() {
+        var me = $(this), message = me.parents (".nerdz_message");
+        if ($(this).hasClass ("img_frame-extended") &&
+            message.find ("div:first").hasClass ("compressed"))
+            message.find (".more").click();
+    });
+
     plist.on('click',".spoiler",function(){
-      if($(this).data("parsed")) return;
-      $.each($(this).find("img"),function(){
-        m = (117-$(this).height())/2;
-        if (m>1)
-          $(this).css("margin-top", m)
-      })
-      $(this).data("parsed","1");
+        if ($(this).data("parsed")) return;
+        $.each ($(this).find("img"), function() {
+            var m = (117-$(this).height())/2;
+            if (m > 1)
+                $(this).css("margin-top", m)
+        })
+        $(this).data("parsed","1");
     });
     
     plist.on('click','.more',function() {

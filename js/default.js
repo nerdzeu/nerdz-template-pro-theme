@@ -96,8 +96,7 @@ $(document).ready(function() {
         var manageResponse = function(d)
         {
             plist.html(d);
-            //variabile booleana messa come stringa data che nel dom posso salvare solo stringhe
-            sessionStorage.setItem('searchLoad', "1"); //e' la variabile load di search, dato che queste azioni sono in questo file js ma sono condivise da tutte le pagine, la variabile di caricamento dev'essere nota a tutte
+            sessionStorage.setItem('searchLoad', "1");
         };
 
         if(plist.data('type') == 'project')
@@ -154,28 +153,23 @@ $(document).ready(function() {
     });
 
     $("#gotopm").on('click',function(e) {
-            e.preventDefault();
-
-            var href = $(this).attr('href');
-
-            if($('#pmcounter').html() != '0') {
-
-                if(href == window.location.pathname ) {
-                    location.hash = "new";
-                    location.reload();
-                }
-                else {
-                    location.href='/pm.php#new';
-                }
+        e.preventDefault();
+        var href = $(this).attr('href');
+        if($('#pmcounter').html() != '0') {
+            if(href == window.location.pathname ) {
+                location.hash = "new";
+                location.reload();
             }
-            else
-            {
-                location.href = href;
+            else {
+                location.href='/pm.php#new';
             }
+        }
+        else
+        {
+            location.href = href;
+        }
     });
 
-    //Questo evento deve essere qui e non in index.js (che ora viene eliminato), dato che un utente può registrarsi anche dal
-    //form di registrazione, che appare quando un profilo/progetto è chiuso 
     $("#regfrm").on('submit',function(event) {
         event.preventDefault();
         N.json.register($("#regfrm").serialize(),function(obj) {
@@ -489,12 +483,12 @@ $(document).ready(function() {
             }
         }
           
-          if($(this).data('silent')) { //nei commenti
-              N.json[plist.data('type')].reNotifyFromUserInPost({ hpid: $(this).data('hpid'), from: $(this).data('silent') },function(d) {tog(d);});
-          }
-          else {
-                 N.json[plist.data('type')].reNotifyForThisPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-          }
+        if($(this).data('silent')) { //nei commenti
+            N.json[plist.data('type')].reNotifyFromUserInPost({ hpid: $(this).data('hpid'), from: $(this).data('silent') },function(d) {tog(d);});
+        }
+        else {
+            N.json[plist.data('type')].reNotifyForThisPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
+        }
     });
 
     plist.on('click',".imgunlocked",function() {
@@ -507,13 +501,10 @@ $(document).ready(function() {
                 me.attr('title',d.message);
             }
         }
-
-        if($(this).data('silent')) {
+        if($(this).data('silent'))
             N.json[plist.data('type')].noNotifyFromUserInPost({ hpid: $(this).data('hpid'), from: $(this).data('silent') },function(d) {tog(d);});
-        }
-        else {
+        else
             N.json[plist.data('type')].noNotifyForThisPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-        }
     });
 
     plist.on('click',".lurk",function() {
@@ -526,9 +517,7 @@ $(document).ready(function() {
                 me.attr('title',d.message);
             }
         }
-          
-          N.json[plist.data('type')].lurkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-
+        N.json[plist.data('type')].lurkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
     });
 
     plist.on('click',".unlurk",function() {
@@ -555,9 +544,7 @@ $(document).ready(function() {
                 me.attr('title',d.message);
             }
         }
-          
-          N.json[plist.data('type')].bookmarkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-
+        N.json[plist.data('type')].bookmarkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
     });
 
     plist.on('click',".unbookmark",function() {
@@ -570,9 +557,7 @@ $(document).ready(function() {
                 me.attr('title',d.message);
             }
         }
-
         N.json[plist.data('type')].unbookmarkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-        
     });
 
     plist.on ('click', '.nerdz-code-title', function() {

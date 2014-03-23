@@ -5,12 +5,13 @@
     <div id="title_right">
         <nav>
 {if="$logged_b"}
+        <a href="/pm.php" accesskey="m" id="gotopm">
+            <span id="pmcounter" accesskey="q"></span>&nbsp;{$pm}
+        </a>&nbsp;&nbsp;
         # <a href="/{$myusername4link_n}" accesskey="p">{$profile}</a>&nbsp;&nbsp;
         # <a href="/preferences.php" accesskey="z">{$preferences}</a>&nbsp;&nbsp;
         # <a href="/" id="logout" data-tok="{$tok_n}">{$logout}</a>
         <br />
-        <a href="/pm.php" accesskey="m" id="gotopm">
-            <span id="pmcounter" style="border-radius:3px; padding-left: 1px; padding-right: 1px" accesskey="q"></span>&nbsp;{$pm}</a>
         <div style="margin-top: 3px; text-align:right;">{$welcome}, {$myusername_n}</div>
 {else}
             <form id="loginfrm">
