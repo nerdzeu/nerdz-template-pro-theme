@@ -344,9 +344,47 @@ html, #body
 
 .nerdz_date
 {
+    display: inline;
     float:right;
     margin-right: 2px;
     font-size: 85%;
+}
+
+.nerdz_thumbs
+{
+    font-size: 80%; 
+    margin-bottom: 10px; 
+    display: inline;
+    position: relative;
+    bottom: 1px;
+}
+
+.nerdz_thumbsNumPos
+{
+    color: #86DC33;
+}
+
+.nerdz_thumbsNumNeg
+{
+    color: #FF3300;
+}
+
+.nerdz_thumbsNorm:hover
+{
+    color: #FFFFA3;
+    cursor: pointer;
+}
+
+.nerdz_thumbsUp
+{
+    color: #00E600;
+    cursor: pointer;
+}
+
+.nerdz_thumbsDown
+{
+    color: #FF3300;
+    cursor: pointer;
 }
 
 .nerdz_from
