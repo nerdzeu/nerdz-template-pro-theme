@@ -10,7 +10,7 @@
     },
     // JS section
     "js": {
-        "default": [ "js/default.js", {
+        "default": [ "js/default.js", "js/protheme.js", {
             "lang": [ "LOADING" ],
             "prettyPrintCallbackName": "pt_onPrettyPrint"
         } ],
@@ -28,7 +28,8 @@
         "reset": "js/reset.js",
         "share": "js/share.js"
     },
-    // LANGS section - accepts only "default": "path/%lang%/path/to/file.json" where %lang% will be replaced with each available language.
+    // LANGS section - accepts only "default": "path/%lang%/path/to/file.json"
+    // where %lang% will be replaced with each available language.
     "langs": {
         "default": "langs/%lang%/json/default.json"
     }
