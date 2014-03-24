@@ -362,7 +362,15 @@ $(document).ready(function() {
         var vote = (updown === 'Up') ? 1 : -1;
         var hpid = $(this).data('hpid');
 
-        N.json[plist.data ('type')].thumbs({hpid: hpid, thumb: vote}, function(r) {        
+        N.json[plist.data ('type')].thumbs({hpid: hpid, thumb: vote}, function(r) {       
+
+            if (typeof r.message === 'string') {
+                var num = $('#thumbsNum' + hpid);
+                num.removeClass().addClass('nerdz_thumbsNumNeg');
+                num.text(r.message);
+                return;
+            }
+
             var other = (updown === 'Up') ? 'Down' : 'Up';
             var current = $('#thumbs' + updown + hpid);
             current.removeClass().addClass('nerdz_thumbs' + updown);
