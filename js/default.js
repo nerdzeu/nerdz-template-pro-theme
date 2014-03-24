@@ -333,6 +333,7 @@ $(document).ready(function() {
         var cl = '';
         if (votes > 0) {
           cl = 'nerdz_thumbsNumPos';
+          votes = '+' + votes;
         } else {
           if (votes < 0) {
             cl = 'nerdz_thumbsNumNeg';
