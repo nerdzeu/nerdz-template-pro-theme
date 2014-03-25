@@ -4,118 +4,223 @@
 // be able to configure it. You will need to remove this from the
 // template.values too.
 
-var ProTheme = {
-    // set to true when CustomLangsAPI finished
-    // the loading of the lang files
-    finished: false,
-    PreferencesAPI: {
-        settings: [],
-        storage: {},
-        masterKey: "",
-        REJECTED: ":::___err___:::",
-        currentSection: null,
-        hook: function (thId, onPrefLoaded) {
-            if (document.location.pathname == "/preferences.php")
-            {
-                onPrefLoaded();
-                $(document).ajaxComplete (function (evt, xhr, settings) {
-                    var sec = /^\/pages\/preferences\/(.+?)\.html\.php$/
-                        .exec (settings.url);
-                    if (sec != null)
-                    {
-                        ProTheme.PreferencesAPI.currentSection = sec[1];
-                        console.log(sec[1]);
-                        if (ProTheme.finished && sec[1] === thId)
-                            ProTheme.PreferencesAPI._onHookedSectionLoaded();
-                    }
-                });
-            }
-        },
-        refresh: function (thId)
+// Declare the APIs, outside of our ProTheme scope
+/**
+ * Provides an easy-to-use API to hook into NERDZ's preferences page.
+ *
+ * @class PreferencesAPI
+ * @static
+ */
+(function (PreferencesAPI) {
+    var _settings  = [],    // settings array
+        _storage   = {},    // storage object
+        _usrNs,             // namespace
+        _section,           // current section
+        _hookedSec,         // the section requested by the user
+        _saveCallback,      // callback set with setOnSaveCallback()
+        _hooked    = false; // true if onHookedSectionLoaded has been called
+
+    /**
+     * Inits the PreferencesAPI class. You __must__ use this method before
+     * any other.
+     *
+     * @method init
+     * @param {String} namespace The master namespace used to store
+     * data in localStorage. Please pick an unique, appropriate name.
+     * @param {String} sectionId The ID of the section you are going
+     * to hook into. Section names can be retrieved from the preferences
+     * internal files' name in `/pages/preferences/`.
+     * @param {Function} onPrefsLoaded The function which is called if
+     * the user is in the preferences page. You __MUST__ register any kind
+     * of setting here, to avoid unnecessary memory wasting.
+     */
+    PreferencesAPI.init = function (namespace, sectionId, onPrefsLoaded) {
+        _usrNs = namespace;
+        _storage[_usrNs] = {};
+        // load preferences
+        if (localStorage.getItem ("prefsAPI") !== null)
         {
-            if (this.currentSection === thId)
-                this._onHookedSectionLoaded();
-        },
-        addSettings: function() {
-            for (var i = 0; i < arguments.length; i++)
-                this.settings.push (arguments[i]);
-        },
-        getValue: function (name, defaultVal) {
-            if (this.storage[this.masterKey].hasOwnProperty (name))
-                return this.storage[this.masterKey][name];
-            return defaultVal;
-        },
-        load: function (mk) {
-            this.masterKey = mk;
-            this.storage[this.masterKey] = {};
-            if (localStorage.getItem ("prefsAPI") !== null)
-            {
-                var _storage = JSON.parse (localStorage.getItem ("prefsAPI"));
-                if (typeof _storage === 'object' &&
-                    typeof _storage[this.masterKey] === 'object')
-                    this.storage[this.masterKey] = _storage[this.masterKey];
-            }
-        },
-        _onHookedSectionLoaded: function() {
-            // if for whatever reason prefApiContainer
-            // is already in the DOM, remove it
-            if ($("#prefApiContainer").length)
-                $("#prefApiContainer").delete();
-            var storage = this.storage, // shorthand
-                pushTo = $(document.createElement("div"))
-                         .attr ("id", "prefApiContainer")
-                         .insertAfter ($("#content form"));
-            pushTo = $("<hr>").appendTo (pushTo);
-            for (var i = 0; i < this.settings.length; i++)
-            {
-                if (typeof this.settings[i] !== "object") continue;
-                if (storage[this.masterKey]
-                    .hasOwnProperty (this.settings[i].name)) {
-                    this.settings[i].onRestore (this.settings[i].element,
-                        storage[this.masterKey][this.settings[i].name]);
+            var storage_tmp = JSON.parse (localStorage.getItem ("prefsAPI"));
+            if (typeof storage_tmp         === 'object' &&
+                typeof storage_tmp[_usrNs] === 'object')
+                _storage[_usrNs] = storage_tmp[_usrNs];
+        }
+        // hook in preferences.php if we can
+        if (document.location.pathname === "/preferences.php")
+        {
+            _hookedSec = sectionId;
+            onPrefsLoaded();
+            // register a global AJAX complete handler
+            // to intercept requests targeted to sections
+            $(document).ajaxComplete (function (evt, xhr, settings) {
+                var rxp = /^\/pages\/preferences\/(.+?)\.html\.php$/
+                          .exec (settings.url);
+                if (rxp != null)
+                {
+                    _section = rxp[1];
+                    if (_section === _hookedSec)
+                        onHookedSectionLoaded();
                 }
-                pushTo = $(document.createElement("div"))
-                    .append (this.settings[i].element)
-                    .insertAfter (pushTo);
-                console.log ("PrefsAPI: registered: %s",this.settings[i].name);
-            }
+            });
+        }
+    };
+    /**
+     * Adds settings which will be displayed in the requested section.
+     *
+     * @method addSettings
+     * @param {Object} settings* An object list containing detailed information
+     * about every setting. Any object __must__ have the following structure:
+     *
+     *     {
+     *       name: "short-setting-name",
+     *       // an element which will be added in the preferences page.
+     *       // generic DOM elements and jQuery objects are allowed.
+     *       element: ...,
+     *       // the following will be called each time the user clicks
+     *       // on the 'Save' button. You must perform any kind of data
+     *       // sanitization here, and if anything goes wrong you should throw
+     *       // an exception with throw "error message".
+     *       // Otherwise, if the sanitization succeeds, return the value which
+     *       // will be saved and then restored when the page is reloaded.
+     *       // The only argument passed is your object, where you can use
+     *       // the 'element' attribute to get any value you may need.
+     *       onSave: function (object) {},
+     *       // the following will be called each time the settings are
+     *       // restored from the localStorage. You should restore the element
+     *       // in the exact same way it was saved. No sanitization is
+     *       // necessary here - if any kind of value screws up, it is not
+     *       // our fault.
+     *       onRestore: function (object, restoredValue) {}
+     *     }
+     * 
+     * Adding other fields is fine, as long as you don't remove the ones
+     * specified in the structure.
+     * Here's a simple example: a checkbox.
+     *
+     *     {
+     *        name: "my-checkbox", // will be saved with this name
+     *        element: $(document.createElement ("input"))..., // not covered
+     *        onSave: function (obj) {
+     *          return obj.element.is (":checked");
+     *        },
+     *        onRestore: function (obj, value) {
+     *          obj.element.prop ("checked", value);
+     *        }
+     *     }
+     *
+     */
+    PreferencesAPI.addSettings = function() {
+        for (var i = 0; i < arguments.length; i++)
+            if (typeof arguments[i] === 'object')
+                _settings.push (arguments[i]);
+        if (_hooked && _hookedSec === _section)
+            onHookedSectionLoaded();
+    };
+    /**
+     * Retrieves a value from the stored settings.
+     * You can specify a default value if it is not defined.
+     *
+     * @method getSetting
+     * @return {Object} The setting, if available, or defaultValue.
+     * @param {String} name The name of the setting.
+     * @param {Object} [defaultValue=undefined] The value which is returned if
+     * `name` is not defined in our storage.
+     */
+    PreferencesAPI.getValue = function (name, defaultValue) {
+        if (_storage[_usrNs].hasOwnProperty (name))
+            return _storage[_usrNs][name];
+        return defaultValue;
+    };
+    /**
+     * Registers a callback which is called each time the
+     * the user clicks the 'Save' button. You may need this
+     * to update the settings in realtime.
+     *
+     * For example, if an user
+     * edits the background of your theme and clicks save, you can
+     * re-read the value and update the background accordingly.
+     *
+     * @method setOnSaveCallback
+     * @param {Function} cb The callback.
+     */
+    PreferencesAPI.setOnSaveCallback = function (cb) {
+        if (typeof cb === 'function')
+            _saveCallback = cb;
+    };
+    // Private methods
+    // Methods that should not be accessed directly are
+    // here. No documentation is exposed for those methods.
+    function onHookedSectionLoaded() {
+        // remove prefsApiContainer if it already exists
+        if ($("#prefsApiContainer").length)
+            $("#prefsApiContainer").remove();
+        var pushTo = $(document.createElement("div"))
+                     .attr ("id", "prefsApiContainer")
+                     .insertAfter ($("#content form"));
+        pushTo = $(document.createElement("hr")).appendTo (pushTo);
+        for (var i = 0; i < _settings.length; i++)
+        {
+            if (typeof _settings[i] !== "object") continue;
+            if (_storage[_usrNs].hasOwnProperty (_settings[i].name))
+                _settings[i].onRestore (
+                    _settings[i],
+                    _storage[_usrNs][_settings[i].name]
+                );
+            pushTo = $(document.createElement("div"))
+                     .append (_settings[i].element)
+                     .insertAfter (pushTo);
+            console.log ("PrefsAPI: registered: %s", _settings[i].name);
+        }
+        if (_settings.length > 0)
+        {
             pushTo = $(document.createElement("input")).attr ({
                 type: "button",
                 value: "Save"
-            }).click (function() {
-                ProTheme.PreferencesAPI._onSave();
-                ProTheme.restorePreferences(true);
-            }).insertAfter (pushTo);
+            }).click (onSaveBtnClicked).insertAfter (pushTo);
             $(document.createElement("span"))
                 .attr ("id", "prefsApiStatus")
                 .insertAfter (pushTo);
-        },
-        _onSave: function() {
-            var _storage = this.storage; // copy
-            for (var i = 0; i < this.settings.length; i++)
-            {
-                var saved = this.settings[i].onSave (this.settings[i].element);
-                if (saved === this.REJECTED)
-                {
-                    this._setStatus ("The value of '"
-                        + this.settings[i].name
-                        + "' is invalid.", false);
-                    return;
-                }
-                this.storage[this.masterKey][this.settings[i].name] = 
-                    this.settings[i].onSave (this.settings[i].element);
-            }
-            console.log ("PrefsAPI: saved %d element(s)", i);
-            this.storage = _storage;
-            localStorage.setItem ("prefsAPI", JSON.stringify (this.storage));
-            this._setStatus ("OK", true);
-        },
-        _setStatus: function (message, isSuccess) {
-            $("#prefsApiStatus")
-                .css ("color", isSuccess ? "lime" : "red")
-                .text (" " + message);
         }
-    },
+        _hooked = true;
+    }
+
+    function onSaveBtnClicked() {
+        var storageCopy = {};
+        $.extend (storageCopy, _storage);
+        for (var i = 0; i < _settings.length; i++)
+        {
+            try
+            {
+                storageCopy[_usrNs][_settings[i].name] =
+                    _settings[i].onSave (_settings[i]);
+            }
+            catch (e)
+            {
+                setStatus (
+                    "The value of '" +
+                    _settings[i].name +
+                    "' is invalid: " +
+                    e, false
+                );
+                return;
+            }
+        }
+        _storage = storageCopy;
+        localStorage.setItem ("prefsAPI", JSON.stringify (_storage));
+        console.log ("PrefsAPI: saved %d element(s)", i);
+        setStatus ("OK", true);
+        if (typeof _saveCallback === 'function')
+            _saveCallback();
+    }
+
+    function setStatus (msg, isSuccess) {
+        $("#prefsApiStatus")
+            .css ("color", isSuccess ? "lime" : "red")
+            .text (" " + msg);
+    }
+}(window.PreferencesAPI = window.PreferencesAPI || {}));
+
+var ProTheme = {
     CustomLangsAPI: {
         templateNumber: "0",
         currentLanguage: "en",
@@ -201,8 +306,8 @@ var ProTheme = {
         }
     },
     onLoad: function() {
-        ProTheme.PreferencesAPI.load ("protheme");
-        ProTheme.PreferencesAPI.hook ("themes", function() {
+        /*ProTheme.PreferencesAPI.load ("protheme");*/
+        PreferencesAPI.init ("protheme", "themes", function() {
             ProTheme.CustomLangsAPI.init ("protheme", function() {
                 var enableBlackOverlay = $(document.createElement ("label"))
                     .append ($(document.createElement("input")).attr ({
@@ -214,42 +319,40 @@ var ProTheme = {
                     .append ("Black overlay opacity: ")
                     .append ($(document.createElement("input"))
                     .attr ("type", "text").val ("0.25"));
-                ProTheme.PreferencesAPI.addSettings ({
+                PreferencesAPI.addSettings ({
                     name: "blackoverlay-enabled",
                     element: enableBlackOverlay,
-                    onSave: function (elm) {
-                        return elm.find ("input").is (":checked");
+                    onSave: function (obj) {
+                        return obj.element.find ("input").is (":checked");
                     },
-                    onRestore: function (elm, restored) {
-                        elm.find ("input").attr ("checked", restored);
+                    onRestore: function (obj, restored) {
+                        obj.element.find ("input").attr ("checked", restored);
                     }
                 }, {
                     name: "blackoverlay-opacity",
                     element: blackOverlayOpacity,
-                    onSave: function (elm) {
-                        var text = elm.find ("input").val();
+                    onSave: function (obj) {
+                        var text = obj.element.find ("input").val();
                         if (!/^\d+(?:\.\d+)?$/.test (text) ||
                             parseFloat (text) > 1)
-                            return ProTheme.PreferencesAPI.REJECTED;
-                        return elm.find ("input").val();
+                            throw "Opacity should be 0 <= x <= 1";
+                        return obj.element.find ("input").val();
                     },
-                    onRestore: function (elm, restored) {
-                        elm.find ("input").val (restored);
+                    onRestore: function (obj, restored) {
+                        obj.element.find ("input").val (restored);
                     }
                 });
-                ProTheme.finished = true;
-                ProTheme.PreferencesAPI.refresh("themes");
             });
         });
         // and now apply the real preferences
-        ProTheme.restorePreferences();
+        ProTheme.restorePreferences (true);
     },
-    restorePreferences: function(_refresh) {
+    restorePreferences: function(_std) {
         if ($("#center_col").length)
         {
-            if (ProTheme.PreferencesAPI.getValue ("blackoverlay-enabled", true))
+            if (PreferencesAPI.getValue ("blackoverlay-enabled", true))
             {
-                var opa = ProTheme.PreferencesAPI.getValue (
+                var opa = PreferencesAPI.getValue (
                     "blackoverlay-opacity", "0.25"
                 );
                 $("#center_col").css ({
@@ -258,7 +361,7 @@ var ProTheme = {
                     boxShadow: "0px 2px 3px #414141"
                 });
             }
-            else if (_refresh) {
+            else if (!_std) {
                 $("#center_col").css ({
                     padding: 0,
                     backgroundColor: "transparent",
