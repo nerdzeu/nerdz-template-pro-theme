@@ -1,0 +1,7 @@
+{
+    "SAVE": "Salva",
+    "BLACK_OVERLAY_ENABLE": "Permite suprapunerea negru",
+    "BLACK_OVERLAY_OPACITY": "Opacitate overlay: ",
+    "INVALID_VAL": "Valoarea '%' este invalid: ",
+    "INVALID_OPACITY": "Opacitatea ar trebui să fie 0 <= val <= 1"
+}

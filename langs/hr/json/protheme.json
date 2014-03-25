@@ -1,0 +1,7 @@
+{
+    "SAVE": "Sačuvati",
+    "BLACK_OVERLAY_ENABLE": "Omogućite crni sloj",
+    "BLACK_OVERLAY_OPACITY": "Prekrivanje neprozirnost: ",
+    "INVALID_VAL": "Vrijednost '%' je nevažeća: ",
+    "INVALID_OPACITY": "Neprozirnosti treba biti 0 <= val <= 1"
+}

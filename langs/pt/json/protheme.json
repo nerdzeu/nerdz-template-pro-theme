@@ -1,0 +1,7 @@
+{
+    "SAVE": "Salvar",
+    "BLACK_OVERLAY_ENABLE": "Ative a sobreposição de preto",
+    "BLACK_OVERLAY_OPACITY": "Opacidade de sobreposição: ",
+    "INVALID_VAL": "O valor de '%' é inválido: ",
+    "INVALID_OPACITY": "A opacidade deve ser 0 <= val <= 1"
+}

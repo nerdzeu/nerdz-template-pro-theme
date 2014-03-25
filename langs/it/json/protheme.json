@@ -1,0 +1,7 @@
+{
+    "SAVE": "Salva",
+    "BLACK_OVERLAY_ENABLE": "Abilita l'overlay nero",
+    "BLACK_OVERLAY_OPACITY": "Opacità overlay: ",
+    "INVALID_VAL": "Il valore di '%' non è valido: ",
+    "INVALID_OPACITY": "L'opacità dev'essere 0 <= valore <= 1"
+}

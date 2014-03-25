@@ -183,7 +183,12 @@
         {
             pushTo = $(document.createElement("input")).attr ({
                 type: "button",
-                value: "Save"
+                value: (
+                    (
+                        "CustomLangsAPI" in window &&
+                        CustomLangsAPI.getFirstAvailMatch ("SAVE")
+                    ) || "Save"
+                )
             }).click (onSaveBtnClicked).insertAfter (pushTo);
             $(document.createElement("span"))
                 .attr ("id", "prefsApiStatus")
@@ -213,10 +218,15 @@
             catch (e)
             {
                 setStatus (
-                    "The value of '" +
-                    _settings[i].name +
-                    "' is invalid: " +
-                    e, false
+                    (
+                        (
+                            "CustomLangsAPI" in window &&
+                            CustomLangsAPI.getFirstAvailMatch (
+                                "INVALID_VAL"
+                            )
+                        ) || "The value of '%' is invalid: "
+                    ).replace ("%", _settings[i].name) + e,
+                    false
                 );
                 return;
             }
@@ -278,7 +288,10 @@
             _langFiles[arguments[i]] = {};
         }
         retrieveCurrentLanguage(); // async, requires an AJAX request
-        console.log ("LangsAPI: loading %d langfile(s)", arguments.length);
+        console.log (
+            "LangsAPI: loading %d langfile(s)",
+            arguments.length - (_callback ? 1 : 0)
+        );
     };
     /**
      * Gets the translated strings for a given `name`,
@@ -291,6 +304,26 @@
      */
     CustomLangsAPI.getLang = function (name) {
         return _langFiles[name] || {};
+    };
+    /**
+     * Retrieves the first available match for a given `key`.
+     * Useful when you do not have a specified `name`.
+     *
+     * @method getFirstAvailMatch
+     * @param {String} key The key which should be find in our lang objects.
+     * @param {Object} [defaultValue=undefined] The value which should be
+     * returned if the `key` is not found.
+     * @return {Object} The translated `key`, if found, or `defaultValue`.
+     */
+    CustomLangsAPI.getFirstAvailMatch = function (key, defaultValue) {
+        for (var lname in _langFiles)
+        {
+            if (typeof _langFiles[lname] !== "object")
+                continue;
+            if (_langFiles[lname].hasOwnProperty (key))
+                return _langFiles[lname][key];
+        }
+        return defaultValue;
     };
     // Private methods
     /**
@@ -382,17 +415,17 @@
 
 var ProTheme = {
     onLoad: function() {
-        /*ProTheme.PreferencesAPI.load ("protheme");*/
         PreferencesAPI.init ("protheme", "themes", function() {
             CustomLangsAPI.init ("protheme", function() {
-                var enableBlackOverlay = $(document.createElement ("label"))
-                    .append ($(document.createElement("input")).attr ({
-                        type: "checkbox",
-                        value: "Enable the semi-transparent black overlay",
-                    }).prop ("checked", true))
-                    .append ("Enable the semi-transparent black overlay");
+                var lang = CustomLangsAPI.getLang ("protheme"),
+                    enableBlackOverlay = $(document.createElement ("label"))
+                        .append ($(document.createElement("input")).attr ({
+                            type: "checkbox",
+                            value: lang.BLACK_OVERLAY_ENABLE
+                        }).prop ("checked", true))
+                        .append (lang.BLACK_OVERLAY_ENABLE);
                 var blackOverlayOpacity = $(document.createElement("label"))
-                    .append ("Black overlay opacity: ")
+                    .append (lang.BLACK_OVERLAY_OPACITY)
                     .append ($(document.createElement("input"))
                     .attr ("type", "text").val ("0.25"));
                 PreferencesAPI.addSettings ({
@@ -411,7 +444,7 @@ var ProTheme = {
                         var text = obj.element.find ("input").val();
                         if (!/^\d+(?:\.\d+)?$/.test (text) ||
                             parseFloat (text) > 1)
-                            throw "Opacity should be 0 <= x <= 1";
+                            throw lang.INVALID_OPACITY;
                         return obj.element.find ("input").val();
                     },
                     onRestore: function (obj, restored) {
@@ -420,6 +453,7 @@ var ProTheme = {
                 });
             });
         });
+        PreferencesAPI.setOnSaveCallback (ProTheme.restorePreferences);
         // and now apply the real preferences
         ProTheme.restorePreferences (true);
     },
