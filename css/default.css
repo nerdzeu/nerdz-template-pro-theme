@@ -369,19 +369,19 @@ html, #body
     color: #FF3300;
 }
 
-.nerdz_thumbsNorm:hover
+.vote:hover
 {
     color: #FFFFA3;
     cursor: pointer;
 }
 
-.nerdz_thumbsUp
+.vote.up.voted
 {
     color: #00E600;
     cursor: pointer;
 }
 
-.nerdz_thumbsDown
+.vote.down.voted
 {
     color: #FF3300;
     cursor: pointer;
