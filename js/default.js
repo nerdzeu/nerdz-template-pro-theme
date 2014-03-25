@@ -328,59 +328,50 @@ $(document).ready(function() {
         }
     });
 
-    updateTNum = function(hpid, votes) {
-        var num = $('#thumbsNum' + hpid);
-        var cl = '';
-        if (votes > 0) {
-          cl = 'nerdz_thumbsNumPos';
-          votes = '+' + votes;
-        } else {
-          if (votes < 0) {
-            cl = 'nerdz_thumbsNumNeg';
-          }
-        }
-        num.removeClass().addClass(cl);
-        num.text(votes);
-    };
+    plist.on('click', ".vote", function() {
+      var curr = $(this),
+          cont = curr.parent(),
+          hpid = cont.data("refto"),
+          tnum = cont.parent().children(".thumbs-counter");
 
-    resetThumb = function() {
-        var hpid = $(this).data('hpid');
-        var updown = $(this).data('thumbs');
-        var current = $('#thumbs' + updown + hpid);
-
+    if(!cont.hasClass("comment")) 
+      curr.hasClass("voted") ? 
         N.json[plist.data ('type')].thumbs({hpid: hpid, thumb: 0}, function(r) {
-            current.removeClass().addClass('nerdz_thumbsNorm');
-            updateTNum(hpid, +r.message);
-        });
-    };
-
-    plist.on('click','.nerdz_thumbsUp',resetThumb);
-    plist.on('click','.nerdz_thumbsDown',resetThumb);
-
-    plist.on('click','.nerdz_thumbsNorm',function() {
-        var updown = $(this).data('thumbs');
-        var vote = (updown === 'Up') ? 1 : -1;
-        var hpid = $(this).data('hpid');
-
-        N.json[plist.data ('type')].thumbs({hpid: hpid, thumb: vote}, function(r) {       
-
-            if (typeof r.message === 'string') {
-                var num = $('#thumbsNum' + hpid);
-                num.removeClass().addClass('nerdz_thumbsNumNeg');
-                num.text(r.message);
-                return;
-            }
-
-            var other = (updown === 'Up') ? 'Down' : 'Up';
-            var current = $('#thumbs' + updown + hpid);
-            current.removeClass().addClass('nerdz_thumbs' + updown);
-
-            var otherButton = $('#thumbs' + other + hpid);
-            otherButton.removeClass().addClass('nerdz_thumbsNorm');
-
-            updateTNum(hpid, +r.message);
-        });
+          curr.removeClass("voted");
+          var votes = parseInt(r.message);
+          tnum.attr("class","thumbs-counter").text(votes);
+          votes!=0 && tnum.addClass(votes>0?"nerdz_thumbsNumPos":"nerdz_thumbsNumNeg");
+          votes>0&&tnum.text("+"+tnum.text());
+        })
+      :
+        N.json[plist.data ('type')].thumbs({hpid: hpid, thumb: (curr.hasClass("up")?1:-1)}, function(r) {
+          cont.children(".voted").removeClass("voted");
+          curr.addClass("voted");
+          var votes = parseInt(r.message);
+          tnum.attr("class","thumbs-counter").text(votes);
+          votes!=0 && tnum.addClass(votes>0?"nerdz_thumbsNumPos":"nerdz_thumbsNumNeg");
+          votes>0&&tnum.text("+"+tnum.text());
+         });
+    else 
+      curr.hasClass("voted") ? 
+        N.json[plist.data ('type')].cthumbs({hcid: hpid, thumb: 0}, function(r) {
+          curr.removeClass("voted");
+          var votes = parseInt(r.message);
+          tnum.attr("class","thumbs-counter").text(votes);
+          votes!=0 && tnum.addClass(votes>0?"nerdz_thumbsNumPos":"nerdz_thumbsNumNeg");
+          votes>0&&tnum.text("+"+tnum.text());
+        })
+      :
+        N.json[plist.data ('type')].cthumbs({hcid: hpid, thumb: (curr.hasClass("up")?1:-1)}, function(r) {
+          cont.children(".voted").removeClass("voted");
+          curr.addClass("voted");
+          var votes = parseInt(r.message);
+          tnum.attr("class","thumbs-counter").text(votes);
+          votes!=0 && tnum.addClass(votes>0?"nerdz_thumbsNumPos":"nerdz_thumbsNumNeg");
+          votes>0&&tnum.text("+"+tnum.text());
+         });
     });
+    
 
     plist.on ('click', '.more_btn', function() {
         var moreBtn     = $(this),

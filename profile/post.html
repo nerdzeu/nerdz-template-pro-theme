@@ -8,37 +8,13 @@
         {/if}
         <div class="nerdz_date">
                 <time>{$datetime_n}</time>
-                &nbsp;|&nbsp;
-                {if="$thumbs_n > 0"}
-                  <span id="thumbsNum{$hpid_n}" class="nerdz_thumbsNumPos">&#43;
-                {else}
-                  {if="$thumbs_n == 0"}
-                    <span id="thumbsNum{$hpid_n}">
-                  {else}
-                    <span id="thumbsNum{$hpid_n}" class="nerdz_thumbsNumNeg">
-                  {/if}
-                {/if}
-                {$thumbs_n}
-                </span>
-                &nbsp;&nbsp;
-                <div class="nerdz_thumbs">
-                {if="$uthumb_n == 1"}
-                  <span class="nerdz_thumbsUp" id="thumbsUp{$hpid_n}" data-thumbs="Up" data-hpid="{$hpid_n}">
-                {else}
-                  <span class="nerdz_thumbsNorm" id="thumbsUp{$hpid_n}" data-thumbs="Up" data-hpid="{$hpid_n}">
-                {/if}
-                    &#9650;
-                  </span>
-                &nbsp;&nbsp;
-                {if="$uthumb_n == -1"}
-                  <span class="nerdz_thumbsDown" id="thumbsDown{$hpid_n}" data-thumbs="Down" data-hpid="{$hpid_n}">
-                {else}
-                  <span class="nerdz_thumbsNorm" id="thumbsDown{$hpid_n}" data-thumbs="Down" data-hpid="{$hpid_n}">
-                {/if}
-                    &#9660;
-                  </span>
-                &nbsp;
-                </div>
+              &nbsp;|&nbsp;              
+              <span class='thumbs-counter{if="$thumbs_n > 0"} nerdz_thumbsNumPos{else}{if="$thumbs_n < 0"} nerdz_thumbsNumNeg{/if}{/if}'>{if="$thumbs_n > 0"}+{/if}{$thumbs_n}</span>
+              &nbsp;&nbsp;
+              <div class="nerdz_thumbs" data-refto="{$hpid_n}">
+                <i class='vote up{if="$uthumb_n == 1"} voted{/if}'>&#9650;</i>&nbsp;&nbsp;
+                <i class='vote down{if="$uthumb_n ==-1"} voted{/if}'>&#9660;</i>&nbsp;&nbsp;
+              </div>
         </div>
     </div>
     <div class="{if="$news_b"}news{else}nerdz_message{/if}">

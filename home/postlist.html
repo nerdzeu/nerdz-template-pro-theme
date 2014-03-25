@@ -23,38 +23,14 @@
             :
             {/if}
             <div class="nerdz_date">
-                <time>{$value.datetime_n}</time>
-                &nbsp;|&nbsp;
-                {if="$value.thumbs_n > 0"}
-                  <span id="thumbsNum{$value.hpid_n}" class="nerdz_thumbsNumPos">&#43;
-                {else}
-                  {if="$value.thumbs_n == 0"}
-                    <span id="thumbsNum{$value.hpid_n}">
-                  {else}
-                    <span id="thumbsNum{$value.hpid_n}" class="nerdz_thumbsNumNeg">
-                  {/if}
-                {/if}
-                {$value.thumbs_n}
-                </span>
-                &nbsp;&nbsp;
-                <div class="nerdz_thumbs">
-                {if="$value.uthumb_n == 1"}
-                  <span class="nerdz_thumbsUp" id="thumbsUp{$value.hpid_n}" data-thumbs="Up" data-hpid="{$value.hpid_n}">
-                {else}
-                  <span class="nerdz_thumbsNorm" id="thumbsUp{$value.hpid_n}" data-thumbs="Up" data-hpid="{$value.hpid_n}">
-                {/if}
-                    &#9650;
-                  </span>
-                &nbsp;&nbsp;
-                {if="$value.uthumb_n == -1"}
-                  <span class="nerdz_thumbsDown" id="thumbsDown{$value.hpid_n}" data-thumbs="Down" data-hpid="{$value.hpid_n}">
-                {else}
-                  <span class="nerdz_thumbsNorm" id="thumbsDown{$value.hpid_n}" data-thumbs="Down" data-hpid="{$value.hpid_n}">
-                {/if}
-                    &#9660;
-                  </span>
-                &nbsp;
-                </div>
+              <time>{$value.datetime_n}</time>
+              &nbsp;|&nbsp;              
+              <span class='thumbs-counter{if="$value.thumbs_n > 0"} nerdz_thumbsNumPos{else}{if="$value.thumbs_n < 0"} nerdz_thumbsNumNeg{/if}{/if}'>{if="$value.thumbs_n > 0"}+{/if}{$value.thumbs_n}</span>
+              &nbsp;&nbsp;
+              <div class="nerdz_thumbs" data-refto="{$value.hpid_n}">
+                <i class='vote up{if="$value.uthumb_n == 1"} voted{/if}'>&#9650;</i>&nbsp;&nbsp;
+                <i class='vote down{if="$value.uthumb_n ==-1"} voted{/if}'>&#9660;</i>&nbsp;&nbsp;
+              </div>
             </div>
         </div>
         <div class="nerdz_message">
