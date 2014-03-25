@@ -31,7 +31,7 @@
      * to hook into. Section names can be retrieved from the preferences
      * internal files' name in `/pages/preferences/`.
      * @param {Function} onPrefsLoaded The function which is called if
-     * the user is in the preferences page. You __MUST__ register any kind
+     * the user is in the preferences page. You __SHOULD__ register any kind
      * of setting here, to avoid unnecessary memory wasting.
      */
     PreferencesAPI.init = function (namespace, sectionId, onPrefsLoaded) {
@@ -149,7 +149,15 @@
     };
     // Private methods
     // Methods that should not be accessed directly are
-    // here. No documentation is exposed for those methods.
+    // here.
+    /**
+     * Called when the section set in the initialization method
+     * is loaded by the user. This adds the settings to the DOM
+     * and restores the values.
+     *
+     * @method onHookedSectionLoaded
+     * @private
+     */
     function onHookedSectionLoaded() {
         // remove prefsApiContainer if it already exists
         if ($("#prefsApiContainer").length)
@@ -183,7 +191,15 @@
         }
         _hooked = true;
     }
-
+    /**
+     * Called when the user clicks on the `Save` button.
+     * Creates a copy of the storage, calls the `onSave` function
+     * on each object and then saves everything to `localStorage`.
+     * Calls the save callback if available.
+     *
+     * @method onSaveBtnClicked
+     * @private
+     */
     function onSaveBtnClicked() {
         var storageCopy = {};
         $.extend (storageCopy, _storage);
@@ -212,7 +228,15 @@
         if (typeof _saveCallback === 'function')
             _saveCallback();
     }
-
+    /**
+     * Sets the save status of the preferences.
+     *
+     * @method setStatus
+     * @param {String} msg The message.
+     * @param {Boolean} isSuccess True if the saving succeeded (displays
+     * a greenish color) or false if it didn't. (displays a red color)
+     * @private
+     */
     function setStatus (msg, isSuccess) {
         $("#prefsApiStatus")
             .css ("color", isSuccess ? "lime" : "red")
@@ -220,95 +244,147 @@
     }
 }(window.PreferencesAPI = window.PreferencesAPI || {}));
 
-var ProTheme = {
-    CustomLangsAPI: {
-        templateNumber: "0",
-        currentLanguage: "en",
-        lang: {},
-        init: function() {
-            this._retrieveTemplateNumber();
-            var callback;
-            for (var i = 0; i < arguments.length; i++)
+/**
+ * Allows the usage of custom language files (in JSON)
+ * with a simple and effective asynchronous interface.
+ *
+ * @class CustomLangsAPI
+ * @static
+ */
+(function (CustomLangsAPI) {
+    var _tplNo     = "0",
+        _currLang  = "en",
+        _langFiles = {},
+        _callback;
+
+    /**
+     * Inits the CustomLangsAPI interface.
+     *
+     * @method init
+     * @param {String} langFiles* A list of strings containing the filenames
+     * of the languages to load (excluding the `.json` extension).
+     * @param {Function} cb The callback which will be called once the
+     * language files are loaded.
+     */
+    CustomLangsAPI.init = function() {
+        retrieveTemplateNumber(); // sync
+        for (var i = 0; i < arguments.length; i++)
+        {
+            if (typeof arguments[i] === "function")
             {
-                if (typeof arguments[i] === "function")
-                {
-                    callback = arguments[i];
-                    continue;
-                }
-                this.lang[arguments[i]] = {};
+                _callback = arguments[i];
+                continue;
             }
-            this._retrieveCurrentLanguage (callback);
-            console.log ("LangsAPI: loading %d langfile(s)", arguments.length);
-        },
-        getLang: function (key) {
-            return this.lang[key];
-        },
-        _loadLanguages: function (cb) {
-            for (var name in this.lang)
+            _langFiles[arguments[i]] = {};
+        }
+        retrieveCurrentLanguage(); // async, requires an AJAX request
+        console.log ("LangsAPI: loading %d langfile(s)", arguments.length);
+    };
+    /**
+     * Gets the translated strings for a given `name`,
+     * if available. (if not, an empty object)
+     *
+     * @method getLang
+     * @param {String} name The name of your language file.
+     * @return {Object} The translated strings for `name` if available, or
+     * an empty object.
+     */
+    CustomLangsAPI.getLang = function (name) {
+        return _langFiles[name] || {};
+    };
+    // Private methods
+    /**
+     * Retrieves the current template number.
+     *
+     * @method retrieveTemplateNumber
+     * @private
+     */
+    function retrieveTemplateNumber() {
+        $("link").each (function() {
+            var res = /^\/tpl\/(\d+)\//.exec ($(this).attr ("href"));
+            if (res !== null)
             {
-                console.log ("LangsAPI: %s: loading", name);
-                $.get (
-                    "/tpl/"   + this.templateNumber  +
-                    "/langs/" + this.currentLanguage +
-                    "/json/"  + name + ".json",
-                    null, null, "json"
-                ).done (function (res) {
-                    if (typeof res !== "object")
-                    {
-                        console.error (
-                            "LangsAPI: %s: server replied %s, and " +
-                            "it is not a JSON object.",
-                            name, res
-                        );
-                        return;
-                    }
-                    console.log (
-                        "LangsAPI: %s: loaded %d record(s)",
-                        name, Object.keys (res).length
-                    );
-                    ProTheme.CustomLangsAPI.lang[name] = res;
-                }).fail (function() {
+                _tplNo = res[1];
+                console.log ("LangsAPI: templateNumber is %d", _tplNo);
+                return;
+            }
+        });
+    }
+    /**
+     * Retrieves the board language used by the user, by performing
+     * an AJAX request on the language preferences page.
+     *
+     * __NOTE__: this implementation is not portable between templates
+     * and should be improved once a global and safe solution comes out.
+     *
+     * @method retrieveCurrentLanguage
+     * @private
+     */
+    function retrieveCurrentLanguage() {
+        // the ?api is used to avoid the triggering of the global
+        // AJAX handler in the PreferencesAPI
+        $.get ("/pages/preferences/language.html.php?api", function (res) {
+            var lang = $(res).find ("#boardfrm option:selected");
+            if (lang.length)
+            {
+                _currLang = lang.val();
+                console.log ("LangsAPI: currentLanguage is %s", _currLang);
+            }
+        }).fail (function() {
+            console.error (
+                "LangsAPI: can't retrieve currentLanguage. Defaulting to %s",
+                _currLang
+            );
+        }).always (loadLanguages);
+    }
+    /**
+     * Loads the language from the remote server from the path
+     * `/tpl/$num/langs/$lang/json/$name.json`. Calls the
+     * `callback` set in the initialization function if available.
+     *
+     * @method loadLanguages
+     * @private
+     */
+    function loadLanguages() {
+        for (var lname in _langFiles)
+        {
+            console.log ("LangsAPI: %s: loading", lname);
+            $.get (
+                "/tpl/"   + _tplNo +
+                "/langs/" + _currLang +
+                "/json/"  + lname + ".json",
+                null, null, "json"
+            ).done (function (res) {
+                if (typeof res !== "object")
+                {
                     console.error (
-                        "LangsAPI: %s: can't load %s.json.",
-                        name, name
+                        "LangsAPI: %s: server didn't send us JSON: %s",
+                        lname, res
                     );
-                }).always (cb);
-            }
-        },
-        _retrieveCurrentLanguage: function (cb) {
-            $.get ("/pages/preferences/language.html.php?api", function (res) {
-                var lang = $(res).find ("#boardfrm option:selected");
-                if (lang.length)
-                {
-                    ProTheme.CustomLangsAPI.currentLanguage = lang.val();
-                    console.log("LangsAPI: currentLanguage is %s", lang.val());
-                }
-            }).fail (function() {
-                console.error (
-                    "LangsAPI: can't retrieve currentLanguage. " +
-                    "Defaulting to %s",
-                    ProTheme.CustomLangsAPI.currentLanguage
-                );
-            }).always (function() {
-                ProTheme.CustomLangsAPI._loadLanguages (cb);
-            });
-        },
-        _retrieveTemplateNumber: function() {
-            $("link").each (function() {
-                var res = /^\/tpl\/(\d+)\//.exec ($(this).attr ("href"));
-                if (res !== null)
-                {
-                    ProTheme.CustomLangsAPI.templateNumber = res[1];
-                    console.log("LangsAPI: templateNumber is %d", res[1]);
                     return;
                 }
-            });
+                // Object.keys is only implemented in >=IE9 but
+                // hell, who cares
+                console.log (
+                    "LangsAPI: %s: loaded %d record(s)",
+                    lname, Object.keys (res).length
+                );
+                _langFiles[lname] = res;
+            }).fail (function() {
+                console.error (
+                    "LangsAPI: %s: can't load %s.json",
+                    lname, lname
+                );
+            }).always (_callback);
         }
-    },
+    }
+}(window.CustomLangsAPI = window.CustomLangsAPI || {}));
+
+var ProTheme = {
     onLoad: function() {
         /*ProTheme.PreferencesAPI.load ("protheme");*/
         PreferencesAPI.init ("protheme", "themes", function() {
-            ProTheme.CustomLangsAPI.init ("protheme", function() {
+            CustomLangsAPI.init ("protheme", function() {
                 var enableBlackOverlay = $(document.createElement ("label"))
                     .append ($(document.createElement("input")).attr ({
                         type: "checkbox",
@@ -347,7 +423,9 @@ var ProTheme = {
         // and now apply the real preferences
         ProTheme.restorePreferences (true);
     },
-    restorePreferences: function(_std) {
+    // the boolean flag is used to avoid setting unnecessary CSS rules
+    // while not refreshing
+    restorePreferences: function (_std) {
         if ($("#center_col").length)
         {
             if (PreferencesAPI.getValue ("blackoverlay-enabled", true))
