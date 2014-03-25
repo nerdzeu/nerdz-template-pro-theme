@@ -331,12 +331,18 @@ $(document).ready(function() {
     plist.on('click', ".vote", function() {
       var curr = $(this),
           cont = curr.parent(),
-          hpid = cont.data("refto"),
           tnum = cont.parent().children(".thumbs-counter");
 
-    if(!cont.hasClass("comment")) 
+      if(cont.hasClass("comment_thumbs"))  {
+        var obj = { hcid: cont.data("refto") };
+        var func = "cthumbs";
+      } else {
+        var obj = { hpid: cont.data("refto") };
+        var func = "thumbs";
+      }
+      
       curr.hasClass("voted") ? 
-        N.json[plist.data ('type')].thumbs({hpid: hpid, thumb: 0}, function(r) {
+        N.json[plist.data ('type')][func]($.extend(obj,{thumb: 0}), function(r) {
           curr.removeClass("voted");
           var votes = parseInt(r.message);
           tnum.attr("class","thumbs-counter").text(votes);
@@ -344,25 +350,7 @@ $(document).ready(function() {
           votes>0&&tnum.text("+"+tnum.text());
         })
       :
-        N.json[plist.data ('type')].thumbs({hpid: hpid, thumb: (curr.hasClass("up")?1:-1)}, function(r) {
-          cont.children(".voted").removeClass("voted");
-          curr.addClass("voted");
-          var votes = parseInt(r.message);
-          tnum.attr("class","thumbs-counter").text(votes);
-          votes!=0 && tnum.addClass(votes>0?"nerdz_thumbsNumPos":"nerdz_thumbsNumNeg");
-          votes>0&&tnum.text("+"+tnum.text());
-         });
-    else 
-      curr.hasClass("voted") ? 
-        N.json[plist.data ('type')].cthumbs({hcid: hpid, thumb: 0}, function(r) {
-          curr.removeClass("voted");
-          var votes = parseInt(r.message);
-          tnum.attr("class","thumbs-counter").text(votes);
-          votes!=0 && tnum.addClass(votes>0?"nerdz_thumbsNumPos":"nerdz_thumbsNumNeg");
-          votes>0&&tnum.text("+"+tnum.text());
-        })
-      :
-        N.json[plist.data ('type')].cthumbs({hcid: hpid, thumb: (curr.hasClass("up")?1:-1)}, function(r) {
+        N.json[plist.data ('type')][func]($.extend(obj,thumb: (curr.hasClass("up")?1:-1)}), function(r) {
           cont.children(".voted").removeClass("voted");
           curr.addClass("voted");
           var votes = parseInt(r.message);
