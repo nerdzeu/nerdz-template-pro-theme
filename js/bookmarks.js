@@ -30,7 +30,7 @@ $(document).ready(function() {
             if(d.status == 'ok') {
                 $("#"+me.data('refto')).hide();
             }
-        }
+        };
           
           N.json[$("#center_col").data('type')].unbookmarkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
 

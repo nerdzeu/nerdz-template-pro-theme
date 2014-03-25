@@ -92,8 +92,8 @@ $(document).ready(function() {
       $.each($(this).find("img"),function(){
         m = (117-$(this).height())/2;
         if (m>1)
-          $(this).css("margin-top", m)
-      })
+          $(this).css("margin-top", m);
+      });
       $(this).data("parsed","1");
     });
     
