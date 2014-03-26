@@ -3,12 +3,12 @@
   {if="$mobile_b"}
     {$desktopavailable}
     
-    <a href="?{$yes_link_n}"><h2>{$gotodesktop}</h2></a>
-    <a href="?{$nop_link_n}">{$stayonmobile}</a>
+    <a href="{$gotodesktop_n}"><h2>{$gotodesktop}</h2></a>
+    <a href="{$gotomobile_n}">{$stayonmobile}</a>
   {else}
     {$mobileavailable}
     
-    <a href="?{$yes_link_n}"><h2>{$gotomobile}</h2></a>
-    <a href="?{$nop_link_n}">{$stayondesktop}</a>
+    <a href="{$gotomobile_n}"><h2>{$gotomobile}</h2></a>
+    <a href="{$gotodesktop_n}">{$stayondesktop}</a>
   {/if}
 </article>
