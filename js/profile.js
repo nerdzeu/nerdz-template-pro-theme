@@ -67,7 +67,7 @@ $(document).ready(function() {
 
     $("#profilepm").on('click',function() {
         var me = $(this), txt = me.html();
-        if(oldPlist == "") {
+        if(oldPlist === '') {
             me.html('...');
             N.html.pm.getForm(function(data) {
                 oldPlist = $("#postlist").html();

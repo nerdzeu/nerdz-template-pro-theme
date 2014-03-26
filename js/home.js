@@ -31,7 +31,7 @@ $(document).ready(function() {
         for (var zxcvbn in lv)
             if (lv[zxcvbn] != target)
                 serialized += lv[zxcvbn] + "|";
-        if (serialized != "")
+        if (serialized !== '')
             localStorage.setItem ("hid", serialized.slice (0, -1));
         else
         {
@@ -43,7 +43,7 @@ $(document).ready(function() {
 
     var hideHidden = function() {
         var hidden = localStorage.getItem ("hid");
-        if (hidden != null)
+        if (hidden !== null)
         {
             var pids = hidden.split ("|").sort().reverse(), len = pids.length;
             while (len--)
@@ -114,7 +114,7 @@ $(document).ready(function() {
     plist.on('click',".hide",function() {
         var pid = $(this).data('postid');
         var hidden = localStorage.getItem('hid');
-        if(hidden == null) {
+        if(hidden === null) {
             localStorage.setItem('hid',pid);
         }
         else
