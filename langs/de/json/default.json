@@ -4,7 +4,6 @@
     "BOOKMARKS": "Bookmarks",
     "ID": "ID",
     "SKYPE": "Skype",
-    "JABBER": "Jabber",
     "GITHUB": "GitHub",
     "FACEBOOK": "Facebook",
     "TWITTER": "Twitter",
@@ -222,5 +221,8 @@
     "HIDDEN_POSTS": "Beitrag versteckt",
     "MOBILEAVAILABLE":"Gehen Sie auf mobile Website?",
     "GOTOMOBILE": "Gehen Sie auf mobile Website",
-    "STAYONDESKTOP":"Bleiben Sie auf der Desktop-Seite"
+    "STAYONDESKTOP":"Bleiben Sie auf der Desktop-Seite",
+    "DESKTOPAVAILABLE":"Gehen Sie auf Desktop-Website?",
+    "GOTODESKTOP": "Gehen Sie auf Desktop-Website",
+    "STAYONMOBILE": "Bleiben Sie auf der mobilen Website"
 }

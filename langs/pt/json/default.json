@@ -4,7 +4,6 @@
     "BOOKMARKS": "Marcadores",
     "ID": "ID",
     "SKYPE": "Skype",
-    "JABBER": "Jabber",
     "GITHUB": "GitHub",
     "FACEBOOK": "Facebook",
     "TWITTER": "Twitter",
@@ -222,5 +221,8 @@
     "HIDDEN_POSTS": "Mensagem escondida",
     "MOBILEAVAILABLE":"Vá no site móvel?",
     "GOTOMOBILE": "Vá no site móvel",
-    "STAYONDESKTOP":"Fique no site desktop"
+    "STAYONDESKTOP":"Fique no site desktop",
+    "DESKTOPAVAILABLE":"Vá no site desktop?",
+    "GOTODESKTOP": "Vá no site desktop",
+    "STAYONMOBILE": "Fique no site móvel"
 }

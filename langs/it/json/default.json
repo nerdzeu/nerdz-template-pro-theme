@@ -4,7 +4,6 @@
     "BOOKMARKS": "Segnalibri",
     "ID": "ID",
     "SKYPE": "Skype",
-    "JABBER": "Jabber",
     "GITHUB": "GitHub",
     "FACEBOOK": "Facebook",
     "TWITTER": "Twitter",
@@ -222,5 +221,8 @@
     "HIDDEN_POSTS": "Post nascosti",
     "MOBILEAVAILABLE":"NERDZ ha anche una versione mobile, vuoi provarla?",
     "GOTOMOBILE": "Vai alla versione mobile",
-    "STAYONDESKTOP":"Resta sul sito desktop"
+    "STAYONDESKTOP":"Resta sul sito desktop",
+    "DESKTOPAVAILABLE":"Vuoi passare alla versione desktop?",
+    "GOTODESKTOP": "Vai alla versione desktop",
+    "STAYONMOBILE": "Resta sul sito mobile"
 }
