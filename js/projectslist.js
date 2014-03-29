@@ -6,7 +6,7 @@ $(document).ready(function() {
             }
             else
             {
-                url+= (location.search == '' ? '?' : '&') + 'orderby='+order;
+                url+= (location.search === '' ? '?' : '&') + 'orderby='+order;
             }
 
             if(url.search(/desc=[0-1]/i) != -1)
@@ -32,8 +32,7 @@ $(document).ready(function() {
             order = str;
         });
 
-        if(order == '')
-        {
+        if(order === '') {
             order = 'description';
         }
 

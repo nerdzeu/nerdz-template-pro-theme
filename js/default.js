@@ -13,7 +13,7 @@ $(document).ready(function() {
     prettify.type = "text/javascript";
     prettify.src  = '//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js?' + append_theme + 'callback=pt_onPrettyPrint';
     _h.append (prettify);
-    if (append_theme != "")
+    if (append_theme !== '')
         _h.append ('<style type="text/css">.nerdz-code-wrapper { background-color: #000; color: #FFF; }</style>');
     else
         _h.append ('<style type="text/css">.nerdz-code-wrapper { background-color: #FFF; color: #000; }</style>');
@@ -40,7 +40,7 @@ $(document).ready(function() {
         var list = $("#notify_list"), old = $(this).html();
         var nold = parseInt(old);
         if(list.length) {
-            if(isNaN(nold) || nold == 0)
+            if(isNaN(nold) || nold === 0)
             {
                 list.remove();
             }
@@ -81,7 +81,7 @@ $(document).ready(function() {
     var wrongPages = [ '/bbcode.php','/terms.php','/faq.php','/stats.php','/rank.php','/preferences.php', '/informations.php', '/preview.php' ];
        if($.inArray(location.pathname,wrongPages) != -1) {
            $("#footersearch").hide();
-       };
+       }
 
     $("#footersearch").on('submit',function(e) {
         e.preventDefault();
@@ -89,7 +89,7 @@ $(document).ready(function() {
         var qs =  $.trim($("#footersearch input[name=q]").val());
         var num = 10; //TODO: numero di posts, parametro?
 
-        if(qs == '') {
+        if(qs === '') {
             return false;
         }
 
@@ -193,7 +193,7 @@ $(document).ready(function() {
 
     $(".preview").on('click',function(){
         var txt = $($(this).data('refto')).val();
-        if(undefined != txt && txt != '') {
+        if(undefined !== txt && txt !== '') {
             window.open('/preview.php?message='+encodeURIComponent(txt));
         }
     });
@@ -217,7 +217,7 @@ $(document).ready(function() {
         txtarea.val(txtarea.val()+' '); //workaround
         var txt = txtarea.val();
         txtarea.val($.trim(txtarea.val()));
-        if(undefined != txt && $.trim(txt) != '') {
+        if(undefined !== txt && $.trim(txt) !== '') {
             window.open('/preview.php?message='+encodeURIComponent(txt));
         }
     });
@@ -320,7 +320,7 @@ $(document).ready(function() {
 
     plist.on('click',".showcomments",function() {
         var refto = $('#' + $(this).data('refto'));
-        if(refto.html() == '')
+        if(refto.html() === '')
         {
             refto.html(loading+'...');
             N.html[plist.data ('type')].getComments ({
@@ -341,6 +341,48 @@ $(document).ready(function() {
         }
     });
 
+    plist.on('click', ".vote", function() {
+        var curr = $(this),
+          cont = curr.parent(),
+          tnum = cont.parent().children(".thumbs-counter"),
+          func = "thumbs",
+          obj = { hpid: cont.data("refto") };
+
+        if(cont.hasClass("comment"))  {
+            obj = { hcid: cont.data("refto") };
+            func = "cthumbs";
+        }
+          
+        if(curr.hasClass("voted")) { 
+            N.json[plist.data ('type')][func]($.extend(obj,{thumb: 0}), function(r) {
+                curr.removeClass("voted");
+                var votes = parseInt(r.message);
+                tnum.attr("class","thumbs-counter").text(votes);
+                if(votes !== 0) {
+                    tnum.addClass(votes>0?"nerdz_thumbsNumPos":"nerdz_thumbsNumNeg");
+                }
+                if(votes>0) {
+                    tnum.text("+"+tnum.text());
+                }
+              });
+        }
+        else {
+            N.json[plist.data ('type')][func]($.extend(obj,{ thumb: curr.hasClass("up") ? 1: -1 }), function(r) {
+                cont.children(".voted").removeClass("voted");
+                curr.addClass("voted");
+                var votes = parseInt(r.message);
+                tnum.attr("class","thumbs-counter").text(votes);
+                if(votes !== 0) {
+                    tnum.addClass(votes>0?"nerdz_thumbsNumPos":"nerdz_thumbsNumNeg");
+                }
+                if(votes>0) {
+                    tnum.text("+"+tnum.text());
+                }
+             });
+        }
+    });
+    
+
     plist.on ('click', '.more_btn', function() {
         var moreBtn     = $(this),
             commentList = moreBtn.parents ("div[id^=\"commentlist\"]"),
@@ -355,7 +397,7 @@ $(document).ready(function() {
             moreBtn.parent().after (r);
             if (intCounter == 1)
                 moreBtn.parent().find (".scroll_bottom_hidden").show();
-            if ($.trim (r) == "" || _ref.find (".nerdz_from").length < 10 || (10 * (intCounter + 1)) == _ref.find (".commentcount:eq(0)").html())
+            if ($.trim (r) === '' || _ref.find (".nerdz_from").length < 10 || (10 * (intCounter + 1)) == _ref.find (".commentcount:eq(0)").html())
             {
                 var btnDb = moreBtn.hide().parent();
                 btnDb.find (".scroll_bottom_separator").hide();
@@ -481,7 +523,7 @@ $(document).ready(function() {
                 me.attr('src',newsrc.replace('/lock.png','/unlock.png'));
                 me.attr('title',d.message);
             }
-        }
+        };
           
         if($(this).data('silent')) { //nei commenti
             N.json[plist.data('type')].reNotifyFromUserInPost({ hpid: $(this).data('hpid'), from: $(this).data('silent') },function(d) {tog(d);});
@@ -500,7 +542,8 @@ $(document).ready(function() {
                 me.attr('src',newsrc.replace('/unlock.png','/lock.png'));
                 me.attr('title',d.message);
             }
-        }
+        };
+
         if($(this).data('silent'))
             N.json[plist.data('type')].noNotifyFromUserInPost({ hpid: $(this).data('hpid'), from: $(this).data('silent') },function(d) {tog(d);});
         else
@@ -516,7 +559,7 @@ $(document).ready(function() {
                 me.attr('src',newsrc.replace('/lurk.png','/unlurk.png'));
                 me.attr('title',d.message);
             }
-        }
+        };
         N.json[plist.data('type')].lurkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
     });
 
@@ -529,9 +572,9 @@ $(document).ready(function() {
                 me.attr('src',newsrc.replace('/unlurk.png','/lurk.png'));
                 me.attr('title',d.message);
             }
-        }
+        };
           
-          N.json[plist.data('type')].unlurkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
+        N.json[plist.data('type')].unlurkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
     });
 
     plist.on('click',".bookmark",function() {
@@ -543,7 +586,7 @@ $(document).ready(function() {
                 me.attr('src',newsrc.replace('/bookmark.png','/unbookmark.png'));
                 me.attr('title',d.message);
             }
-        }
+        };  
         N.json[plist.data('type')].bookmarkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
     });
 
@@ -556,7 +599,7 @@ $(document).ready(function() {
                 me.attr('src',newsrc.replace('/unbookmark.png','/bookmark.png'));
                 me.attr('title',d.message);
             }
-        }
+        };
         N.json[plist.data('type')].unbookmarkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
     });
 
@@ -614,10 +657,10 @@ $(document).ready(function() {
     //end plist into events
     setInterval(function() {
         var nc = $("#notifycounter"), val = parseInt(nc.html());
-        nc.css('background-color',val == 0 || isNaN(val) ? '#FFF' : '#FF0000');
+        nc.css('background-color',val === 0 || isNaN(val) ? '#FFF' : '#FF0000');
         var pc = $("#pmcounter");
         val = parseInt(pc.html());
-        pc.css('background-color',val == 0 || isNaN(val) ? '#AFAFAF' : '#FF0000');
+        pc.css('background-color',val === 0 || isNaN(val) ? '#AFAFAF' : '#FF0000');
     },200);
 
 });

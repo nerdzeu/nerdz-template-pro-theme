@@ -22,6 +22,15 @@
                 {/if}
             {/if}
             <img width="16" height="16" src="images/quote.png" alt="quote" class="qu_ico" data-hcid="{$value.hcid_n}" data-type="u" data-refto="commentto{$value.hpid_n}" onclick="" />
+            <span class="thumbs">
+              &nbsp;|&nbsp;              
+              <span class='thumbs-counter{if="$value.thumbs_n > 0"} nerdz_thumbsNumPos{else}{if="$value.thumbs_n < 0"} nerdz_thumbsNumNeg{/if}{/if}'>{if="$value.thumbs_n > 0"}+{/if}{$value.thumbs_n}</span>
+              &nbsp;&nbsp;
+              <div class="nerdz_thumbs comment" data-refto="{$value.hcid_n}">
+                <i class='vote up{if="$value.uthumb_n == 1"} voted{/if}'>&#9650;</i>&nbsp;&nbsp;
+                <i class='vote down{if="$value.uthumb_n ==-1"} voted{/if}'>&#9660;</i>&nbsp;&nbsp;
+              </div>
+            </span>
         </span>
     </div>
     <div class="nerdz_comments" style="width:auto">

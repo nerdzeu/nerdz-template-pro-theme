@@ -1,0 +1,14 @@
+<div id="left_col">&nbsp;</div>
+<article id="center_col">
+  {if="$mobile_b"}
+    {$desktopavailable}
+    
+    <a href="{$gotodesktop_n}"><h2>{$gotodesktop}</h2></a>
+    <a href="{$gotomobile_n}">{$stayonmobile}</a>
+  {else}
+    {$mobileavailable}
+    
+    <a href="{$gotomobile_n}"><h2>{$gotomobile}</h2></a>
+    <a href="{$gotodesktop_n}">{$stayondesktop}</a>
+  {/if}
+</article>

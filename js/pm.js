@@ -75,7 +75,7 @@ $(document).ready(function() {
                 newpm = false;
                 var count = $("#pmcounter");
                 var cval = parseInt(count.html());
-                if(!isNaN(cval) && cval != 0) {
+                if(!isNaN(cval) && cval !== 0) {
                     count.html(cval -1);
                 }
             }
@@ -116,7 +116,7 @@ $(document).ready(function() {
         txtarea.val(txtarea.val()+' '); //workaround
         var txt = txtarea.val();
         txtarea.val($.trim(txtarea.val()));
-        if(undefined != txt && $.trim(txt) != '') {
+        if(undefined !== txt && $.trim(txt) !== '') {
             window.open('/preview.php?message='+encodeURIComponent(txt));
         }
     });
@@ -138,7 +138,7 @@ $(document).ready(function() {
             parsedData.insertAfter (thisBtn.parent());
             if (internalPointer == 1)
                 thisBtn.parent().find ('.scroll_bottom_hidden').show();
-            if ($.trim (data) == ''|| parsedData.find ('.nerdz_from').length < 10 || (10 * (internalPointer + 1)) == thisBtn.data ('count'))
+            if ($.trim (data) === ''|| parsedData.find ('.nerdz_from').length < 10 || (10 * (internalPointer + 1)) == thisBtn.data ('count'))
             {
                 var btnDb = thisBtn.hide().parent();
                 btnDb.find (".scroll_bottom_separator").hide();
@@ -150,7 +150,7 @@ $(document).ready(function() {
     c.on ('click', '.scroll_bottom_btn', function() {
         $("html, body").animate ({ scrollTop: $("#convfrm").offset().top }, function() {
             $("#message").focus();
-        })
+        });
     });
 
     c.on ('click', '.all_msgs_btn', function() {

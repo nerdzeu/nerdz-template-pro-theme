@@ -4,7 +4,6 @@
     "BOOKMARKS": "Oznake",
     "ID": "ID",
     "SKYPE": "Skype",
-    "JABBER": "Jabber",
     "GITHUB": "GitHub",
     "FACEBOOK": "Facebook",
     "TWITTER": "Twitter",
@@ -219,5 +218,11 @@
     "EVERY_COMMENT": "Svi komentari",
     "EVERY_MSG": "Svi postovi",
     "USER_MENU": "korisni\u010dki izbornik",
-    "HIDDEN_POSTS": "Post skrivena"
+    "HIDDEN_POSTS": "Post skrivena",
+    "MOBILEAVAILABLE":"Idi na mobilnim stranicama?",
+    "GOTOMOBILE": "Idi na mobilnoj mjestu",
+    "STAYONDESKTOP":"Ostani na desktop mjestu",
+    "DESKTOPAVAILABLE":"Idi na desktop web stranice?",
+    "GOTODESKTOP": "Idi na desktop web stranice",
+    "STAYONMOBILE": "Ostani na mobilne web stranice"
 }
