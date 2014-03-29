@@ -33,37 +33,10 @@ $(document).ready(function() {
                 $("#hp-cnt").remove();
                 $("#hp-title").remove();
             }
-            el.attr('data-parsed','1');
-        });
-    };
-
-    var onRemoveHiddenPost = function() {
-        var me = $(this), target = me.data ("target"), lv = localStorage.getItem ("hid").split ("|"), serialized = "";
-        $("#" + target).slideToggle (function() {
-            $(this).find (".img_frame > img").each (function() {
-                $(this).css ("margin-top", (117 - $(this).height()) / 2);
-            });
-        });
-        me.parent().remove();
-        for (var zxcvbn in lv)
-            if (lv[zxcvbn] != target)
-                serialized += lv[zxcvbn] + "|";
-        if (serialized !== '')
-            localStorage.setItem ("hid", serialized.slice (0, -1));
-        else
-        {
-            localStorage.removeItem ("hid");
-            $("#hp-cnt").remove();
-            $("#hp-title").remove();
-        }
-    };
-
-    var hideHidden = function() {
-        var hidden = localStorage.getItem ("hid");
-        if (hidden !== null && hidden != "")
-        {
-            var pids = hidden.split ("|").sort().reverse(), len = pids.length;
-            while (len--)
+        },
+        hideHidden = function() {
+            var hidden = localStorage.getItem ("hid");
+            if (hidden != null && hidden != "")
             {
                 var pids = hidden.split ("|").sort().reverse(), len = pids.length;
                 while (len--)
@@ -95,17 +68,16 @@ $(document).ready(function() {
                         $("#hp-cnt ul").html (pids);
                 }
             }
-        }
-        // Hide 'blacklisted user changed nickname'
-        // We ALWAYS have windows.idios that is the blacklisted users array
-        $("#postlist ").find(".news a:nth-last-child(3)").each(function() {
-            if($.inArray($(this).html(), window.idiots) > -1) {
-                $(this).parent().parent().hide();
-            }
-        });
-
-        fixHeights();
-    };
+            // Hide 'blacklisted user changed nickname'
+            // We ALWAYS have windows.idios that is the blacklisted users array
+            $("#postlist").find(".news a:nth-last-child(3)").each(function() {
+                if($.inArray($(this).html(), window.idiots) > -1) {
+                    $(this).parent().parent().hide();
+                }
+            });
+            fixHeights();
+        };
+    plist.html('<h1>'+loading+'...</h1>');
 
     plist.on('click', '.img_frame', function() {
         var me = $(this), message = me.parents (".nerdz_message");
