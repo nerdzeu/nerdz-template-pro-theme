@@ -52,7 +52,7 @@ $(document).ready(function() {
                 if (post.length)
                 {
                     post.hide();
-                    var pLink = window[pids[len].replace (/post/, "lnk")] || "#";
+                    var pLink = window[pids[len].replace (/post/, "lnk")];
                     pids[len] = $(document.createElement("li"))
                         .append ($(document.createElement("a")).attr ("href", pLink).text (decodeURIComponent (pLink.substr (1))))
                         .append ($(document.createElement("a")).data ("target", pids[len]).css ("float", "right").html ("X").click (onRemoveHiddenPost));
