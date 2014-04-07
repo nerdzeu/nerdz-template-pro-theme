@@ -438,9 +438,14 @@ $(document).ready(function() {
     });
 
     plist.on('click',".qu_ico",function() {
-        var area = $("#"+$(this).data('refto'));
-        area.val(area.val()+"[quote="+ $(this).data('hcid') +"|"+$(this).data('type')+"]");
+        var area = $("#" + $(this).data ('refto')),
+            msg  = "[quote=" + $(this).data ('hcid') + "|" + $(this).data ('type') + "]",
+            cpos = area[0].selectionStart,
+            val  = area.val(),
+            intx = val.substring (0, cpos) + msg;
         area.focus();
+        area.val (intx + val.substring (cpos));
+        area[0].setSelectionRange (intx.length, intx.length);
     });
 
     plist.on('click',".delpost",function(e) {
