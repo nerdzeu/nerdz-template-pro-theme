@@ -1,7 +1,11 @@
 {
-    "SAVE": "Salva",
-    "BLACK_OVERLAY_ENABLE": "Permite suprapunerea negru",
-    "BLACK_OVERLAY_OPACITY": "Opacitate overlay: ",
-    "INVALID_VAL": "Valoarea '%' este invalid: ",
-    "INVALID_OPACITY": "Opacitatea ar trebui să fie 0 <= val <= 1"
+    "INVALID_VAL" : "Valoarea '%' este invalid: ",
+    "BLACK_OVERLAY_OPACITY" : "Opacitate overlay: ",
+    "INVALID_OPACITY" : "Opacitatea ar trebui să fie 0 <= val <= 1",
+    "NO_PREFERENCE" : "Nici o preferinţă",
+    "ALWAYS_USE_HTTPS" : "Utilizaţi întotdeauna HTTPS",
+    "BLACK_OVERLAY_ENABLE" : "Permite suprapunerea negru",
+    "ALWAYS_USE_HTTP" : "Utilizaţi întotdeauna HTTP",
+    "SAVE" : "Salva",
+    "PREFERRED_PROTOCOL" : "Protocolul de preferat"
 }

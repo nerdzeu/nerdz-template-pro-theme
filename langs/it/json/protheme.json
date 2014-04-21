@@ -1,7 +1,11 @@
 {
-    "SAVE": "Salva",
-    "BLACK_OVERLAY_ENABLE": "Abilita l'overlay nero",
-    "BLACK_OVERLAY_OPACITY": "Opacità overlay: ",
-    "INVALID_VAL": "Il valore di '%' non è valido: ",
-    "INVALID_OPACITY": "L'opacità dev'essere 0 <= valore <= 1"
+    "INVALID_VAL" : "Il valore di '%' non è valido: ",
+    "BLACK_OVERLAY_OPACITY" : "Opacità overlay: ",
+    "INVALID_OPACITY" : "L'opacità dev'essere 0 <= valore <= 1",
+    "NO_PREFERENCE" : "Nessuna preferenza",
+    "ALWAYS_USE_HTTPS" : "Usa sempre HTTPS",
+    "BLACK_OVERLAY_ENABLE" : "Abilita l'overlay nero",
+    "ALWAYS_USE_HTTP" : "Usa sempre HTTP",
+    "SAVE" : "Salva",
+    "PREFERRED_PROTOCOL" : "Protocollo preferito"
 }

@@ -12,13 +12,17 @@
  * @static
  */
 (function (PreferencesAPI) {
-    var _settings  = [],    // settings array
+    var _available_sections = [
+            "account", "profile", "guests", "projects",
+            "language", "themes", "delete"
+        ],
+        _settings  = [],    // settings array
         _storage   = {},    // storage object
+        _hooked    = false, // true if onHookedSectionLoaded has been called
         _usrNs,             // namespace
         _section,           // current section
         _hookedSec,         // the section requested by the user
-        _saveCallback,      // callback set with setOnSaveCallback()
-        _hooked    = false; // true if onHookedSectionLoaded has been called
+        _saveCallback;      // callback set with setOnSaveCallback()
 
     /**
      * Inits the PreferencesAPI class. You __must__ use this method before
@@ -29,12 +33,14 @@
      * data in localStorage. Please pick an unique, appropriate name.
      * @param {String} sectionId The ID of the section you are going
      * to hook into. Section names can be retrieved from the preferences
-     * internal files' name in `/pages/preferences/`.
+     * internal filenames in `/pages/preferences/`.
      * @param {Function} onPrefsLoaded The function which is called if
      * the user is in the preferences page. You __SHOULD__ register any kind
      * of setting here, to avoid unnecessary memory wasting.
      */
     PreferencesAPI.init = function (namespace, sectionId, onPrefsLoaded) {
+        if ($.inArray (sectionId, _available_sections) === -1)
+            throw "Invalid sectionId. Please read the documentation.";
         _usrNs = namespace;
         _storage[_usrNs] = {};
         // load preferences
@@ -62,6 +68,10 @@
                         onHookedSectionLoaded();
                 }
             });
+            // check if there's a name of a section in the anchor
+            if ($.inArray (document.location.hash.substr (3),
+                    _available_sections))
+                $("#" + document.location.hash.substr (3)).click();
         }
     };
     /**
@@ -120,7 +130,7 @@
      * Retrieves a value from the stored settings.
      * You can specify a default value if it is not defined.
      *
-     * @method getSetting
+     * @method getValue
      * @return {Object} The setting, if available, or defaultValue.
      * @param {String} name The name of the setting.
      * @param {Object} [defaultValue=undefined] The value which is returned if
@@ -130,6 +140,21 @@
         if (_storage[_usrNs].hasOwnProperty (name))
             return _storage[_usrNs][name];
         return defaultValue;
+    };
+    /**
+     * Manually puts a key/value pair in the stored settings.
+     * This method should be used only when you know what you are doing.
+     * Changing a setting in the wrong way may cause a global thermonuclear
+     * disaster. You have been warned.
+     *
+     * @method setValue
+     * @param {String} key The name of the setting.
+     * @param {String} value The value of the setting.
+     */
+    PreferencesAPI.setValue = function (key, value) {
+        _storage[_usrNs][key] = value;
+        // save in the localStorage
+        localStorage.setItem ("prefsAPI", JSON.stringify (_storage));
     };
     /**
      * Registers a callback which is called each time the
@@ -318,9 +343,8 @@
     CustomLangsAPI.getFirstAvailMatch = function (key, defaultValue) {
         for (var lname in _langFiles)
         {
-            if (typeof _langFiles[lname] !== "object")
-                continue;
-            if (_langFiles[lname].hasOwnProperty (key))
+            if (typeof _langFiles[lname] === "object" &&
+                _langFiles[lname].hasOwnProperty (key))
                 return _langFiles[lname][key];
         }
         return defaultValue;
@@ -416,18 +440,68 @@
 var ProTheme = {
     onLoad: function() {
         PreferencesAPI.init ("protheme", "themes", function() {
+            // check if our querystring has _ptHttps.
+            if (document.location.search.indexOf ("_ptHttps=") !== -1)
+            {
+                var rxp = /_ptHttps=(whatever|https?)/.exec (
+                    document.location.search
+                );
+                if (rxp != null)
+                {
+                    PreferencesAPI.setValue ("preferred-protocol", rxp[1]);
+                    var scroto = document.location.protocol.slice (0, -1),
+                        proto;
+                    // if we have 'whatever' as the value, it's better to
+                    // redirect back to the other protocol (the user may
+                    // be annoyed otherwise)
+                    if (rxp[1] === "whatever" || rxp[1] !== scroto)
+                    {
+                        proto = rxp[1] === "whatever"
+                                ? (scroto === "http"
+                                    ? "https"
+                                    : "http")
+                                : rxp[1];
+                    }
+                    else
+                        proto = scroto;
+                    document.location.href =
+                            proto + "://" + document.location.host
+                            + "/preferences.php#s-themes";
+                }
+            }
             CustomLangsAPI.init ("protheme", function() {
                 var lang = CustomLangsAPI.getLang ("protheme"),
                     enableBlackOverlay = $(document.createElement ("label"))
-                        .append ($(document.createElement("input")).attr ({
-                            type: "checkbox",
-                            value: lang.BLACK_OVERLAY_ENABLE
-                        }).prop ("checked", true))
-                        .append (lang.BLACK_OVERLAY_ENABLE);
+                    .append ($(document.createElement("input")).attr ({
+                        type: "checkbox",
+                        value: lang.BLACK_OVERLAY_ENABLE
+                    }).prop ("checked", true))
+                    .append (lang.BLACK_OVERLAY_ENABLE);
                 var blackOverlayOpacity = $(document.createElement("label"))
-                    .append (lang.BLACK_OVERLAY_OPACITY)
-                    .append ($(document.createElement("input"))
-                    .attr ("type", "text").val ("0.25"));
+                    .append (lang.BLACK_OVERLAY_OPACITY,
+                        $(document.createElement("input"))
+                        .attr ("type", "text").val ("0.25")
+                    );
+                var preferredProtocol = $(document.createElement ("label"))
+                    .append (lang.PREFERRED_PROTOCOL, ": ",
+                        $(document.createElement("select"))
+                        .append (
+                            $(document.createElement("option"))
+                            .text (lang.NO_PREFERENCE)
+                            .val ("whatever"),
+                            $(document.createElement("option"))
+                            .text (lang.ALWAYS_USE_HTTP)
+                            .val ("http"),
+                            $(document.createElement("option"))
+                            .text (lang.ALWAYS_USE_HTTPS)
+                            .val ("https")
+                        )
+                        .change (function() {
+                            // hack to avoid messing with the location
+                            // unnecessarily
+                            $(this).data ('has-changed', true);
+                        })
+                    );
                 PreferencesAPI.addSettings ({
                     name: "blackoverlay-enabled",
                     element: enableBlackOverlay,
@@ -450,36 +524,78 @@ var ProTheme = {
                     onRestore: function (obj, restored) {
                         obj.element.find ("input").val (restored);
                     }
+                }, {
+                    name: "preferred-protocol",
+                    element: preferredProtocol,
+                    onSave: function (obj) {
+                        var val = obj.element.find ("option:selected").val();
+                        if (obj.element.find ("select").data ("has-changed"))
+                            setTimeout (function() {
+                                // TODO: we are doing this hack because
+                                // localStorage is not shared between HTTP
+                                // and HTTPS sessions. However, we should do
+                                // this with the whole settings, otherwise they
+                                // will be desynced.
+                                document.location.href = 
+                                    (document.location.protocol === 'https:'
+                                        ? 'http'
+                                        : 'https')
+                                    + "://" + document.location.host
+                                    + "/preferences.php?_ptHttps=" + val;
+                            }, 500);
+                        return val;
+                    },
+                    onRestore: function (obj, restored) {
+                        obj.element.find ('option[value="' + restored + '"]').prop ('selected', true);
+                        //obj.element.find ("input").attr ("checked", restored);
+                    }
                 });
             });
         });
         PreferencesAPI.setOnSaveCallback (ProTheme.restorePreferences);
         // and now apply the real preferences
         ProTheme.restorePreferences (true);
+        // fix the protocol if necessary
+        if (document.location.search.indexOf ("_ptHttps") === -1)
+        {
+            var proto = PreferencesAPI.getValue ("preferred-protocol",
+                "whatever");
+            if (proto !== "whatever" &&
+                document.location.protocol !== (proto + ":"))
+            {
+                // MAGIC!
+                document.write ('<script type="text/undefined">');
+                document.location.href =
+                    proto + "://" + document.location.host
+                    + document.location.pathname
+                    + document.location.search
+                    + document.location.hash;
+            }
+        }
     },
     // the boolean flag is used to avoid setting unnecessary CSS rules
     // while not refreshing
-    restorePreferences: function (_std) {
+    restorePreferences: function (normal_restore) {
         if ($("#center_col").length)
         {
+            var center_col_css = {
+                padding: 0,
+                backgroundColor: "transparent",
+                boxShadow: "none"
+            };
             if (PreferencesAPI.getValue ("blackoverlay-enabled", true))
             {
                 var opa = PreferencesAPI.getValue (
                     "blackoverlay-opacity", "0.25"
                 );
-                $("#center_col").css ({
+                center_col_css = {
                     padding: "4px",
                     backgroundColor: "rgba(0,0,0," + opa + ")",
                     boxShadow: "0px 2px 3px #414141"
-                });
+                };
             }
-            else if (!_std) {
-                $("#center_col").css ({
-                    padding: 0,
-                    backgroundColor: "transparent",
-                    boxShadow: "none"
-                });
-            }
+            if (center_col_css.padding != 0 || !normal_restore)
+                $("#center_col").css (center_col_css);
         }
     }
 };

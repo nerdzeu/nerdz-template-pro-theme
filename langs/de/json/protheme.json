@@ -1,7 +1,11 @@
 {
-    "SAVE": "Sparen",
-    "BLACK_OVERLAY_ENABLE": "Ermöglichen die schwarz-overlay",
-    "BLACK_OVERLAY_OPACITY": "Overlay-Deckkraft: ",
-    "INVALID_VAL": "Der Wert von '%' ist ungültig",
-    "INVALID_OPACITY": "Die Opazität sollte 0 <= val <= 1"
+    "INVALID_VAL" : "Der Wert von '%' ist ungültig",
+    "BLACK_OVERLAY_OPACITY" : "Overlay-Deckkraft: ",
+    "INVALID_OPACITY" : "Die Opazität sollte 0 <= val <= 1",
+    "NO_PREFERENCE" : "Keine Präferenz",
+    "ALWAYS_USE_HTTPS" : "Immer HTTPS verwenden",
+    "BLACK_OVERLAY_ENABLE" : "Ermöglichen die schwarz-overlay",
+    "ALWAYS_USE_HTTP" : "Verwenden Sie immer HTTP",
+    "SAVE" : "Sparen",
+    "PREFERRED_PROTOCOL" : "Bevorzugte Protokoll"
 }

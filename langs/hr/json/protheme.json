@@ -1,7 +1,11 @@
 {
-    "SAVE": "Sačuvati",
-    "BLACK_OVERLAY_ENABLE": "Omogućite crni sloj",
-    "BLACK_OVERLAY_OPACITY": "Prekrivanje neprozirnost: ",
-    "INVALID_VAL": "Vrijednost '%' je nevažeća: ",
-    "INVALID_OPACITY": "Neprozirnosti treba biti 0 <= val <= 1"
+    "INVALID_VAL" : "Vrijednost '%' je nevažeća: ",
+    "BLACK_OVERLAY_OPACITY" : "Prekrivanje neprozirnost: ",
+    "INVALID_OPACITY" : "Neprozirnosti treba biti 0 <= val <= 1",
+    "NO_PREFERENCE" : "Svejedno",
+    "ALWAYS_USE_HTTPS" : "Uvijek koristi HTTPS",
+    "BLACK_OVERLAY_ENABLE" : "Omogućite crni sloj",
+    "ALWAYS_USE_HTTP" : "Uvijek koristite HTTP",
+    "SAVE" : "Sačuvati",
+    "PREFERRED_PROTOCOL" : "Željena protokol"
 }

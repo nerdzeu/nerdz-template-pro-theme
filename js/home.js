@@ -101,13 +101,19 @@ $(document).ready(function() {
         if (me.data ('busy') == 'godyes') return;
         me.data ('busy', 'godyes');
         // switching back to the old hack
-        var suchHeight = jenk.removeClass ("compressed").height();
-        jenk.addClass ("compressed").animate ({ maxHeight: suchHeight }, function() {
-            jenk.removeClass ("compressed").css ("max-height", "none");
-            me.slideUp ("slow", function() {
-                me.remove();
+        // suchMaxHeight is a work-around for shitty browsers
+        // (anyone said Chrome?)
+        var suchMaxHeight = jenk.css ("max-height"),
+            suchHeight    = jenk.removeClass ("compressed")
+            .css ("max-height", "none").height();
+        jenk.addClass ("compressed")
+            .css ("max-height", suchMaxHeight)
+            .animate ({ maxHeight: suchHeight }, function() {
+                jenk.removeClass ("compressed").css ("max-height", "none");
+                me.slideUp ("slow", function() {
+                    me.remove();
+                });
             });
-        });
     });
 
     plist.on('click',".hide",function() {
