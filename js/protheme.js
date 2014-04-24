@@ -326,11 +326,10 @@
         retrieveTemplateNumber(); // sync
         // cache system
         // register a global AJAX handler if necessary: it clears the
-        // cache when the user changes language, or at least goes on the
-        // languages page (TODO: work only when the lang has been changed)
+        // cache when the user changes language.
         if (document.location.pathname === "/preferences.php")
             $(document).ajaxComplete (function (evt, xhr, settings) {
-                if (settings.url === "/pages/preferences/language.html.php")
+                if (settings.url==="/pages/preferences/language.html.json.php")
                     CustomLangsAPI.clearCache();
             });
         if (localStorage.getItem ("langsApiCache") != null)
