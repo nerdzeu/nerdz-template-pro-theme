@@ -1,11 +1,14 @@
 {
     "INVALID_VAL" : "Vrijednost '%' je nevažeća: ",
     "BLACK_OVERLAY_OPACITY" : "Prekrivanje neprozirnost: ",
+    "NEW_NOTIFICATIONS" : "% Nova obavijest (i)",
     "INVALID_OPACITY" : "Neprozirnosti treba biti 0 <= val <= 1",
-    "NO_PREFERENCE" : "Svejedno",
-    "ALWAYS_USE_HTTPS" : "Uvijek koristi HTTPS",
-    "BLACK_OVERLAY_ENABLE" : "Omogućite crni sloj",
     "ALWAYS_USE_HTTP" : "Uvijek koristite HTTP",
+    "BLACK_OVERLAY_ENABLE" : "Omogućite crni sloj",
+    "ALWAYS_USE_HTTPS" : "Uvijek koristi HTTPS",
+    "NO_PREFERENCE" : "Svejedno",
     "SAVE" : "Sačuvati",
+    "NEW_PMS" : "% Nova privatna poruka (i)",
+    "ENABLE_DESKTOP_NOTIFICATIONS" : "Omogućili obavijesti radne površine",
     "PREFERRED_PROTOCOL" : "Željena protokol"
 }

@@ -1,11 +1,14 @@
 {
     "INVALID_VAL" : "Valoarea '%' este invalid: ",
     "BLACK_OVERLAY_OPACITY" : "Opacitate overlay: ",
+    "NEW_NOTIFICATIONS" : "% noi care",
     "INVALID_OPACITY" : "Opacitatea ar trebui să fie 0 <= val <= 1",
-    "NO_PREFERENCE" : "Nici o preferinţă",
-    "ALWAYS_USE_HTTPS" : "Utilizaţi întotdeauna HTTPS",
-    "BLACK_OVERLAY_ENABLE" : "Permite suprapunerea negru",
     "ALWAYS_USE_HTTP" : "Utilizaţi întotdeauna HTTP",
+    "BLACK_OVERLAY_ENABLE" : "Permite suprapunerea negru",
+    "ALWAYS_USE_HTTPS" : "Utilizaţi întotdeauna HTTPS",
+    "NO_PREFERENCE" : "Nici o preferinţă",
     "SAVE" : "Salva",
+    "NEW_PMS" : "% mesaje private noi",
+    "ENABLE_DESKTOP_NOTIFICATIONS" : "Activare notificări desktop",
     "PREFERRED_PROTOCOL" : "Protocolul de preferat"
 }

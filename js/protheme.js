@@ -83,10 +83,10 @@
      *
      *     {
      *       name: "short-setting-name",
-     *       // an element which will be added in the preferences page.
+     *       // An element which will be added in the preferences page.
      *       // generic DOM elements and jQuery objects are allowed.
      *       element: ...,
-     *       // the following will be called each time the user clicks
+     *       // The following will be called each time the user clicks
      *       // on the 'Save' button. You must perform any kind of data
      *       // sanitization here, and if anything goes wrong you should throw
      *       // an exception with throw "error message".
@@ -95,16 +95,22 @@
      *       // The only argument passed is your object, where you can use
      *       // the 'element' attribute to get any value you may need.
      *       onSave: function (object) {},
-     *       // the following will be called each time the settings are
+     *       // The following will be called each time the settings are
      *       // restored from the localStorage. You should restore the element
      *       // in the exact same way it was saved. No sanitization is
      *       // necessary here - if any kind of value screws up, it is not
      *       // our fault.
-     *       onRestore: function (object, restoredValue) {}
+     *       onRestore: function (object, restoredValue) {},
+     *       // A boolean value which determines if the setting should be shown
+     *       // or not. If this is set to false, the setting won't be added at
+     *       // all. This is useful when you need to check if some prerequisites
+     *       // are met before showing the option to the user.
+     *       // By default it is set to true, and you don't need to include it.
+     *       display: true
      *     }
      * 
-     * Adding other fields is fine, as long as you don't remove the ones
-     * specified in the structure.
+     * Adding other fields is fine, as long as you don't remove the required
+     * ones specified in the structure.
      * Here's a simple example: a checkbox.
      *
      *     {
@@ -121,7 +127,9 @@
      */
     PreferencesAPI.addSettings = function() {
         for (var i = 0; i < arguments.length; i++)
-            if (typeof arguments[i] === 'object')
+            if (typeof arguments[i] === 'object' &&
+                (!arguments[i].hasOwnProperty ("display")
+                    || arguments[i].display))
                 _settings.push (arguments[i]);
         if (_hooked && _hookedSec === _section)
             onHookedSectionLoaded();
@@ -302,15 +310,46 @@
      * language files are loaded.
      */
     CustomLangsAPI.init = function() {
-        retrieveTemplateNumber(); // sync
+        var alreadyInitialized = Object.keys (_langFiles).length > 0;
         for (var i = 0; i < arguments.length; i++)
         {
             if (typeof arguments[i] === "function")
             {
+                if (alreadyInitialized)
+                    return arguments[i]();
                 _callback = arguments[i];
                 continue;
             }
-            _langFiles[arguments[i]] = {};
+            if (!_langFiles.hasOwnProperty (arguments[i]))
+                _langFiles[arguments[i]] = {};
+        }
+        retrieveTemplateNumber(); // sync
+        // cache system
+        // register a global AJAX handler if necessary: it clears the
+        // cache when the user changes language, or at least goes on the
+        // languages page (TODO: work only when the lang has been changed)
+        if (document.location.pathname === "/preferences.php")
+            $(document).ajaxComplete (function (evt, xhr, settings) {
+                if (settings.url === "/pages/preferences/language.html.php")
+                    CustomLangsAPI.clearCache();
+            });
+        if (localStorage.getItem ("langsApiCache") != null)
+        {
+            var cache = JSON.parse (localStorage.getItem ("langsApiCache"));
+            if (typeof cache === "object" &&
+                cache.hasOwnProperty ("updated") &&
+                cache.hasOwnProperty ("tpl-" + _tplNo) &&
+                typeof cache.updated === "number" &&
+                typeof cache["tpl-" + _tplNo] === "object" &&
+                (Date.now() - cache.updated) < 21600000) // 6 hours
+            {
+                console.log ("LangsAPI: restored languages from the cache");
+                $.extend (_langFiles, cache["tpl-" + _tplNo]);
+                if (_callback) _callback();
+                return;
+            }
+            else
+                CustomLangsAPI.clearCache();
         }
         retrieveCurrentLanguage(); // async, requires an AJAX request
         console.log (
@@ -349,6 +388,15 @@
         }
         return defaultValue;
     };
+    /**
+     * Clears the internal language cache, which is used to restore
+     * language data from localStorage instead of requesting it every time.
+     *
+     * @method clearCache
+     */
+    CustomLangsAPI.clearCache = function() {
+        localStorage.removeItem ("langsApiCache");
+    }
     // Private methods
     /**
      * Retrieves the current template number.
@@ -403,6 +451,7 @@
      * @private
      */
     function loadLanguages() {
+        var cache = {}; cache["tpl-" + _tplNo] = {};
         for (var lname in _langFiles)
         {
             console.log ("LangsAPI: %s: loading", lname);
@@ -427,12 +476,17 @@
                     lname, Object.keys (res).length
                 );
                 _langFiles[lname] = res;
+                // store in the cache
+                cache["updated"] = Date.now();
+                cache["tpl-" + _tplNo][lname] = res;
+                localStorage.setItem ("langsApiCache", JSON.stringify (cache));
+                _callback (lname);
             }).fail (function() {
                 console.error (
                     "LangsAPI: %s: can't load %s.json",
                     lname, lname
                 );
-            }).always (_callback);
+            });
         }
     }
 }(window.CustomLangsAPI = window.CustomLangsAPI || {}));
@@ -470,18 +524,28 @@ var ProTheme = {
                 }
             }
             CustomLangsAPI.init ("protheme", function() {
-                var lang = CustomLangsAPI.getLang ("protheme"),
-                    enableBlackOverlay = $(document.createElement ("label"))
-                    .append ($(document.createElement("input")).attr ({
-                        type: "checkbox",
-                        value: lang.BLACK_OVERLAY_ENABLE
-                    }).prop ("checked", true))
-                    .append (lang.BLACK_OVERLAY_ENABLE);
+                // contains the key/value mappings of protheme.json
+                // *note: not using the var x, y, ... notation for clarity
+                var lang = CustomLangsAPI.getLang ("protheme");
+                // Enable black overlay
+                // boolean / checkbox
+                var enableBlackOverlay =
+                    $(document.createElement ("label"))
+                    .append (
+                        $(document.createElement("input")).attr (
+                            "type", "checkbox"
+                        ).prop ("checked", true),
+                        " ", lang.BLACK_OVERLAY_ENABLE
+                    );
+                // Black overlay opacity
+                // double / inputbox (0 <= val <= 1)
                 var blackOverlayOpacity = $(document.createElement("label"))
                     .append (lang.BLACK_OVERLAY_OPACITY,
                         $(document.createElement("input"))
                         .attr ("type", "text").val ("0.25")
                     );
+                // Preferred protocol
+                // string / combobox (whatever, http, https)
                 var preferredProtocol = $(document.createElement ("label"))
                     .append (lang.PREFERRED_PROTOCOL, ": ",
                         $(document.createElement("select"))
@@ -499,8 +563,18 @@ var ProTheme = {
                         .change (function() {
                             // hack to avoid messing with the location
                             // unnecessarily
-                            $(this).data ('has-changed', true);
+                            $(this).data ("has-changed", true);
                         })
+                    );
+                // Enable desktop notifications
+                // boolean / checkbox
+                var enableDesktopNotifications =
+                    $(document.createElement ("label"))
+                    .append (
+                        $(document.createElement("input")).attr (
+                            "type", "checkbox"
+                        ), " ",
+                        lang.ENABLE_DESKTOP_NOTIFICATIONS
                     );
                 PreferencesAPI.addSettings ({
                     name: "blackoverlay-enabled",
@@ -546,9 +620,39 @@ var ProTheme = {
                         return val;
                     },
                     onRestore: function (obj, restored) {
-                        obj.element.find ('option[value="' + restored + '"]').prop ('selected', true);
-                        //obj.element.find ("input").attr ("checked", restored);
+                        obj.element.find ('option[value="' + restored + '"]')
+                            .prop ('selected', true);
                     }
+                }, {
+                    name: "desktop-notifications",
+                    element: enableDesktopNotifications,
+                    onSave: function (obj) {
+                        if (!obj.element.find ("input").is (":checked"))
+                        {
+                            $(document).unbind ("ajaxSuccess.ptheme");
+                            return false;
+                        }
+                        else if (Notification.permission === "granted")
+                            return true;
+                        else/* if (Notification.permission !== "denied")*/
+                            Notification.requestPermission (function (perm) {
+                                if (!('permission' in Notification))
+                                    Notification.permission = perm;
+                                if (perm === "granted")
+                                {
+                                    PreferencesAPI.setValue (
+                                        "desktop-notifications",
+                                        true
+                                    );
+                                    ProTheme.configureNotifications();
+                                }
+                            });
+                        return false;
+                    },
+                    onRestore: function (obj, restored) {
+                        obj.element.find ("input").prop ("checked", restored);
+                    },
+                    display: ("Notification" in window)
                 });
             });
         });
@@ -597,6 +701,76 @@ var ProTheme = {
             if (center_col_css.padding != 0 || !normal_restore)
                 $("#center_col").css (center_col_css);
         }
+        ProTheme.configureNotifications();
+    },
+    configureNotifications: function() {
+        if (!PreferencesAPI.getValue ("desktop-notifications", false) ||
+            !("Notification" in window))
+            return;
+        if (Notification.permission !== "granted")
+        {
+            PreferencesAPI.setValue ("desktop-notifications", false);
+            return;
+        }
+        // register the global ajax handler to intercept notifications and PMs
+        CustomLangsAPI.init ("protheme", function() {
+            console.log ("registering global ajax handler for notifications");
+            var hasNotified   = 0,
+                hasNotifiedPM = 0,
+                lang          = CustomLangsAPI.getLang ("protheme");
+            $(document).bind ("ajaxSuccess.ptheme", function (evt, xhr, sett) {
+                switch (sett.url)
+                {
+                    case "/pages/profile/notify.json.php":
+                    case "/pages/pm/notify.json.php":
+                        var isPM  = sett.url === "/pages/pm/notify.json.php",
+                            count = (
+                                "responseJSON" in xhr &&
+                                "message"      in xhr.responseJSON
+                            ) ? parseInt (xhr.responseJSON.message) : 0;
+                        if (count > 0)
+                        {
+                            if ((isPM  && hasNotifiedPM === count) ||
+                                (!isPM && hasNotified   === count))
+                                return; 
+                            new Notification ("NERDZ", {
+                                body: ProTheme.parseMultiLocalization (
+                                    isPM ?
+                                    lang.NEW_PMS :
+                                    lang.NEW_NOTIFICATIONS,
+                                    count
+                                ),
+                                icon: document.location.protocol + "//" +
+                                      document.location.host +
+                                      "/static/images/winicon.png"
+                            }).addEventListener ("click", function() {
+                                if (isPM)
+                                    $("#gotopm").click();
+                                else
+                                    $("#notifycounter").click();
+                            });
+                            if (isPM) hasNotifiedPM = count;
+                            else hasNotified = count;
+                        }
+                    break;
+                    case "/pages/profile/notify.html.php":
+                        hasNotified = 0;
+                    break;
+                }
+            });
+        });
+    },
+    parseMultiLocalization: function (message, count) {
+        message = message.replace ("%", count);
+        var matches = message.match (/\[.+?\]/g);
+        if (matches == null) return message;
+        for (var i = 0; i < matches.length; i++)
+        {
+            var arr = matches[i].slice (1, -1).split ("|", 2), res;
+            message = message.replace (matches[i],
+                count === 1 ? arr.length < 2 ? "" : arr[0] : arr[1] || arr[0]);
+        }
+        return message;
     }
 };
 

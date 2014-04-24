@@ -1,11 +1,14 @@
 {
     "INVALID_VAL" : "Der Wert von '%' ist ungültig",
     "BLACK_OVERLAY_OPACITY" : "Overlay-Deckkraft: ",
+    "NEW_NOTIFICATIONS" : "% neue Höchstmengen",
     "INVALID_OPACITY" : "Die Opazität sollte 0 <= val <= 1",
-    "NO_PREFERENCE" : "Keine Präferenz",
-    "ALWAYS_USE_HTTPS" : "Immer HTTPS verwenden",
-    "BLACK_OVERLAY_ENABLE" : "Ermöglichen die schwarz-overlay",
     "ALWAYS_USE_HTTP" : "Verwenden Sie immer HTTP",
+    "BLACK_OVERLAY_ENABLE" : "Ermöglichen die schwarz-overlay",
+    "ALWAYS_USE_HTTPS" : "Immer HTTPS verwenden",
+    "NO_PREFERENCE" : "Keine Präferenz",
     "SAVE" : "Sparen",
+    "NEW_PMS" : "% neue private Nachricht(en)",
+    "ENABLE_DESKTOP_NOTIFICATIONS" : "Desktop-Benachrichtigungen aktivieren",
     "PREFERRED_PROTOCOL" : "Bevorzugte Protokoll"
 }

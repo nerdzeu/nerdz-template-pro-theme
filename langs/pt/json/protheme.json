@@ -1,11 +1,14 @@
 {
     "INVALID_VAL" : "O valor de '%' é inválido: ",
     "BLACK_OVERLAY_OPACITY" : "Opacidade de sobreposição: ",
+    "NEW_NOTIFICATIONS" : "% Nova notificação (ões)",
     "INVALID_OPACITY" : "A opacidade deve ser 0 <= val <= 1",
-    "NO_PREFERENCE" : "Sem preferência",
-    "ALWAYS_USE_HTTPS" : "Sempre usar HTTPS",
-    "BLACK_OVERLAY_ENABLE" : "Ative a sobreposição de preto",
     "ALWAYS_USE_HTTP" : "Sempre use HTTP",
+    "BLACK_OVERLAY_ENABLE" : "Ative a sobreposição de preto",
+    "ALWAYS_USE_HTTPS" : "Sempre usar HTTPS",
+    "NO_PREFERENCE" : "Sem preferência",
     "SAVE" : "Salvar",
+    "NEW_PMS" : "% nova mensagem privada",
+    "ENABLE_DESKTOP_NOTIFICATIONS" : "Habilitar notificações de área de trabalho",
     "PREFERRED_PROTOCOL" : "Protocolo preferido"
 }
