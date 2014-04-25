@@ -431,12 +431,12 @@ th {
 #site_title
 {
     color: #000;
-    margin: 0 auto 1.5% auto;
+    margin: 0 auto 0.5% auto;
     width: 100%;
     background-color: #AFAFAF;
     display: block;
     overflow: hidden;
-    position: fixed;
+    /*position: fixed;*/
     top: 0;
     box-shadow: 2px 2px 5px #000;
     z-index: 1;
@@ -691,7 +691,7 @@ body
     width: 100%;
     height: 100%;
     margin: auto;
-    margin-top: 55px;
+    /*margin-top: 55px;*/
     z-index: 0;
 }
 

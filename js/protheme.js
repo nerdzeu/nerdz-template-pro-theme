@@ -395,7 +395,7 @@
      */
     CustomLangsAPI.clearCache = function() {
         localStorage.removeItem ("langsApiCache");
-    }
+    };
     // Private methods
     /**
      * Retrieves the current template number.
@@ -543,6 +543,16 @@ var ProTheme = {
                         $(document.createElement("input"))
                         .attr ("type", "text").val ("0.25")
                     );
+                // Fixed top bar
+                // boolean / checkbox
+                var topBarFixed =
+                    $(document.createElement ("label"))
+                    .append (
+                        $(document.createElement ("input")).attr (
+                            "type", "checkbox"
+                        ).prop ("checked", true),
+                        " ", lang.TOP_BAR_FIXED
+                    );
                 // Preferred protocol
                 // string / combobox (whatever, http, https)
                 var preferredProtocol = $(document.createElement ("label"))
@@ -582,7 +592,7 @@ var ProTheme = {
                         return obj.element.find ("input").is (":checked");
                     },
                     onRestore: function (obj, restored) {
-                        obj.element.find ("input").attr ("checked", restored);
+                        obj.element.find ("input").prop ("checked", restored);
                     }
                 }, {
                     name: "blackoverlay-opacity",
@@ -596,6 +606,15 @@ var ProTheme = {
                     },
                     onRestore: function (obj, restored) {
                         obj.element.find ("input").val (restored);
+                    }
+                }, {
+                    name: "fixed-top-bar",
+                    element: topBarFixed,
+                    onSave: function (obj) {
+                        return obj.element.find ("input").is (":checked");
+                    },
+                    onRestore: function (obj, restored) {
+                        obj.element.find ("input").prop ("checked", restored);
                     }
                 }, {
                     name: "preferred-protocol",
@@ -628,7 +647,7 @@ var ProTheme = {
                     onSave: function (obj) {
                         if (!obj.element.find ("input").is (":checked"))
                         {
-                            $(document).unbind ("ajaxSuccess.ptheme");
+                            $(document).off ("ajaxSuccess.ptheme");
                             return false;
                         }
                         else if (Notification.permission === "granted")
@@ -700,6 +719,22 @@ var ProTheme = {
             if (center_col_css.padding != 0 || !normal_restore)
                 $("#center_col").css (center_col_css);
         }
+        var fixed_css = {
+            site_title: {
+                position: "static"
+            },
+            body: {
+                marginTop: 0
+            }
+        };
+        if (PreferencesAPI.getValue ("fixed-top-bar", true))
+        {
+            fixed_css.site_title.position = "fixed";
+            fixed_css.body.marginTop      = "55px";
+        }
+        if (fixed_css.body.marginTop != 0 || !normal_restore)
+            $("body").css (fixed_css.body)
+                .find ("#site_title").css (fixed_css.site_title);
         ProTheme.configureNotifications();
     },
     configureNotifications: function() {
@@ -717,7 +752,9 @@ var ProTheme = {
             var hasNotified   = 0,
                 hasNotifiedPM = 0,
                 lang          = CustomLangsAPI.getLang ("protheme");
-            $(document).bind ("ajaxSuccess.ptheme", function (evt, xhr, sett) {
+            $(document)
+                .off ("ajaxSuccess.ptheme")
+                .on ("ajaxSuccess.ptheme", function (evt, xhr, sett) {
                 switch (sett.url)
                 {
                     case "/pages/profile/notify.json.php":

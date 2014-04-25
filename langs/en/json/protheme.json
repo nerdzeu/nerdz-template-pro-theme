@@ -1,14 +1,15 @@
 {
     "INVALID_VAL" : "The value of '%' is invalid: ",
-    "BLACK_OVERLAY_OPACITY" : "Black overlay opacity: ",
     "NEW_NOTIFICATIONS" : "% new notification[s]",
+    "BLACK_OVERLAY_OPACITY" : "Black overlay opacity: ",
     "INVALID_OPACITY" : "Opacity should be 0 <= val <= 1",
-    "ALWAYS_USE_HTTP" : "Always use HTTP",
-    "BLACK_OVERLAY_ENABLE" : "Enable the black overlay",
-    "ALWAYS_USE_HTTPS" : "Always use HTTPS",
     "NO_PREFERENCE" : "No preference",
+    "ALWAYS_USE_HTTPS" : "Always use HTTPS",
+    "BLACK_OVERLAY_ENABLE" : "Enable the black overlay",
+    "ALWAYS_USE_HTTP" : "Always use HTTP",
     "SAVE" : "Save",
     "NEW_PMS" : "% new private message[s]",
-    "ENABLE_DESKTOP_NOTIFICATIONS" : "Enable desktop notifications",
-    "PREFERRED_PROTOCOL" : "Preferred protocol"
+    "TOP_BAR_FIXED" : "Make the top bar fixed",
+    "PREFERRED_PROTOCOL" : "Preferred protocol",
+    "ENABLE_DESKTOP_NOTIFICATIONS" : "Enable desktop notifications"
 }
