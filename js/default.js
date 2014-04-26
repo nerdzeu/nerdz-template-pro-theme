@@ -481,7 +481,7 @@ $(document).ready(function() {
             editlang = $(this).html(),
             form = function (fid, hpid, message, edlang, prev) {
                 return '<form style="margin-bottom:40px" id="' +fid+ '" data-hpid="'+hpid+'">' +
-                    '<textarea id="'+fid+'abc" autofocus style="width:100%; height:125px">' +message+ '</textarea><br />' +
+                    '<textarea id="'+fid+'abc" autofocus class="bbcode-enabled" style="width:100%; height:125px">' +message+ '</textarea><br />' +
                     '<input type="submit" value="' + edlang +'" style="float: right; margin-top:5px" />' +
                     '<button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#'+fid+'abc">'+prev+'</button>'+
                     '<button type="button" style="float:left; margin-top:5px" onclick="window.open(\'/bbcode.php\')">BBCode</button>' +

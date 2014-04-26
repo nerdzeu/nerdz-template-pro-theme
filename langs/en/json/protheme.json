@@ -1,15 +1,16 @@
 {
+    "ENABLE_AUTO_COMPLETION" : "Enable BBCode autocompletion",
     "INVALID_VAL" : "The value of '%' is invalid: ",
-    "NEW_NOTIFICATIONS" : "% new notification[s]",
     "BLACK_OVERLAY_OPACITY" : "Black overlay opacity: ",
+    "NEW_NOTIFICATIONS" : "% new notification[s]",
     "INVALID_OPACITY" : "Opacity should be 0 <= val <= 1",
-    "NO_PREFERENCE" : "No preference",
-    "ALWAYS_USE_HTTPS" : "Always use HTTPS",
-    "BLACK_OVERLAY_ENABLE" : "Enable the black overlay",
     "ALWAYS_USE_HTTP" : "Always use HTTP",
+    "BLACK_OVERLAY_ENABLE" : "Enable the black overlay",
+    "ALWAYS_USE_HTTPS" : "Always use HTTPS",
+    "NO_PREFERENCE" : "No preference",
     "SAVE" : "Save",
     "NEW_PMS" : "% new private message[s]",
-    "TOP_BAR_FIXED" : "Make the top bar fixed",
+    "ENABLE_DESKTOP_NOTIFICATIONS" : "Enable desktop notifications",
     "PREFERRED_PROTOCOL" : "Preferred protocol",
-    "ENABLE_DESKTOP_NOTIFICATIONS" : "Enable desktop notifications"
+    "TOP_BAR_FIXED" : "Make the top bar fixed"
 }

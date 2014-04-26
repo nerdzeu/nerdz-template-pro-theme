@@ -491,6 +491,36 @@
 }(window.CustomLangsAPI = window.CustomLangsAPI || {}));
 
 var ProTheme = {
+    bbCodes: {
+        list: [
+            "user", "project", "img", "b", "cur", "small", "big", "del", "u",
+            "gist", "youtube", "yt",  "m", "math","quote", "spoiler", "url",
+            { name: "url=", hasParam: true, useQuotes: true, paramDesc: "url"},
+            { name: "code", hasParam: true, paramDesc: "lang" },
+            { name: "wiki", hasParam: true, paramDesc: "lang" },
+            { name: "quote=", hasParam: true },
+            { name: "spoiler=", hasParam: true, paramDesc: "label" },
+            { name: "hr", isEmpty: true }
+        ],
+        byName: function (search) {
+            for (var i = 0; i < this.list.length; i++)
+            {
+                if ((typeof this.list[i] === 'object' &&
+                    this.list[i].name === search) || this.list[i] === search)
+                    return this.list[i];
+            }
+            return null;
+        },
+        getNames: function() {
+            var ret = [];
+            for (var i = 0; i < this.list.length; i++)
+            {
+                ret.push (typeof this.list[i] === 'object' ?
+                    this.list[i].name : this.list[i]);
+            }
+            return ret;
+        }
+    },
     onLoad: function() {
         PreferencesAPI.init ("protheme", "themes", function() {
             // check if our querystring has _ptHttps.
@@ -524,11 +554,13 @@ var ProTheme = {
             }
             CustomLangsAPI.init ("protheme", function() {
                 // contains the key/value mappings of protheme.json
-                // *note: not using the var x, y, ... notation for clarity
-                var lang = CustomLangsAPI.getLang ("protheme");
+                var lang, enableBlackOverlay, blackOverlayOpacity, topBarFixed,
+                    enableAutoCompletion, preferredProtocol,
+                    enableDesktopNotifications;
+                lang = CustomLangsAPI.getLang ("protheme");
                 // Enable black overlay
                 // boolean / checkbox
-                var enableBlackOverlay =
+                enableBlackOverlay =
                     $(document.createElement ("label"))
                     .append (
                         $(document.createElement("input")).attr (
@@ -538,14 +570,14 @@ var ProTheme = {
                     );
                 // Black overlay opacity
                 // double / inputbox (0 <= val <= 1)
-                var blackOverlayOpacity = $(document.createElement("label"))
+                blackOverlayOpacity = $(document.createElement("label"))
                     .append (lang.BLACK_OVERLAY_OPACITY,
                         $(document.createElement("input"))
                         .attr ("type", "text").val ("0.25")
                     );
                 // Fixed top bar
                 // boolean / checkbox
-                var topBarFixed =
+                topBarFixed =
                     $(document.createElement ("label"))
                     .append (
                         $(document.createElement ("input")).attr (
@@ -553,9 +585,19 @@ var ProTheme = {
                         ).prop ("checked", true),
                         " ", lang.TOP_BAR_FIXED
                     );
+                // Autocompletion (using At.js)
+                // boolean / checkbox
+                enableAutoCompletion =
+                    $(document.createElement ("label"))
+                    .append (
+                        $(document.createElement ("input")).attr (
+                            "type", "checkbox"
+                        ).prop ("checked", true),
+                        " ", lang.ENABLE_AUTO_COMPLETION
+                    );
                 // Preferred protocol
                 // string / combobox (whatever, http, https)
-                var preferredProtocol = $(document.createElement ("label"))
+                preferredProtocol = $(document.createElement ("label"))
                     .append (lang.PREFERRED_PROTOCOL, ": ",
                         $(document.createElement("select"))
                         .append (
@@ -577,7 +619,7 @@ var ProTheme = {
                     );
                 // Enable desktop notifications
                 // boolean / checkbox
-                var enableDesktopNotifications =
+                enableDesktopNotifications =
                     $(document.createElement ("label"))
                     .append (
                         $(document.createElement("input")).attr (
@@ -610,6 +652,15 @@ var ProTheme = {
                 }, {
                     name: "fixed-top-bar",
                     element: topBarFixed,
+                    onSave: function (obj) {
+                        return obj.element.find ("input").is (":checked");
+                    },
+                    onRestore: function (obj, restored) {
+                        obj.element.find ("input").prop ("checked", restored);
+                    }
+                }, {
+                    name: "auto-completion-bb",
+                    element: enableAutoCompletion,
                     onSave: function (obj) {
                         return obj.element.find ("input").is (":checked");
                     },
@@ -698,6 +749,7 @@ var ProTheme = {
     // the boolean flag is used to avoid setting unnecessary CSS rules
     // while not refreshing
     restorePreferences: function (normal_restore) {
+        // black overlay stuff
         if ($("#center_col").length)
         {
             var center_col_css = {
@@ -719,6 +771,7 @@ var ProTheme = {
             if (center_col_css.padding != 0 || !normal_restore)
                 $("#center_col").css (center_col_css);
         }
+        // fixed top bar
         var fixed_css = {
             site_title: {
                 position: "static"
@@ -734,7 +787,127 @@ var ProTheme = {
         }
         if (fixed_css.body.marginTop != 0 || !normal_restore)
             $("body").css (fixed_css.body)
-                .find ("#site_title").css (fixed_css.site_title);
+            .find ("#site_title").css (fixed_css.site_title);
+        // autocompletion
+        if (PreferencesAPI.getValue ("auto-completion-bb", true))
+        {
+            $("head").append (
+                $(document.createElement ("script")).attr ({
+                    type: "application/javascript",
+                    src:  "//cdn.jsdelivr.net/g/caret.js,at.js"
+                })/*, merged in default.css
+                $(document.createElement ("link")).attr ({
+                    rel: "stylesheet",
+                    href:"//cdn.jsdelivr.net/at.js/latest/css/jquery.atwho.css"
+                })*/
+            );
+            $("body").on ("focus", ".bbcode-enabled", function() {
+                var $me = $(this), next_offset = [], old_len = 0;
+                if ($me.data ("ac-enabled")) return;
+                $me.data ("ac-enabled", true);
+                $me.atwho ({
+                    at: "[",
+                    tpl: "8=======D",
+                    data: ProTheme.bbCodes.getNames(),
+                    start_with_space: false,
+                    callbacks: {
+                        before_insert: function (val, $li) {
+                            var bbcode = ProTheme.bbCodes
+                                .byName ($li.data ('value')), what, indch;
+                            if (typeof bbcode !== 'object')
+                                what  = '[' + bbcode + '][/' + bbcode + ']',
+                                indch = "]";
+                            else
+                            {
+                                var name = bbcode.name.replace (/=$/, "");
+                                what = '[' + name;
+                                if (bbcode.hasParam)
+                                    what += "=" +(bbcode.useQuotes ? '""': ""),
+                                    indch = bbcode.useQuotes ? '"' : "=";
+                                else
+                                    indch = "]";
+                                what += "]";
+                                if (!bbcode.isEmpty)
+                                    what += "[/" + name + "]";
+                            }
+                            $li.data ("index", indch).data ("final", what);
+                            return what;
+                        },
+                        tpl_eval: function (tpl, map) {
+                            var base = "<li data-value='" + map["name"] + "'>",
+                                bbcode = ProTheme.bbCodes.byName (map["name"]),
+                                isObj  = typeof bbcode === 'object';
+                            map["name"] = map["name"].replace (/=$/, "");
+                            base += "[" + map["name"];
+                            if (isObj && bbcode.hasParam)
+                                base += "=" +
+                                    (bbcode.paramDesc ?
+                                     bbcode.paramDesc : "...");
+                            base += "]";
+                            if (!isObj || !bbcode.isEmpty)
+                                base += "...[/" + map["name"] + "]";
+                            return base + "</li>";
+                        },
+                        highlighter: function (li, query) {
+                            if (!query)
+                                return li;
+                            return li.replace (
+                                new RegExp (">(.+?)(" + query.replace (
+                                    /([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"
+                                ) + ")", "gi"),
+                                function (s, $1, $2) {
+                                    if ($1 === "[")
+                                    {
+                                        $1 = "";
+                                        $2 = "[" + $2;
+                                    }
+                                    return ">" + $1 +
+                                        "<strong>" + $2 + "</strong>";
+                                });
+                        },
+                        matcher: function (flag, subtext) {
+                            var match;
+                            match = /\[([A-Za-z0-9_+-=\]]*)$/gi.exec (subtext);
+                            if (match)
+                                return match[1];
+                            return null;
+                        }
+                    }
+                }).on ("inserted.atwho", function (e, $li) {
+                    var str = $li.data ("final"), $me = $(this),
+                        pos = $me.caret ("pos"), v = $me.val(), index;
+                    // remove the trailing space from the textbox
+                    $me.val (v.substr (0, pos - 1) + v.substr (pos));
+                    index = str.indexOf ($li.data ("index")),
+                    next_offset = pos - str.length;
+                    if ($li.data ("index") !== "]")
+                        next_offset += str.indexOf ("]");
+                    else
+                        next_offset += str.indexOf ("]", index + 1);
+                    old_len = $(this).val().length;
+                    if (index === -1) return console.error ("index = -1 :(");
+                    $(this).caret ("pos", pos - str.length + index);
+                }).on ("keydown", function (e) {
+                    if (next_offset !== -1 && e.which === 9)
+                    {
+                        e.preventDefault();
+                        $(this).caret ("pos", next_offset);
+                        next_offset = -1, old_len = 0;
+                    }
+                }).on ("keyup", function() {
+                    if (next_offset !== -1)
+                    {
+                        var $me = $(this), curr = $me.val().length,
+                            delta = curr - old_len;
+                        old_len = curr;
+                        next_offset += delta;
+                        if ($me.caret ("pos") >= next_offset)
+                            next_offset = -1, old_len = 0;
+                    }
+                });
+            });
+        }
+        // desktop notifications 
         ProTheme.configureNotifications();
     },
     configureNotifications: function() {

@@ -1,15 +1,16 @@
 {
+    "ENABLE_AUTO_COMPLETION" : "Habilitar AutoCompletar BBCode",
     "INVALID_VAL" : "O valor de '%' é inválido: ",
-    "NEW_NOTIFICATIONS" : "% Nova notificação (ões)",
     "BLACK_OVERLAY_OPACITY" : "Opacidade de sobreposição: ",
+    "NEW_NOTIFICATIONS" : "% Nova notificação (ões)",
     "INVALID_OPACITY" : "A opacidade deve ser 0 <= val <= 1",
-    "NO_PREFERENCE" : "Sem preferência",
-    "ALWAYS_USE_HTTPS" : "Sempre usar HTTPS",
-    "BLACK_OVERLAY_ENABLE" : "Ative a sobreposição de preto",
     "ALWAYS_USE_HTTP" : "Sempre use HTTP",
+    "BLACK_OVERLAY_ENABLE" : "Ative a sobreposição de preto",
+    "ALWAYS_USE_HTTPS" : "Sempre usar HTTPS",
+    "NO_PREFERENCE" : "Sem preferência",
     "SAVE" : "Salvar",
     "NEW_PMS" : "% nova mensagem privada",
-    "TOP_BAR_FIXED" : "Fazer a barra superior fixa",
+    "ENABLE_DESKTOP_NOTIFICATIONS" : "Habilitar notificações de área de trabalho",
     "PREFERRED_PROTOCOL" : "Protocolo preferido",
-    "ENABLE_DESKTOP_NOTIFICATIONS" : "Habilitar notificações de área de trabalho"
+    "TOP_BAR_FIXED" : "Fazer a barra superior fixa"
 }

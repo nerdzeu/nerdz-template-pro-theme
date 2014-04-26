@@ -1,15 +1,16 @@
 {
+    "ENABLE_AUTO_COMPLETION" : "Abilita l'autocompletamento dei BBCode",
     "INVALID_VAL" : "Il valore di '%' non è valido: ",
-    "NEW_NOTIFICATIONS" : "% nuov[a|e] notific[a|he]",
     "BLACK_OVERLAY_OPACITY" : "Opacità overlay: ",
+    "NEW_NOTIFICATIONS" : "% nuov[a|e] notific[a|he]",
     "INVALID_OPACITY" : "L'opacità dev'essere 0 <= valore <= 1",
-    "NO_PREFERENCE" : "Nessuna preferenza",
-    "ALWAYS_USE_HTTPS" : "Usa sempre HTTPS",
-    "BLACK_OVERLAY_ENABLE" : "Abilita l'overlay nero",
     "ALWAYS_USE_HTTP" : "Usa sempre HTTP",
+    "BLACK_OVERLAY_ENABLE" : "Abilita l'overlay nero",
+    "ALWAYS_USE_HTTPS" : "Usa sempre HTTPS",
+    "NO_PREFERENCE" : "Nessuna preferenza",
     "SAVE" : "Salva",
     "NEW_PMS" : "% nuov[o|i] messagg[io|i] privat[o|i]",
-    "TOP_BAR_FIXED" : "Rendi la barra superiore fissa",
+    "ENABLE_DESKTOP_NOTIFICATIONS" : "Abilita notifiche desktop",
     "PREFERRED_PROTOCOL" : "Protocollo preferito",
-    "ENABLE_DESKTOP_NOTIFICATIONS" : "Abilita notifiche desktop"
+    "TOP_BAR_FIXED" : "Rendi la barra superiore fissa"
 }
