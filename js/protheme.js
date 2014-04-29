@@ -778,16 +778,33 @@ var ProTheme = {
             },
             body: {
                 marginTop: 0
+            },
+            single_comment: {
+                paddingTop: 0,
+                marginTop: 0
             }
         };
         if (PreferencesAPI.getValue ("fixed-top-bar", true))
         {
-            fixed_css.site_title.position = "fixed";
-            fixed_css.body.marginTop      = "55px";
+            fixed_css.site_title.position       = "fixed",
+            fixed_css.body.marginTop            = "55px",
+            fixed_css.single_comment.paddingTop = "55px",
+            fixed_css.single_comment.marginTop  = "-55px";
         }
         if (fixed_css.body.marginTop != 0 || !normal_restore)
-            $("body").css (fixed_css.body)
-            .find ("#site_title").css (fixed_css.site_title);
+        {
+            $("body")
+                .css  (fixed_css.body)
+                .find ("#site_title")
+                .css  (fixed_css.site_title);
+            if ("$singleCommentStyleTag" in ProTheme)
+                ProTheme.$singleCommentStyleTag.remove();
+            ProTheme.$singleCommentStyleTag = $(
+                "<style type='text/css'>.singlecomment { margin-top: " +
+                fixed_css.single_comment.marginTop + "; padding-top: " +
+                fixed_css.single_comment.paddingTop + "; }</style>"
+            ).appendTo ("head");
+        }
         // autocompletion
         if (PreferencesAPI.getValue ("auto-completion-bb", true))
         {

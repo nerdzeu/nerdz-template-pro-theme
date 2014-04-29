@@ -319,26 +319,45 @@ $(document).ready(function() {
     });
 
     plist.on('click',".showcomments",function() {
-        var refto = $('#' + $(this).data('refto'));
-        if(refto.html() === '')
+        var $refto = $('#' + $(this).data('refto'));
+        if ($refto.html() === '')
         {
-            refto.html(loading+'...');
+            $refto.html(loading+'...');
             N.html[plist.data ('type')].getComments ({
                 hpid: $(this).data ('hpid'),
                 start: 0,
                 num: 10
             }, function (res) {
-                refto.html (res);
+                $refto.html (res);
                 if (document.location.hash == '#last')
-                    refto.find ('.frmcomment textarea[name=message]').focus();
-                else if (document.location.hash)
-                    $(document).scrollTop ($(document.location.hash).offset().top);
+                    $refto.find ('.frmcomment textarea[name=message]').focus();
+                else if (/^#c\d+/.test (document.location.hash))
+                {
+                    // note: the variables prefixed with $ are jquery objects
+                    // (someone may think that I'm doin' shit like php)
+                    var such_cb = function() {
+                            var $new_comment = $(document.location.hash);
+                            if ($new_comment.length > 0)
+                            {
+                                $new_comment.find (".nerdz_comments").css ("background-color", "lightyellow");
+                                $(document).scrollTop ($new_comment.offset().top);
+                            }
+                        };
+                    if ($(document.location.hash).length < 1)
+                    {
+                        var $final_elements =
+                            [ $refto.find (".all_comments_btn"), $refto.find (".more_btn") ]
+                            .filter (function ($elm) { return $elm.is (":visible"); });
+                        if ($final_elements.length > 0)
+                            $final_elements.shift().trigger ("click", such_cb);
+                    }
+                    else
+                        such_cb();
+                }
             });
         }
         else
-        {
-            refto.html('');
-        }
+            $refto.html('');
     });
 
     plist.on('click', ".vote", function() {
@@ -383,7 +402,7 @@ $(document).ready(function() {
     });
     
 
-    plist.on ('click', '.more_btn', function() {
+    plist.on ('click', '.more_btn', function (evt, cb) {
         var moreBtn     = $(this),
             commentList = moreBtn.parents ("div[id^=\"commentlist\"]"),
             hpid        = /^post(\d+)$/.exec (commentList.parents ("div[id^=\"post\"]").attr ("id"))[1],
@@ -403,6 +422,7 @@ $(document).ready(function() {
                 btnDb.find (".scroll_bottom_separator").hide();
                 btnDb.find (".all_comments_hidden").hide();
             }
+            if (typeof cb === 'function') cb();
         });
     });
 
@@ -415,7 +435,7 @@ $(document).ready(function() {
         });
     });
 
-    plist.on ('click', '.all_comments_btn', function() {
+    plist.on ('click', '.all_comments_btn', function (evt, cb) {
         // TODO do not waste precious performance by requesting EVERY
         // comment, but instead adapt the limited function to allow
         // specifying a start parameter without 'num'.
@@ -434,6 +454,7 @@ $(document).ready(function() {
             moreBtn.hide().data ("morecount", Math.ceil (parseInt (parsed.find (".commentcount").html()) / 10));
             push.find ("div[id^=\"c\"]").remove();
             push.find ('form.frmcomment').eq (0).parent().before (res);
+            if (typeof cb === 'function') cb();
         });
     });
 
@@ -454,24 +475,22 @@ $(document).ready(function() {
         var post = refto.html();
         var hpid = $(this).data('hpid');
 
-          N.json[plist.data('type')].delPostConfirm({ hpid: hpid },function(m) {
-              if(m.status == 'ok') {
-                  refto.html('<div style="text-align:center">' + m.message + '<br /><span id="delPostOk' + hpid +'" style="cursor:pointer">YES</span>|<span id="delPostNo'+hpid+'" style="cursor:pointer">NO</span></div>');
-                  refto.on('click','#delPostOk'+hpid,function() {
-                        N.json[plist.data('type')].delPost({ hpid: hpid    },function(j) {
-                             if(j.status == 'ok') {
-                                  refto.hide();
-                             }
-                             else {
-                                  refto.html(j.message);
-                             }
-                        });
-                  });
-
-                  refto.on('click','#delPostNo'+hpid,function() {
-                        refto.html(post);
-                  });
-             }
+        N.json[plist.data('type')].delPostConfirm({ hpid: hpid },function(m) {
+            if (m.status == 'ok')
+            {
+                refto.html('<div style="text-align:center">' + m.message + '<br /><span id="delPostOk' + hpid +'" style="cursor:pointer">YES</span>|<span id="delPostNo'+hpid+'" style="cursor:pointer">NO</span></div>');
+                refto.on('click','#delPostOk'+hpid,function() {
+                    N.json[plist.data('type')].delPost ({ hpid: hpid }, function(j) {
+                        if(j.status == 'ok')
+                            refto.hide();
+                        else
+                            refto.html(j.message);
+                    });
+                });
+                refto.on('click','#delPostNo'+hpid,function() {
+                    refto.html(post);
+                });
+            }
         });
     });
 
