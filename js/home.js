@@ -10,7 +10,7 @@ $(document).ready(function() {
                     // revert: real-height set in .data, this is not good because
                     // the actual height may change after this JS is executed
                     el.addClass ("compressed")
-                        .next().prepend ('<p class="more">&gt;&gt; ' + N.getLangData().EXPAND + ' &lt;&lt;</p>');
+                        .next().prepend ('<a><p class="more">&gt;&gt; ' + N.getLangData().EXPAND + ' &lt;&lt;</p></a>');
                 el.data ('parsed', 'wow');
             });
         },
@@ -97,7 +97,7 @@ $(document).ready(function() {
     });
     
     plist.on('click','.more',function() {
-        var me = $(this), par = me.parent(), jenk = par.prev();
+        var me = $(this).parent(), par = me.parent(), jenk = par.prev();
         if (me.data ('busy') == 'godyes') return;
         me.data ('busy', 'godyes');
         // switching back to the old hack
@@ -110,7 +110,7 @@ $(document).ready(function() {
             .css ("max-height", suchMaxHeight)
             .animate ({ maxHeight: suchHeight }, function() {
                 jenk.removeClass ("compressed").css ("max-height", "none");
-                me.slideUp ("slow", function() {
+                me.find ("p").slideUp ("slow", function() {
                     me.remove();
                 });
             });
