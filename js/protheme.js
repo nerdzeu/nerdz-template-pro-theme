@@ -757,7 +757,7 @@ var ProTheme = {
                 backgroundColor: "transparent",
                 boxShadow: "none"
             };
-            if (PreferencesAPI.getValue ("blackoverlay-enabled", true))
+            if (PreferencesAPI.getValue ("blackoverlay-enabled", false))
             {
                 var opa = PreferencesAPI.getValue (
                     "blackoverlay-opacity", "0.25"
