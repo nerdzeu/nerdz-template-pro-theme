@@ -566,7 +566,7 @@ var ProTheme = {
                     .append (
                         $(document.createElement("input")).attr (
                             "type", "checkbox"
-                        ).prop ("checked", true),
+                        ).prop ("checked", false),
                         " ", lang.BLACK_OVERLAY_ENABLE
                     );
                 // Black overlay opacity
@@ -820,7 +820,8 @@ var ProTheme = {
                 })*/
             );
             $("body").on ("focus", ".bbcode-enabled", function() {
-                var $me = $(this), next_offset = [], old_len = 0;
+                var $me = $(this), next_offset = [], old_len = 0,
+                    fired = false;
                 if ($me.data ("ac-enabled")) return;
                 $me.data ("ac-enabled", true);
                 $me.atwho ({
@@ -905,7 +906,13 @@ var ProTheme = {
                     old_len = $(this).val().length;
                     if (index === -1) return console.error ("index = -1 :(");
                     $(this).caret ("pos", pos - str.length + index);
+                    fired = true;
                 }).on ("keydown", function (e) {
+                    if (fired)
+                    {
+                        fired = false;
+                        return;
+                    }
                     if (next_offset !== -1 && e.which === 9)
                     {
                         e.preventDefault();
