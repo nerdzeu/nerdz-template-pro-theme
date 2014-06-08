@@ -495,6 +495,7 @@ var ProTheme = {
         list: [
             "user", "project", "img", "b", "cur", "small", "big", "del", "u",
             "gist", "youtube", "yt",  "m", "math","quote", "spoiler", "url",
+            "video", "twitter", "music",
             { name: "url=", hasParam: true, useQuotes: true, paramDesc: "url"},
             { name: "code", hasParam: true, paramDesc: "lang" },
             { name: "wiki", hasParam: true, paramDesc: "lang" },
