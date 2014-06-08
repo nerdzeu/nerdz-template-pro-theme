@@ -41,7 +41,7 @@ $(document).ready(function() {
         var me = $(this);
         var plist = $("#postlist");
         oldPlist = plist.html();
-        plist.html('<form id="blfrm">Motivation: <textarea style="width:100%; height:60px" id="blmot"></textarea><br /><input type="submit" value="Blacklist" /></form>');
+        plist.html('<form id="blfrm">Motivation: <textarea style="width:100%; height:60px" class="bbcode-enabled" id="blmot"></textarea><br /><input type="submit" value="Blacklist" /></form>');
         plist.on('submit','#blfrm',function(event) {
             event.preventDefault();
             me.html('...');
@@ -67,7 +67,7 @@ $(document).ready(function() {
 
     $("#profilepm").on('click',function() {
         var me = $(this), txt = me.html();
-        if(oldPlist == "") {
+        if(oldPlist === '') {
             me.html('...');
             N.html.pm.getForm(function(data) {
                 oldPlist = $("#postlist").html();

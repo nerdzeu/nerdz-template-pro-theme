@@ -69,7 +69,7 @@
         <div id="fast_nerdz">
             <div>
                 <form id="stdfrm">
-                    <textarea id="frmtxt" name="message" style="width: 100%; height: 60px"></textarea>
+                    <textarea id="frmtxt" name="message" class="bbcode-enabled" style="width: 100%; height: 60px"></textarea>
                     <input type="submit" value="{$nerdz_it}" style="float: right; margin-top:5px" />
                     <button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#frmtxt">{$preview}</button>
                     <button type="button" style="float:left; margin-top:5px" onclick="window.open('/bbcode.php')">BBCode</button>
@@ -89,9 +89,8 @@
     {if="!empty($followed_a)"}
         <div style="width:99%" class="title">
             {$you_follow}
-            <div style="font-style: italic" class="small">[{$followedonlinetot_n}/{$followedtot_n}]</div>
+            <div style="font-weight: normal" class="small">[{$followedonlinetot_n}/{$followedtot_n}]</div>
         </div>
-        <br />
         <div id="rightmenu">
             <ul id="followedlist" style="color: #AFAFAF">
             {loop="followed_a"}

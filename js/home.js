@@ -10,7 +10,7 @@ $(document).ready(function() {
                     // revert: real-height set in .data, this is not good because
                     // the actual height may change after this JS is executed
                     el.addClass ("compressed")
-                        .next().prepend ('<p class="more">&gt;&gt; ' + N.getLangData().EXPAND + ' &lt;&lt;</p>');
+                        .next().prepend ('<a><p class="more">&gt;&gt; ' + N.getLangData().EXPAND + ' &lt;&lt;</p></a>');
                 el.data ('parsed', 'wow');
             });
         },
@@ -36,7 +36,7 @@ $(document).ready(function() {
         },
         hideHidden = function() {
             var hidden = localStorage.getItem ("hid");
-            if (hidden != null)
+            if (hidden != null && hidden != "")
             {
                 var pids = hidden.split ("|").sort().reverse(), len = pids.length;
                 while (len--)
@@ -68,37 +68,58 @@ $(document).ready(function() {
                         $("#hp-cnt ul").html (pids);
                 }
             }
+            // Hide 'blacklisted user changed nickname'
+            // We ALWAYS have windows.idios that is the blacklisted users array
+            $("#postlist").find(".news a:nth-last-child(3)").each(function() {
+                if($.inArray($(this).html(), window.idiots) > -1) {
+                    $(this).parent().parent().hide();
+                }
+            });
             fixHeights();
         };
     plist.html('<h1>'+loading+'...</h1>');
+
+    plist.on('click', '.img_frame', function() {
+        var me = $(this), message = me.parents (".nerdz_message");
+        if ($(this).hasClass ("img_frame-extended") &&
+            message.find ("div:first").hasClass ("compressed"))
+            message.find (".more").click();
+    });
+
     plist.on('click',".spoiler",function(){
-      if($(this).data("parsed")) return;
-      $.each($(this).find("img"),function(){
-        m = (117-$(this).height())/2;
-        if (m>1)
-          $(this).css("margin-top", m)
-      })
-      $(this).data("parsed","1");
+        if ($(this).data("parsed")) return;
+        $.each ($(this).find("img"), function() {
+            var m = (117-$(this).height())/2;
+            if (m > 1)
+                $(this).css("margin-top", m)
+        })
+        $(this).data("parsed","1");
     });
     
     plist.on('click','.more',function() {
-        var me = $(this), par = me.parent(), jenk = par.prev();
+        var me = $(this).parent(), par = me.parent(), jenk = par.prev();
         if (me.data ('busy') == 'godyes') return;
         me.data ('busy', 'godyes');
         // switching back to the old hack
-        var suchHeight = jenk.removeClass ("compressed").height();
-        jenk.addClass ("compressed").animate ({ maxHeight: suchHeight }, function() {
-            jenk.removeClass ("compressed").css ("max-height", "none");
-            me.slideUp ("slow", function() {
-                me.remove();
+        // suchMaxHeight is a work-around for shitty browsers
+        // (anyone said Chrome?)
+        var suchMaxHeight = jenk.css ("max-height"),
+            suchHeight    = jenk.removeClass ("compressed")
+            .css ("max-height", "none").height();
+        jenk.addClass ("compressed")
+            .css ("max-height", suchMaxHeight)
+            .animate ({ maxHeight: suchHeight }, function() {
+                jenk.removeClass ("compressed").css ("max-height", "none");
+                me.find ("p").slideUp ("slow", function() {
+                    me.remove();
+                });
             });
-        });
     });
 
     plist.on('click',".hide",function() {
         var pid = $(this).data('postid');
         var hidden = localStorage.getItem('hid');
-        if(hidden == null) {
+        if(hidden === null) {
             localStorage.setItem('hid',pid);
         }
         else
