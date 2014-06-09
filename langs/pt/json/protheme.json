@@ -6,6 +6,7 @@
     "BLACK_OVERLAY_OPACITY" : "Opacidade de sobreposição: ",
     "ENABLE_AUTO_COMPLETION" : "Habilitar AutoCompletar BBCode",
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Habilitar notificações de área de trabalho",
+    "ENABLE_MARKDOWN_SUPPORT" : "Habilitar o suporte do markdown",
     "FEATURES" : "Características",
     "INVALID_OPACITY" : "A opacidade deve ser 0 <= val <= 1",
     "INVALID_VAL" : "O valor de '%' é inválido: ",

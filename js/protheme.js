@@ -662,7 +662,7 @@ var ProTheme = {
                 // contains the key/value mappings of protheme.json
                 var lang, enableBlackOverlay, blackOverlayOpacity, topBarFixed,
                     enableAutoCompletion, preferredProtocol,
-                    enableDesktopNotifications;
+                    enableDesktopNotifications, enableMarkdown;
                 lang = CustomLangsAPI.getLang ("protheme");
                 // Enable black overlay
                 // boolean / checkbox
@@ -783,6 +783,12 @@ var ProTheme = {
                     },
                     display: ("Notification" in window)
                 });
+                // Enable markdown support
+                // boolean / checkbox
+                enableMarkdown = PreferencesAPI.createCheckbox ({
+                    name: "enable-markdown",
+                    displayName: lang.ENABLE_MARKDOWN_SUPPORT
+                });
                 PreferencesAPI.addSettings (
                     {
                         groupName: lang.BLACK_OVERLAY,
@@ -793,7 +799,8 @@ var ProTheme = {
                     {
                         groupName: lang.FEATURES,
                         groupSettings: [
-                            enableAutoCompletion, enableDesktopNotifications
+                            enableAutoCompletion, enableDesktopNotifications,
+                            enableMarkdown
                         ]
                     },
                     {
@@ -884,6 +891,30 @@ var ProTheme = {
                 fixed_css.single_comment.marginTop + "; padding-top: " +
                 fixed_css.single_comment.paddingTop + "; }</style>"
             ).appendTo ("head");
+        }
+        // markdown support
+        if (PreferencesAPI.getValue ("enable-markdown", false) &&
+            !$("script[src$='showdown.min.js']").length)
+        {
+            $("head").append (
+                $(document.createElement ("script")).attr ({
+                    type: "application/javascript",
+                    src:  "//cdn.rawgit.com/alfateam123/md2bbc/master" +
+                          "/src/showdown.min.js"
+                })
+            );
+            $("body").on ("click", "input[type=submit]", function() {
+                if (typeof Showdown !== "object") return;
+                var converter = new Showdown.converter ({
+                    multiline_quoting: true,
+                    check_quotes_into_lists: true,
+                    recognize_bbcode: true
+                });
+                $(".bbcode-enabled").each (function() {
+                    var $me = $(this);
+                    $me.val (converter.makeBBCode ($me.val()));
+                });
+            });
         }
         // autocompletion
         if (PreferencesAPI.getValue ("auto-completion-bb", true) &&

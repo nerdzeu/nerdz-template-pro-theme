@@ -6,6 +6,7 @@
     "BLACK_OVERLAY_OPACITY" : "Opacità overlay: ",
     "ENABLE_AUTO_COMPLETION" : "Abilita l'autocompletamento dei BBCode",
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Abilita notifiche desktop",
+    "ENABLE_MARKDOWN_SUPPORT" : "Abilita il supporto al markdown",
     "FEATURES" : "Funzionalità",
     "INVALID_OPACITY" : "L'opacità dev'essere 0 <= valore <= 1",
     "INVALID_VAL" : "Il valore di '%' non è valido: ",

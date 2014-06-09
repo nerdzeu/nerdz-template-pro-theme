@@ -6,6 +6,7 @@
     "BLACK_OVERLAY_OPACITY" : "Opacitate overlay: ",
     "ENABLE_AUTO_COMPLETION" : "Permite BBCode autocompletion",
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Activare notificări desktop",
+    "ENABLE_MARKDOWN_SUPPORT" : "Activaţi suportul markdown",
     "FEATURES" : "Caracteristici",
     "INVALID_OPACITY" : "Opacitatea ar trebui să fie 0 <= val <= 1",
     "INVALID_VAL" : "Valoarea '%' este invalid: ",

@@ -6,6 +6,7 @@
     "BLACK_OVERLAY_OPACITY" : "Prekrivanje neprozirnost: ",
     "ENABLE_AUTO_COMPLETION" : "Omogućite BBCode dovršavanje",
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Omogućili obavijesti radne površine",
+    "ENABLE_MARKDOWN_SUPPORT" : "Omogućite markdown podršku",
     "FEATURES" : "Značajke",
     "INVALID_OPACITY" : "Neprozirnosti treba biti 0 <= val <= 1",
     "INVALID_VAL" : "Vrijednost '%' je nevažeća: ",

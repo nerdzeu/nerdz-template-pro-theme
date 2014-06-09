@@ -6,6 +6,7 @@
     "BLACK_OVERLAY_OPACITY" : "Overlay-Deckkraft: ",
     "ENABLE_AUTO_COMPLETION" : "Aktivieren Sie die automatische Vervollständigung der BBCode",
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Desktop-Benachrichtigungen aktivieren",
+    "ENABLE_MARKDOWN_SUPPORT" : "Markdown-Unterstützung aktivieren",
     "FEATURES" : "Funktionen",
     "INVALID_OPACITY" : "Die Opazität sollte 0 <= val <= 1",
     "INVALID_VAL" : "Der Wert von '%' ist ungültig",
