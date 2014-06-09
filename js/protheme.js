@@ -79,7 +79,8 @@
      *
      * @method addSettings
      * @param {Object} settings* An object list containing detailed information
-     * about every setting. Any object __must__ have the following structure:
+     * about every setting.
+     * A setting is structured like this:
      *
      *     {
      *       name: "short-setting-name",
@@ -103,25 +104,24 @@
      *       onRestore: function (object, restoredValue) {},
      *       // A boolean value which determines if the setting should be shown
      *       // or not. If this is set to false, the setting won't be added at
-     *       // all. This is useful when you need to check if some prerequisites
-     *       // are met before showing the option to the user.
+     *       // all. This is useful when you need to check if some
+     *       // prerequisites are met before showing the option to the user.
      *       // By default it is set to true, and you don't need to include it.
      *       display: true
      *     }
      * 
      * Adding other fields is fine, as long as you don't remove the required
      * ones specified in the structure.
-     * Here's a simple example: a checkbox.
+     *
+     * You can also create settings groups, which are structured like this:
      *
      *     {
-     *        name: "my-checkbox", // will be saved with this name
-     *        element: $(document.createElement ("input"))..., // not covered
-     *        onSave: function (obj) {
-     *          return obj.element.is (":checked");
-     *        },
-     *        onRestore: function (obj, value) {
-     *          obj.element.prop ("checked", value);
-     *        }
+     *       // The name of the group.
+     *       groupName: "Miscellaneous settings",
+     *       // An array of settings.
+     *       groupSettings: [
+     *        { ... }, { ... }
+     *       ]
      *     }
      *
      */
@@ -180,6 +180,45 @@
         if (typeof cb === 'function')
             _saveCallback = cb;
     };
+    /**
+     * Creates a checkbox object that can be used with
+     * {{#crossLink "PreferencesAPI/addSettings:method"}}{{/crossLink}}.
+     *
+     * @method createCheckbox
+     * @return {Object} The created setting.
+     * @param {Object} params Configuration parameters. Fields:
+     *
+     * - `name`: the codename of your setting.
+     * - `displayName`: the name of the setting that will be shown to the user.
+     * - `defaultValue`: optional. The default value (defaults to `false`).
+     * - `onSave`: optional. A custom save callback.
+     * - `onRestore`: optional. A custom restore callback.
+     *
+     */
+    PreferencesAPI.createCheckbox = function (params) {
+        if (typeof params !== "object" ||
+            !params.hasOwnProperty ("name") ||
+            !params.hasOwnProperty ("displayName"))
+            throw "Missing 'name' / 'displayName' in the parameters.";
+        if (params.hasOwnProperty ("element"))
+            throw "User error: please insert a new user (don't use 'element')";
+        return $.extend ({
+            element:
+                $(document.createElement ("label"))
+                .append (
+                    $(document.createElement ("input")).attr (
+                        "type", "checkbox"
+                    ).prop ("checked", !!params.defaultValue),
+                    " ", params.displayName
+                ),
+            onSave: function (obj) {
+                return obj.element.find ("input").is (":checked");
+            },
+            onRestore: function (obj, restored) {
+                obj.element.find ("input").prop ("checked", restored);
+            }
+        }, params);
+    };
     // Private methods
     // Methods that should not be accessed directly are
     // here.
@@ -202,15 +241,68 @@
         for (var i = 0; i < _settings.length; i++)
         {
             if (typeof _settings[i] !== "object") continue;
-            if (_storage[_usrNs].hasOwnProperty (_settings[i].name))
-                _settings[i].onRestore (
-                    _settings[i],
-                    _storage[_usrNs][_settings[i].name]
+            var realSettings = [];
+            if (_settings[i].hasOwnProperty ("groupName") &&
+                _settings[i].hasOwnProperty ("groupSettings") &&
+                Array.isArray (_settings[i].groupSettings))
+            {
+                // we are dealing with a group.
+                // 
+                pushTo =
+                    $(document.createElement("div"))
+                    .addClass ("group-container")
+                    .append (
+                        $(document.createElement ("span")).text ("[-]"),
+                        " ",
+                        $(document.createElement ("span")).text (
+                            _settings[i].groupName
+                        ),
+                        $(document.createElement ("div")).click (function (e) {
+                            e.stopPropagation();
+                        })
+                    )
+                    .css ("cursor", "pointer")
+                    .click (function() {
+                        var $status  = $(this).find ("span").eq (0),
+                            $context = $(this).find ("div").eq (0).stop();
+                        $context.slideToggle();
+                        $status.text (
+                            $status.text() === "[-]" ? "[+]" : "[-]"
+                        );
+                    })
+                    .insertAfter (pushTo);
+                // because I'm a f*g
+                var _textContainers = pushTo.find ("span");
+                // yes.
+                pushTo.find ("div").css (
+                    "marginLeft",
+                    _textContainers.eq (1).offset().left -
+                        _textContainers.eq (0).offset().left
                 );
-            pushTo = $(document.createElement("div"))
-                     .append (_settings[i].element)
-                     .insertAfter (pushTo);
-            console.log ("PrefsAPI: registered: %s", _settings[i].name);
+                realSettings = _settings[i].groupSettings;
+            }
+            else
+                realSettings = [ _settings[i] ];
+            for (var j = 0; j < realSettings.length; j++)
+            {
+                var sobj = realSettings[j], elm;
+                if (sobj.hasOwnProperty ("display") && !sobj.display)
+                    continue;
+                if (_storage[_usrNs].hasOwnProperty (sobj.name))
+                    sobj.onRestore (
+                        sobj,
+                        _storage[_usrNs][sobj.name]
+                    );
+                elm =
+                    $(document.createElement("div"))
+                    .attr ("id", sobj.name) // just for nerdy aesthetics
+                    .append (sobj.element);
+                if (pushTo.hasClass ("group-container"))
+                    pushTo.find ("div").eq (0).append (elm);
+                else
+                    pushTo = elm.insertAfter (pushTo);
+                console.log ("PrefsAPI: registered: %s", sobj.name);
+            }
         }
         if (_settings.length > 0)
         {
@@ -243,30 +335,43 @@
         $.extend (storageCopy, _storage);
         for (var i = 0; i < _settings.length; i++)
         {
-            try
+            var realSettings = [];
+            if (_settings[i].hasOwnProperty ("groupName") &&
+                _settings[i].hasOwnProperty ("groupSettings") &&
+                Array.isArray (_settings[i].groupSettings))
+                realSettings = _settings[i].groupSettings;
+            else
+                realSettings = [ _settings[i] ];
+            for (var j = 0; j < realSettings.length; j++)
             {
-                storageCopy[_usrNs][_settings[i].name] =
-                    _settings[i].onSave (_settings[i]);
-            }
-            catch (e)
-            {
-                setStatus (
-                    (
+                if (realSettings[j].hasOwnProperty ("display") &&
+                    !realSettings[j].display)
+                    continue;
+                try
+                {
+                    storageCopy[_usrNs][realSettings[j].name] =
+                        realSettings[j].onSave (realSettings[j]);
+                }
+                catch (e)
+                {
+                    setStatus (
                         (
-                            "CustomLangsAPI" in window &&
-                            CustomLangsAPI.getFirstAvailMatch (
-                                "INVALID_VAL"
-                            )
-                        ) || "The value of '%' is invalid: "
-                    ).replace ("%", _settings[i].name) + e,
-                    false
-                );
-                return;
+                            (
+                                "CustomLangsAPI" in window &&
+                                CustomLangsAPI.getFirstAvailMatch (
+                                    "INVALID_VAL"
+                                )
+                            ) || "The value of '%' is invalid: "
+                        ).replace ("%", realSettings[j].name) + e,
+                        false
+                    );
+                    return;
+                }
             }
         }
         _storage = storageCopy;
         localStorage.setItem ("prefsAPI", JSON.stringify (_storage));
-        console.log ("PrefsAPI: saved %d element(s)", i);
+        console.log ("PrefsAPI: the settings were saved correctly.");
         setStatus ("OK", true);
         if (typeof _saveCallback === 'function')
             _saveCallback();
@@ -561,85 +666,20 @@ var ProTheme = {
                 lang = CustomLangsAPI.getLang ("protheme");
                 // Enable black overlay
                 // boolean / checkbox
-                enableBlackOverlay =
-                    $(document.createElement ("label"))
-                    .append (
-                        $(document.createElement("input")).attr (
-                            "type", "checkbox"
-                        ).prop ("checked", false),
-                        " ", lang.BLACK_OVERLAY_ENABLE
-                    );
+                enableBlackOverlay = PreferencesAPI.createCheckbox ({
+                    name: "blackoverlay-enabled",
+                    displayName: lang.BLACK_OVERLAY_ENABLE
+                });
                 // Black overlay opacity
                 // double / inputbox (0 <= val <= 1)
-                blackOverlayOpacity = $(document.createElement("label"))
-                    .append (lang.BLACK_OVERLAY_OPACITY,
-                        $(document.createElement("input"))
-                        .attr ("type", "text").val ("0.25")
-                    );
-                // Fixed top bar
-                // boolean / checkbox
-                topBarFixed =
-                    $(document.createElement ("label"))
-                    .append (
-                        $(document.createElement ("input")).attr (
-                            "type", "checkbox"
-                        ).prop ("checked", true),
-                        " ", lang.TOP_BAR_FIXED
-                    );
-                // Autocompletion (using At.js)
-                // boolean / checkbox
-                enableAutoCompletion =
-                    $(document.createElement ("label"))
-                    .append (
-                        $(document.createElement ("input")).attr (
-                            "type", "checkbox"
-                        ).prop ("checked", true),
-                        " ", lang.ENABLE_AUTO_COMPLETION
-                    );
-                // Preferred protocol
-                // string / combobox (whatever, http, https)
-                preferredProtocol = $(document.createElement ("label"))
-                    .append (lang.PREFERRED_PROTOCOL, ": ",
-                        $(document.createElement("select"))
-                        .append (
-                            $(document.createElement("option"))
-                            .text (lang.NO_PREFERENCE)
-                            .val ("whatever"),
-                            $(document.createElement("option"))
-                            .text (lang.ALWAYS_USE_HTTP)
-                            .val ("http"),
-                            $(document.createElement("option"))
-                            .text (lang.ALWAYS_USE_HTTPS)
-                            .val ("https")
-                        )
-                        .change (function() {
-                            // hack to avoid messing with the location
-                            // unnecessarily
-                            $(this).data ("has-changed", true);
-                        })
-                    );
-                // Enable desktop notifications
-                // boolean / checkbox
-                enableDesktopNotifications =
-                    $(document.createElement ("label"))
-                    .append (
-                        $(document.createElement("input")).attr (
-                            "type", "checkbox"
-                        ), " ",
-                        lang.ENABLE_DESKTOP_NOTIFICATIONS
-                    );
-                PreferencesAPI.addSettings ({
-                    name: "blackoverlay-enabled",
-                    element: enableBlackOverlay,
-                    onSave: function (obj) {
-                        return obj.element.find ("input").is (":checked");
-                    },
-                    onRestore: function (obj, restored) {
-                        obj.element.find ("input").prop ("checked", restored);
-                    }
-                }, {
+                blackOverlayOpacity = {
                     name: "blackoverlay-opacity",
-                    element: blackOverlayOpacity,
+                    element:
+                        $(document.createElement("label"))
+                        .append (lang.BLACK_OVERLAY_OPACITY,
+                            $(document.createElement("input"))
+                            .attr ("type", "text").val ("0.25")
+                        ),
                     onSave: function (obj) {
                         var text = obj.element.find ("input").val();
                         if (!/^\d+(?:\.\d+)?$/.test (text) ||
@@ -650,27 +690,46 @@ var ProTheme = {
                     onRestore: function (obj, restored) {
                         obj.element.find ("input").val (restored);
                     }
-                }, {
+                };
+                // Fixed top bar
+                // boolean / checkbox
+                topBarFixed = PreferencesAPI.createCheckbox ({
                     name: "fixed-top-bar",
-                    element: topBarFixed,
-                    onSave: function (obj) {
-                        return obj.element.find ("input").is (":checked");
-                    },
-                    onRestore: function (obj, restored) {
-                        obj.element.find ("input").prop ("checked", restored);
-                    }
-                }, {
+                    displayName: lang.TOP_BAR_FIXED,
+                    defaultValue: true
+                });
+                // Autocompletion (using At.js)
+                // boolean / checkbox
+                enableAutoCompletion = PreferencesAPI.createCheckbox ({
                     name: "auto-completion-bb",
-                    element: enableAutoCompletion,
-                    onSave: function (obj) {
-                        return obj.element.find ("input").is (":checked");
-                    },
-                    onRestore: function (obj, restored) {
-                        obj.element.find ("input").prop ("checked", restored);
-                    }
-                }, {
+                    displayName: lang.ENABLE_AUTO_COMPLETION,
+                    defaultValue: true
+                });
+                // Preferred protocol
+                // string / combobox (whatever, http, https)
+                preferredProtocol = {
                     name: "preferred-protocol",
-                    element: preferredProtocol,
+                    element:
+                        $(document.createElement ("label"))
+                        .append (lang.PREFERRED_PROTOCOL, ": ",
+                            $(document.createElement("select"))
+                            .append (
+                                $(document.createElement("option"))
+                                .text (lang.NO_PREFERENCE)
+                                .val ("whatever"),
+                                $(document.createElement("option"))
+                                .text (lang.ALWAYS_USE_HTTP)
+                                .val ("http"),
+                                $(document.createElement("option"))
+                                .text (lang.ALWAYS_USE_HTTPS)
+                                .val ("https")
+                            )
+                            .change (function() {
+                                // hack to avoid messing with the location
+                                // unnecessarily
+                                $(this).data ("has-changed", true);
+                            })
+                        ),
                     onSave: function (obj) {
                         var val = obj.element.find ("option:selected").val();
                         if (obj.element.find ("select").data ("has-changed"))
@@ -693,9 +752,12 @@ var ProTheme = {
                         obj.element.find ('option[value="' + restored + '"]')
                             .prop ('selected', true);
                     }
-                }, {
+                };
+                // Enable desktop notifications
+                // boolean / checkbox
+                enableDesktopNotifications = PreferencesAPI.createCheckbox ({
                     name: "desktop-notifications",
-                    element: enableDesktopNotifications,
+                    displayName: lang.ENABLE_DESKTOP_NOTIFICATIONS,
                     onSave: function (obj) {
                         if (!obj.element.find ("input").is (":checked"))
                         {
@@ -719,11 +781,28 @@ var ProTheme = {
                             });
                         return false;
                     },
-                    onRestore: function (obj, restored) {
-                        obj.element.find ("input").prop ("checked", restored);
-                    },
                     display: ("Notification" in window)
                 });
+                PreferencesAPI.addSettings (
+                    {
+                        groupName: lang.BLACK_OVERLAY,
+                        groupSettings: [
+                            enableBlackOverlay, blackOverlayOpacity
+                        ]
+                    },
+                    {
+                        groupName: lang.FEATURES,
+                        groupSettings: [
+                            enableAutoCompletion, enableDesktopNotifications
+                        ]
+                    },
+                    {
+                        groupName: lang.MISCELLANEOUS,
+                        groupSettings: [
+                            topBarFixed, preferredProtocol
+                        ]
+                    }
+                );
             });
         });
         PreferencesAPI.setOnSaveCallback (ProTheme.restorePreferences);
@@ -807,17 +886,14 @@ var ProTheme = {
             ).appendTo ("head");
         }
         // autocompletion
-        if (PreferencesAPI.getValue ("auto-completion-bb", true))
+        if (PreferencesAPI.getValue ("auto-completion-bb", true) &&
+            !$("script[src$='at.js']").length)
         {
             $("head").append (
                 $(document.createElement ("script")).attr ({
                     type: "application/javascript",
                     src:  "//cdn.jsdelivr.net/g/caret.js,at.js"
-                })/*, merged in default.css
-                $(document.createElement ("link")).attr ({
-                    rel: "stylesheet",
-                    href:"//cdn.jsdelivr.net/at.js/latest/css/jquery.atwho.css"
-                })*/
+                })
             );
             $("body").on ("focus", ".bbcode-enabled", function() {
                 var $me = $(this), next_offset = [], old_len = 0,
