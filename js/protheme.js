@@ -220,8 +220,7 @@
         }, params);
     };
     // Private methods
-    // Methods that should not be accessed directly are
-    // here.
+    // Methods that should not be accessed directly are here.
     /**
      * Called when the section set in the initialization method
      * is loaded by the user. This adds the settings to the DOM
@@ -403,6 +402,7 @@
     var _tplNo     = "0",
         _currLang  = "en",
         _langFiles = {},
+        _hasFailed = false, // true if retrieveCurrentLanguage fails
         _callback;
 
     /**
@@ -530,6 +530,13 @@
      * @private
      */
     function retrieveCurrentLanguage() {
+        var failHandler = function() {
+            console.error (
+                "LangsAPI: can't retrieve currentLanguage. Defaulting to %s",
+                _currLang
+            );
+            _hasFailed = true;
+        };
         // the ?api is used to avoid the triggering of the global
         // AJAX handler in the PreferencesAPI
         $.get ("/pages/preferences/language.html.php?api", function (res) {
@@ -539,12 +546,9 @@
                 _currLang = lang.val();
                 console.log ("LangsAPI: currentLanguage is %s", _currLang);
             }
-        }).fail (function() {
-            console.error (
-                "LangsAPI: can't retrieve currentLanguage. Defaulting to %s",
-                _currLang
-            );
-        }).always (loadLanguages);
+            else
+                failHandler();
+        }).fail (failHandler).always (loadLanguages);
     }
     /**
      * Loads the language from the remote server from the path
@@ -555,7 +559,14 @@
      * @private
      */
     function loadLanguages() {
-        var cache = {}; cache["tpl-" + _tplNo] = {};
+        // no cache/cake for the bad boys
+        if (!_hasFailed)
+        {
+            var cache = {};
+            cache["tpl-" + _tplNo] = {};
+        }
+        else
+            console.log ("LangsAPI: the cache has been disabled");
         for (var lname in _langFiles)
         {
             console.log ("LangsAPI: %s: loading", lname);
@@ -581,9 +592,12 @@
                 );
                 _langFiles[lname] = res;
                 // store in the cache
-                cache["updated"] = Date.now();
-                cache["tpl-" + _tplNo][lname] = res;
-                localStorage.setItem ("langsApiCache", JSON.stringify (cache));
+                if (!_hasFailed)
+                {
+                    cache["updated"] = Date.now();
+                    cache["tpl-" + _tplNo][lname] = res;
+                    localStorage.setItem ("langsApiCache", JSON.stringify (cache));
+                }
                 _callback (lname);
             }).fail (function() {
                 console.error (
@@ -734,11 +748,6 @@ var ProTheme = {
                         var val = obj.element.find ("option:selected").val();
                         if (obj.element.find ("select").data ("has-changed"))
                             setTimeout (function() {
-                                // TODO: we are doing this hack because
-                                // localStorage is not shared between HTTP
-                                // and HTTPS sessions. However, we should do
-                                // this with the whole settings, otherwise they
-                                // will be desynced.
                                 document.location.href = 
                                     (document.location.protocol === 'https:'
                                         ? 'http'
