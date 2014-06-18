@@ -12,7 +12,8 @@
  * @static
  */
 (function (PreferencesAPI) {
-    var _available_sections = [
+    var LS_KEY = "prefsAPI",// the key we are using to store stuff in lStorage
+        _available_sections = [
             "account", "profile", "guests", "projects",
             "language", "themes", "delete"
         ],
@@ -42,15 +43,15 @@
         if ($.inArray (sectionId, _available_sections) === -1)
             throw "Invalid sectionId. Please read the documentation.";
         _usrNs = namespace;
-        _storage[_usrNs] = {};
         // load preferences
-        if (localStorage.getItem ("prefsAPI") !== null)
+        if (localStorage.getItem (LS_KEY) !== null)
         {
-            var storage_tmp = JSON.parse (localStorage.getItem ("prefsAPI"));
-            if (typeof storage_tmp         === 'object' &&
-                typeof storage_tmp[_usrNs] === 'object')
-                _storage[_usrNs] = storage_tmp[_usrNs];
+            var storage_tmp = JSON.parse (localStorage.getItem (LS_KEY));
+            if (typeof storage_tmp === 'object')
+                _storage = storage_tmp;
         }
+        if (!(_usrNs in _storage))
+            _storage[_usrNs] = {};
         // hook in preferences.php if we can
         if (document.location.pathname === "/preferences.php")
         {
@@ -116,6 +117,8 @@
      * You can also create settings groups, which are structured like this:
      *
      *     {
+     *       // The codename of the group. Must be unique.
+     *       groupCodeName: "miscellaneous",
      *       // The name of the group.
      *       groupName: "Miscellaneous settings",
      *       // An array of settings.
@@ -127,9 +130,9 @@
      */
     PreferencesAPI.addSettings = function() {
         for (var i = 0; i < arguments.length; i++)
-            if (typeof arguments[i] === 'object' &&
-                (!arguments[i].hasOwnProperty ("display")
-                    || arguments[i].display))
+            if (typeof arguments[i] === 'object' && (
+                !("display" in arguments[i]) ||
+                arguments[i].display))
                 _settings.push (arguments[i]);
         if (_hooked && _hookedSec === _section)
             onHookedSectionLoaded();
@@ -145,7 +148,7 @@
      * `name` is not defined in our storage.
      */
     PreferencesAPI.getValue = function (name, defaultValue) {
-        if (_storage[_usrNs].hasOwnProperty (name))
+        if (name in _storage[_usrNs])
             return _storage[_usrNs][name];
         return defaultValue;
     };
@@ -162,7 +165,7 @@
     PreferencesAPI.setValue = function (key, value) {
         _storage[_usrNs][key] = value;
         // save in the localStorage
-        localStorage.setItem ("prefsAPI", JSON.stringify (_storage));
+        store();
     };
     /**
      * Registers a callback which is called each time the
@@ -197,10 +200,9 @@
      */
     PreferencesAPI.createCheckbox = function (params) {
         if (typeof params !== "object" ||
-            !params.hasOwnProperty ("name") ||
-            !params.hasOwnProperty ("displayName"))
+            !("name" in params) || !("displayName" in params))
             throw "Missing 'name' / 'displayName' in the parameters.";
-        if (params.hasOwnProperty ("element"))
+        if ("element" in params)
             throw "User error: please insert a new user (don't use 'element')";
         return $.extend ({
             element:
@@ -223,8 +225,7 @@
     // Methods that should not be accessed directly are here.
     /**
      * Called when the section set in the initialization method
-     * is loaded by the user. This adds the settings to the DOM
-     * and restores the values.
+     * is loaded by the user. This draws the preferences UI.
      *
      * @method onHookedSectionLoaded
      * @private
@@ -237,57 +238,89 @@
                      .attr ("id", "prefsApiContainer")
                      .insertAfter ($("#content form"));
         pushTo = $(document.createElement("hr")).appendTo (pushTo);
+        var hiddenGroups = [];
+        if ("hidden-groups" in _storage[_usrNs] &&
+            Array.isArray (_storage[_usrNs]["hidden-groups"]))
+            hiddenGroups = _storage[_usrNs]["hidden-groups"];
         for (var i = 0; i < _settings.length; i++)
         {
             if (typeof _settings[i] !== "object") continue;
-            var realSettings = [];
-            if (_settings[i].hasOwnProperty ("groupName") &&
-                _settings[i].hasOwnProperty ("groupSettings") &&
+            var realSettings;
+            if ("groupCodeName" in _settings[i] &&
+                "groupName"     in _settings[i] &&
+                "groupSettings" in _settings[i] &&
                 Array.isArray (_settings[i].groupSettings))
             {
                 // we are dealing with a group.
-                // 
+                _settings[i]["_group"] = true;
+                var gCodeName = _settings[i].groupCodeName,
+                    gText     = $.inArray (gCodeName, hiddenGroups) !== -1 ?
+                        "[+]" : "[-]";
                 pushTo =
                     $(document.createElement("div"))
                     .addClass ("group-container")
+                    .attr ("id", _settings[i].groupCodeName)
                     .append (
-                        $(document.createElement ("span")).text ("[-]"),
+                        $(document.createElement ("span")).text (gText),
                         " ",
                         $(document.createElement ("span")).text (
                             _settings[i].groupName
                         ),
                         $(document.createElement ("div")).click (function (e) {
                             e.stopPropagation();
-                        })
+                        })[gText === "[+]" ? "hide" : "show"]()
                     )
                     .css ("cursor", "pointer")
                     .click (function() {
-                        var $status  = $(this).find ("span").eq (0),
+                        var $me      = $(this),
+                            $status  = $(this).find ("span").eq (0),
                             $context = $(this).find ("div").eq (0).stop();
+                        if ($context.is (":visible"))
+                            hiddenGroups.push ($me.attr ("id"));
+                        else
+                            hiddenGroups.splice (hiddenGroups.indexOf (
+                                $me.attr ("id")), 1);
+                        _storage[_usrNs]["hidden-groups"] = hiddenGroups;
+                        store();
                         $context.slideToggle();
                         $status.text (
                             $status.text() === "[-]" ? "[+]" : "[-]"
                         );
                     })
                     .insertAfter (pushTo);
-                // because I'm a f*g
-                var _textContainers = pushTo.find ("span");
-                // yes.
+                // I'm sorry
+                var $textContainers = pushTo.find ("span");
                 pushTo.find ("div").css (
                     "marginLeft",
-                    _textContainers.eq (1).offset().left -
-                        _textContainers.eq (0).offset().left
+                    $textContainers.eq (1).offset().left -
+                    $textContainers.eq (0).offset().left
                 );
                 realSettings = _settings[i].groupSettings;
             }
             else
+            {
+                // This flag is used to avoid a nasty bug which causes the
+                // engine to add a preference to a group even if it is not
+                // part of it.
+                _settings[i]._notGrouped = true;
                 realSettings = [ _settings[i] ];
+            }
             for (var j = 0; j < realSettings.length; j++)
             {
                 var sobj = realSettings[j], elm;
-                if (sobj.hasOwnProperty ("display") && !sobj.display)
+                if (sobj.name === "hidden-groups")
+                    throw "Illegal preference name: hidden-groups";
+                // If we have 'display' and it is false, then we are 100%
+                // sure that the option is in a group, because options
+                // which are not in any groups and have a display value
+                // set to false are not added to the _settings array at all.
+                // (see PreferencesAPI#addSettings)
+                if ("display" in sobj && !sobj.display)
+                {
+                    _settings[i].groupSettings.splice (j--, 1);
                     continue;
-                if (_storage[_usrNs].hasOwnProperty (sobj.name))
+                }
+                if (sobj.name in _storage[_usrNs])
                     sobj.onRestore (
                         sobj,
                         _storage[_usrNs][sobj.name]
@@ -296,7 +329,7 @@
                     $(document.createElement("div"))
                     .attr ("id", sobj.name) // just for nerdy aesthetics
                     .append (sobj.element);
-                if (pushTo.hasClass ("group-container"))
+                if (pushTo.hasClass ("group-container") && !sobj._notGrouped)
                     pushTo.find ("div").eq (0).append (elm);
                 else
                     pushTo = elm.insertAfter (pushTo);
@@ -314,7 +347,7 @@
                     ) || "Save"
                 )
             }).click (onSaveBtnClicked).insertAfter (pushTo);
-            $(document.createElement("span"))
+            $(document.createElement ("span"))
                 .attr ("id", "prefsApiStatus")
                 .insertAfter (pushTo);
         }
@@ -334,18 +367,10 @@
         $.extend (storageCopy, _storage);
         for (var i = 0; i < _settings.length; i++)
         {
-            var realSettings = [];
-            if (_settings[i].hasOwnProperty ("groupName") &&
-                _settings[i].hasOwnProperty ("groupSettings") &&
-                Array.isArray (_settings[i].groupSettings))
-                realSettings = _settings[i].groupSettings;
-            else
-                realSettings = [ _settings[i] ];
+            var realSettings = _settings[i]["_group"] ?
+                _settings[i].groupSettings : [ _settings[i] ];
             for (var j = 0; j < realSettings.length; j++)
             {
-                if (realSettings[j].hasOwnProperty ("display") &&
-                    !realSettings[j].display)
-                    continue;
                 try
                 {
                     storageCopy[_usrNs][realSettings[j].name] =
@@ -369,7 +394,7 @@
             }
         }
         _storage = storageCopy;
-        localStorage.setItem ("prefsAPI", JSON.stringify (_storage));
+        store();
         console.log ("PrefsAPI: the settings were saved correctly.");
         setStatus ("OK", true);
         if (typeof _saveCallback === 'function')
@@ -388,6 +413,15 @@
         $("#prefsApiStatus")
             .css ("color", isSuccess ? "lime" : "red")
             .text (" " + msg);
+    }
+    /**
+     * Serializes the current storage object and puts it in the localStorage.
+     *
+     * @method store
+     * @private
+     */
+    function store() {
+        localStorage.setItem (LS_KEY, JSON.stringify (_storage));
     }
 }(window.PreferencesAPI = window.PreferencesAPI || {}));
 
@@ -425,7 +459,7 @@
                 _callback = arguments[i];
                 continue;
             }
-            if (!_langFiles.hasOwnProperty (arguments[i]))
+            if (!(arguments[i] in _langFiles))
                 _langFiles[arguments[i]] = {};
         }
         retrieveTemplateNumber(); // sync
@@ -441,8 +475,6 @@
         {
             var cache = JSON.parse (localStorage.getItem ("langsApiCache"));
             if (typeof cache === "object" &&
-                cache.hasOwnProperty ("updated") &&
-                cache.hasOwnProperty ("tpl-" + _tplNo) &&
                 typeof cache.updated === "number" &&
                 typeof cache["tpl-" + _tplNo] === "object" &&
                 (Date.now() - cache.updated) < 21600000) // 6 hours
@@ -487,7 +519,7 @@
         for (var lname in _langFiles)
         {
             if (typeof _langFiles[lname] === "object" &&
-                _langFiles[lname].hasOwnProperty (key))
+                key in _langFiles[lname])
                 return _langFiles[lname][key];
         }
         return defaultValue;
@@ -596,7 +628,8 @@
                 {
                     cache["updated"] = Date.now();
                     cache["tpl-" + _tplNo][lname] = res;
-                    localStorage.setItem ("langsApiCache", JSON.stringify (cache));
+                    localStorage.setItem ("langsApiCache",
+                        JSON.stringify (cache));
                 }
                 _callback (lname);
             }).fail (function() {
@@ -613,7 +646,7 @@ var ProTheme = {
     bbCodes: {
         list: [
             "user", "project", "img", "b", "cur", "small", "big", "del", "u",
-            "gist", "youtube", "yt",  "m", "math","quote", "spoiler", "url",
+            "gist", "youtube", "yt",  "m", "math", "quote", "spoiler", "url",
             "video", "twitter", "music",
             { name: "url=", hasParam: true, useQuotes: true, paramDesc: "url"},
             { name: "code", hasParam: true, paramDesc: "lang" },
@@ -623,6 +656,8 @@ var ProTheme = {
             { name: "hr", isEmpty: true }
         ],
         byName: function (search) {
+            // ProTheme: Doing the right thing since 2014. (C)
+            if (search === "yt" || search === "youtube") return "video";
             for (var i = 0; i < this.list.length; i++)
             {
                 if ((typeof this.list[i] === 'object' &&
@@ -770,14 +805,16 @@ var ProTheme = {
                     onSave: function (obj) {
                         if (!obj.element.find ("input").is (":checked"))
                         {
-                            $(document).off ("ajaxSuccess.ptheme");
+                            $(document)
+                                .off ("nerdz:pm.protheme")
+                                .off ("nerdz:notification.protheme");
                             return false;
                         }
                         else if (Notification.permission === "granted")
                             return true;
                         else/* if (Notification.permission !== "denied")*/
                             Notification.requestPermission (function (perm) {
-                                if (!('permission' in Notification))
+                                if (!("permission" in Notification))
                                     Notification.permission = perm;
                                 if (perm === "granted")
                                 {
@@ -790,7 +827,7 @@ var ProTheme = {
                             });
                         return false;
                     },
-                    display: ("Notification" in window)
+                    display: "Notification" in window
                 });
                 // Enable markdown support
                 // boolean / checkbox
@@ -800,12 +837,14 @@ var ProTheme = {
                 });
                 PreferencesAPI.addSettings (
                     {
+                        groupCodeName: "black-overlay",
                         groupName: lang.BLACK_OVERLAY,
                         groupSettings: [
                             enableBlackOverlay, blackOverlayOpacity
                         ]
                     },
                     {
+                        groupCodeName: "features",
                         groupName: lang.FEATURES,
                         groupSettings: [
                             enableAutoCompletion, enableDesktopNotifications,
@@ -813,6 +852,7 @@ var ProTheme = {
                         ]
                     },
                     {
+                        groupCodeName: "miscellaneous",
                         groupName: lang.MISCELLANEOUS,
                         groupSettings: [
                             topBarFixed, preferredProtocol
@@ -998,7 +1038,8 @@ var ProTheme = {
                                     }
                                     return ">" + $1 +
                                         "<strong>" + $2 + "</strong>";
-                                });
+                                }
+                            );
                         },
                         matcher: function (flag, subtext) {
                             var match;
@@ -1024,17 +1065,14 @@ var ProTheme = {
                     $(this).caret ("pos", pos - str.length + index);
                     fired = true;
                 }).on ("keydown", function (e) {
-                    if (fired)
-                    {
-                        fired = false;
-                        return;
-                    }
-                    if (next_offset !== -1 && e.which === 9)
+                    if (next_offset !== -1 && e.which === 9 && !fired)
                     {
                         e.preventDefault();
                         $(this).caret ("pos", next_offset);
                         next_offset = -1, old_len = 0;
                     }
+                    else if (fired)
+                        fired = false;
                 }).on ("keyup", function() {
                     if (next_offset !== -1)
                     {
@@ -1060,54 +1098,35 @@ var ProTheme = {
             PreferencesAPI.setValue ("desktop-notifications", false);
             return;
         }
-        // register the global ajax handler to intercept notifications and PMs
+        // notification events master race
         CustomLangsAPI.init ("protheme", function() {
-            console.log ("registering global ajax handler for notifications");
-            var hasNotified   = 0,
-                hasNotifiedPM = 0,
-                lang          = CustomLangsAPI.getLang ("protheme");
+            console.log ("Subscribing to NERDZ notification events");
+            var lang                   = CustomLangsAPI.getLang ("protheme"),
+                notificationEvtHandler = function (e, count) {
+                    if (count <= 0) return;
+                    var isPM = e.type === "nerdz:pm";
+                    new Notification ("NERDZ", {
+                        body: ProTheme.parseMultiLocalization (
+                            isPM ?
+                            lang.NEW_PMS :
+                            lang.NEW_NOTIFICATIONS,
+                            count
+                        ),
+                        icon: document.location.protocol + "//" +
+                              document.location.host +
+                              "/static/images/winicon.png"
+                    }).addEventListener ("click", function() {
+                        if (isPM)
+                            $("#gotopm").click();
+                        else
+                            $("#notifycounter").click();
+                    });
+                };
             $(document)
-                .off ("ajaxSuccess.ptheme")
-                .on ("ajaxSuccess.ptheme", function (evt, xhr, sett) {
-                switch (sett.url)
-                {
-                    case "/pages/profile/notify.json.php":
-                    case "/pages/pm/notify.json.php":
-                        var isPM  = sett.url === "/pages/pm/notify.json.php",
-                            count = (
-                                "responseJSON" in xhr &&
-                                "message"      in xhr.responseJSON
-                            ) ? parseInt (xhr.responseJSON.message) : 0;
-                        if (count > 0)
-                        {
-                            if ((isPM  && hasNotifiedPM === count) ||
-                                (!isPM && hasNotified   === count))
-                                return; 
-                            new Notification ("NERDZ", {
-                                body: ProTheme.parseMultiLocalization (
-                                    isPM ?
-                                    lang.NEW_PMS :
-                                    lang.NEW_NOTIFICATIONS,
-                                    count
-                                ),
-                                icon: document.location.protocol + "//" +
-                                      document.location.host +
-                                      "/static/images/winicon.png"
-                            }).addEventListener ("click", function() {
-                                if (isPM)
-                                    $("#gotopm").click();
-                                else
-                                    $("#notifycounter").click();
-                            });
-                            if (isPM) hasNotifiedPM = count;
-                            else hasNotified = count;
-                        }
-                    break;
-                    case "/pages/profile/notify.html.php":
-                        hasNotified = 0;
-                    break;
-                }
-            });
+                .off ("nerdz:notification.protheme")
+                .off ("nerdz:pm.protheme")
+                .on  ("nerdz:notification.protheme", notificationEvtHandler)
+                .on  ("nerdz:pm.protheme", notificationEvtHandler);
         });
     },
     parseMultiLocalization: function (message, count) {
