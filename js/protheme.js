@@ -542,11 +542,11 @@
      */
     function retrieveTemplateNumber() {
         $("link").each (function() {
-            var res = /^\/tpl\/(\d+)\//.exec ($(this).attr ("href"));
+            var res = /\/tpl\/(\d+)\//.exec ($(this).attr ("href"));
             if (res !== null)
             {
                 _tplNo = res[1];
-                console.log ("LangsAPI: templateNumber is %d", _tplNo);
+                console.log ("LangsAPI: templateNumber is %s", _tplNo);
                 return;
             }
         });

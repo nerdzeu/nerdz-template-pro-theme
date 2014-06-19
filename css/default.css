@@ -291,11 +291,6 @@ th {
     margin: 0;
 }
 
-#rightmenu li, #leftmenu li
-{
-    margin-bottom: -7px;
-}
-
 #footer_main
 {
     background-color: #AFAFAF;
@@ -398,12 +393,19 @@ th {
 {
     overflow-y: auto;
     overflow-x: hidden;
-    height:310px;
+    height: 310px;
+    border: 0;
+}
+
+#rightmenu_title
+{
+    margin-bottom: 1px;
+    border: 0;
 }
 
 #leftmenu li, #rightmenu li
 {
-    margin-top: 5%;
+    margin-top: 5px;
 }
 
 #fast_nerdz
