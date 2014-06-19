@@ -3,19 +3,20 @@ $(document).ready(function() {
 
     $("#stdfrm").on('submit',function(event) {
         event.preventDefault();
-         $("#pmessage").html(loading+'...');
-        N.json.profile.newPost({message: $("#frmtxt").val(), to: $(this).data('to') },function(data) {
-            if(data.status == 'ok') {
-                $("#showpostlist").click();
-                $("#frmtxt").val('');
-            }
-            
-            $("#pmessage").html(data.message);
-
-            setTimeout(function() {
-                        $("#pmessage").html('');
-                        },5000);
-        });
+        var $me = $(this);
+        setTimeout (function() {
+            $("#pmessage").html (loading+'...');
+            N.json.profile.newPost({ message: $("#frmtxt").val(), to: $me.data('to') }, function(data) {
+                if(data.status == 'ok') {
+                    $("#showpostlist").click();
+                    $("#frmtxt").val('');
+                }
+                $("#pmessage").html(data.message);
+                setTimeout(function() {
+                    $("#pmessage").html('');
+                },5000);
+            });
+        }, 0);
     });
 
     var oldPlist = "";
@@ -44,15 +45,17 @@ $(document).ready(function() {
         plist.html('<form id="blfrm">Motivation: <textarea style="width:100%; height:60px" class="bbcode-enabled" id="blmot"></textarea><br /><input type="submit" value="Blacklist" /></form>');
         plist.on('submit','#blfrm',function(event) {
             event.preventDefault();
-            me.html('...');
-            N.json.profile.blacklist({
+            setTimeout (function() {
+                me.html('...');
+                N.json.profile.blacklist({
                     id: me.data('id'),
                     motivation: $("#blmot").val()
                 },function(d) {
                     me.html(d.message);
                     plist.html(oldPlist);
                     me.off('click');
-            });
+                });
+            }, 0);
         });
     });
 
@@ -87,11 +90,13 @@ $(document).ready(function() {
 
     $("#postlist").on('submit',"#convfrm",function(e) { //per i pm
         e.preventDefault();
-        $("#res").html('...');
-        N.json.pm.send({
-            tok: $(this).data('tok'),
-            to: $("#to").val(),
-            message: $("#message").val(),
+        var $me = $(this);
+        setTimeout (function() {
+            $("#res").html('...');
+            N.json.pm.send({
+                tok: $me.data('tok'),
+                to: $("#to").val(),
+                message: $("#message").val(),
             },function(d) {
                 $('#res').html(d.message);
                 if(d.status == 'ok') {
@@ -100,6 +105,7 @@ $(document).ready(function() {
                         $("#postlist").html(oldPlist);
                     },500);
                 }
-        });
+            });
+        }, 0);
     });
 });

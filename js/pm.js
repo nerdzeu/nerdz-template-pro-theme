@@ -4,17 +4,18 @@ $(document).ready(function() {
 
     $("#content").on('submit',"#convfrm",function(e) {
         e.preventDefault();
-        $("#res").html(loadtxt);
-        var pattern = "div[id^='pm']";
-        var mess = $("#conversation").find(pattern);
-        var last = null;
-        var pmid = 0;
+        setTimeout (function() {
+            $("#res").html(loadtxt);
+            var pattern = "div[id^='pm']",
+                mess    = $("#conversation").find(pattern),
+                last    = null,
+                pmid    = 0;
 
-        if(mess.length) {
-            last = mess.length > 1 ? mess.eq (mess.length - 2) : null; // request every message if cnum < 2.
-            pmid = last ? last.data('pmid') : 0;
-        }
-        N.json.pm.send({ to: $("#to").val(), message: $("#message").val() },function(d) {
+            if(mess.length) {
+                last = mess.length > 1 ? mess.eq (mess.length - 2) : null; // request every message if cnum < 2.
+                pmid = last ? last.data('pmid') : 0;
+            }
+            N.json.pm.send({ to: $("#to").val(), message: $("#message").val() },function(d) {
                 $('#res').html(d.message);
                 if(d.status == 'ok') {
                     $("#message").val('');
@@ -53,7 +54,8 @@ $(document).ready(function() {
                         });
                     }
                 }
-        });
+            });
+        }, 0);
     });
 
     var c = $("#content");

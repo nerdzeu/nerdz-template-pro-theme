@@ -952,14 +952,14 @@ var ProTheme = {
                           "/src/showdown.min.js"
                 })
             );
-            $("body").on ("click", "input[type=submit]", function() {
+            $(document).on ("submit", "form", function (e) {
                 if (typeof Showdown !== "object") return;
                 var converter = new Showdown.converter ({
                     multiline_quoting: true,
                     check_quotes_into_lists: true,
                     recognize_bbcode: true
                 });
-                $(".bbcode-enabled").each (function() {
+                $(this).find (".bbcode-enabled").each (function (index) {
                     var $me = $(this);
                     $me.val (converter.makeBBCode ($me.val()));
                 });

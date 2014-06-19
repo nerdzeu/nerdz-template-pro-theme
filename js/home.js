@@ -243,41 +243,41 @@ $(document).ready(function() {
     });
     
     $("#stdfrm").on('submit',function(e) {
+        // always execute after any other event handler
         e.preventDefault();
-        $("#pmessage").html(loading+'...');
-        N.json.profile.newPost({message: $("#frmtxt").val(), to: 0 },function(data) {
-            if(data.status == 'ok') {
-                $("#frmtxt").val('');
-                load = false;
-                if(lang == '*') {
-                    N.html.profile.getByLangHomePostList(0,lang,function(data) {
-                        plist.html(data);
-                        plist.data('type','profile');
-                        plist.data('mode','language');
-                        hideHidden();
-                        load = true;
-                    });
+        setTimeout (function() {
+            $("#pmessage").html(loading+'...');
+            N.json.profile.newPost({message: $("#frmtxt").val(), to: 0 },function(data) {
+                if(data.status == 'ok') {
+                    $("#frmtxt").val('');
+                    load = false;
+                    if(lang == '*')
+                        N.html.profile.getByLangHomePostList(0,lang,function(data) {
+                            plist.html(data);
+                            plist.data('type','profile');
+                            plist.data('mode','language');
+                            hideHidden();
+                            load = true;
+                        });
+                    else if (lang == 'usersifollow')
+                        N.html.profile.getFollowedHomePostList(0,function(data) {
+                            plist.html(data);
+                            plist.data('type','profile');
+                            plist.data('mode','followed');
+                            hideHidden();
+                            load = true;
+                        });
+                    else
+                        $("#profilePostList").click();
                 }
-                else if(lang == 'usersifollow') {
-                    N.html.profile.getFollowedHomePostList(0,function(data) {
-                        plist.html(data);
-                        plist.data('type','profile');
-                        plist.data('mode','followed');
-                        hideHidden();
-                        load = true;
-                    });
-                }
-                else {
-                    $("#profilePostList").click();
-                }
-            }
-            
-            $("#pmessage").html(data.message);
+                
+                $("#pmessage").html(data.message);
 
-            setTimeout(function() {
-                        $("#pmessage").html('');
-                        },5000);
-        });
+                setTimeout(function() {
+                    $("#pmessage").html('');
+                },5000);
+            });
+        }, 0);
     });
 
     //default profile posts

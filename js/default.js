@@ -248,73 +248,76 @@ $(document).ready(function() {
 
     plist.on('submit','.frmcomment',function(e) {
         e.preventDefault();
-        var last, hcid,
-            hpid     = $(this).data ('hpid'),
-            refto    = $('#commentlist' + hpid),
-            error    = $(this).find ('.error').eq (0),
-            pattern  = 'div[id^="c"]',
-            comments = refto.find (pattern);
-        if(comments.length)
-        {
-            // Uses the second-last element instead of the last one (if available)
-            // to fix the append bug reported by nessuno.
-            last = comments.length > 1 ? comments.eq (comments.length - 2) : null;
-            hcid = last ? last.data('hcid') : 0;
-        }
-        error.html (loading);
-        N.json[plist.data('type')].addComment ({ hpid: hpid, message: $(this).find('textarea').eq(0).val() }, function(d) {
-            if(d.status == 'ok')
+        var $me = $(this);
+        setTimeout (function() {
+            var last, hcid,
+                hpid     = $me.data ('hpid'),
+                refto    = $('#commentlist' + hpid),
+                error    = $me.find ('.error').eq (0),
+                pattern  = 'div[id^="c"]',
+                comments = refto.find (pattern);
+            if(comments.length)
             {
-                if(hcid && last)
+                // Uses the second-last element instead of the last one (if available)
+                // to fix the append bug reported by nessuno.
+                last = comments.length > 1 ? comments.eq (comments.length - 2) : null;
+                hcid = last ? last.data('hcid') : 0;
+            }
+            error.html (loading);
+            N.json[plist.data('type')].addComment ({ hpid: hpid, message: $me.find('textarea').eq(0).val() }, function(d) {
+                if(d.status == 'ok')
                 {
-                    N.html[plist.data('type')].getCommentsAfterHcid ({ hpid: hpid, hcid: hcid }, function(d) {
-                        var form = refto.find ('form.frmcomment').eq (0),
-                            pushBefore = form.parent(),
-                            newComments = $('<div>' + d + '</div>').find (pattern),
-                            internalLengthPointer = comments.length,
-                            lastComment = comments.last();
-                        // if available, delete the secondlast comment
-                        if (comments.length > 1) {
-                            comments.eq (comments.length - 1).remove();
-                            internalLengthPointer--;
-                        }
-                        // then, check the hcid of the last comment
-                        // delete it if it matches
-                        if (lastComment.data ('hcid') == newComments.last().data ('hcid')) {
-                            lastComment.remove();
-                            internalLengthPointer--;
-                        }
-                        // wait until we reach 10 comments (except if the user pressed more)
-                        // TODO: replace this with comments.slice (0, n).remove()
-                        // TODO: add logic to show again the 'more' button if we deleted
-                        // enough comments
-                        // Fix for issue #9: add a >point<
-                        while ((internalLengthPointer + newComments.length) > (((comments.parent().find ('.more_btn').data ('morecount') || 0) + 1) * 10)) {
-                            comments.first().remove();
-                            // reassign the variable, otherwise .first() won't work
-                            // anymore with .remove().
-                            comments = refto.find (pattern);
-                            internalLengthPointer--;
-                        }
-                        // append newComments
-                        pushBefore.before (d);
-                        form.find ('textarea').val ('');
-                        error.html('');
-                    });
+                    if(hcid && last)
+                    {
+                        N.html[plist.data('type')].getCommentsAfterHcid ({ hpid: hpid, hcid: hcid }, function(d) {
+                            var form = refto.find ('form.frmcomment').eq (0),
+                                pushBefore = form.parent(),
+                                newComments = $('<div>' + d + '</div>').find (pattern),
+                                internalLengthPointer = comments.length,
+                                lastComment = comments.last();
+                            // if available, delete the secondlast comment
+                            if (comments.length > 1) {
+                                comments.eq (comments.length - 1).remove();
+                                internalLengthPointer--;
+                            }
+                            // then, check the hcid of the last comment
+                            // delete it if it matches
+                            if (lastComment.data ('hcid') == newComments.last().data ('hcid')) {
+                                lastComment.remove();
+                                internalLengthPointer--;
+                            }
+                            // wait until we reach 10 comments (except if the user pressed more)
+                            // TODO: replace this with comments.slice (0, n).remove()
+                            // TODO: add logic to show again the 'more' button if we deleted
+                            // enough comments
+                            // Fix for issue #9: add a >point<
+                            while ((internalLengthPointer + newComments.length) > (((comments.parent().find ('.more_btn').data ('morecount') || 0) + 1) * 10)) {
+                                comments.first().remove();
+                                // reassign the variable, otherwise .first() won't work
+                                // anymore with .remove().
+                                comments = refto.find (pattern);
+                                internalLengthPointer--;
+                            }
+                            // append newComments
+                            pushBefore.before (d);
+                            form.find ('textarea').val ('');
+                            error.html('');
+                        });
+                    }
+                    else
+                    {
+                        N.html[plist.data('type')].getComments( { hpid: hpid, start: 0, num: 10 },function(d) {
+                            refto.html(d);
+                            error.html('');
+                        });
+                    }
                 }
                 else
                 {
-                    N.html[plist.data('type')].getComments( { hpid: hpid, start: 0, num: 10 },function(d) {
-                        refto.html(d);
-                        error.html('');
-                    });
+                    error.html(d.message);
                 }
-            }
-            else
-            {
-                error.html(d.message);
-            }
-        });
+            });
+        }, 0);
     });
 
     plist.on('click',".showcomments",function() {
@@ -510,29 +513,32 @@ $(document).ready(function() {
             refto.html (form (fid, hpid, d.message, editlang, $(".preview").html()));
             $('#' + fid).on ('submit', function(e) {
                 e.preventDefault();
-                N.json[plist.data('type')].editPost ({
-                    hpid: $(this).data('hpid'),
-                    message: $(this).children('textarea').val()
-                }, function (d) {
-                    if(d.status == 'ok')
-                    {
-                        refto.hide();
-                        N.html[plist.data('type')].getPost({ hpid: hpid }, function(o) {
-                            refto.html(o);
-                            refto.slideToggle("slow");
-                            var separator = refto.find (".delpost") ? "|&nbsp;" : "";
-                            if(refto.data("hide").length)
-                                $(refto.find("div.small")[0]).prepend (
-                                    '<a class="hide" style="float:right; margin-left:3px" data-postid="post'+hpid+'">'
-                                    + separator
-                                    + refto.data("hide")
-                                    + '</a>'
-                                );
-                        });
-                    }
-                    else
-                        alert(d.message);
-                });
+                var $me = $(this);
+                setTimeout (function() {
+                    N.json[plist.data('type')].editPost ({
+                        hpid: $me.data('hpid'),
+                        message: $me.children('textarea').val()
+                    }, function (d) {
+                        if(d.status == 'ok')
+                        {
+                            refto.hide();
+                            N.html[plist.data('type')].getPost({ hpid: hpid }, function(o) {
+                                refto.html(o);
+                                refto.slideToggle("slow");
+                                var separator = refto.find (".delpost") ? "|&nbsp;" : "";
+                                if(refto.data("hide").length)
+                                    $(refto.find("div.small")[0]).prepend (
+                                        '<a class="hide" style="float:right; margin-left:3px" data-postid="post'+hpid+'">'
+                                        + separator
+                                        + refto.data("hide")
+                                        + '</a>'
+                                    );
+                            });
+                        }
+                        else
+                            alert(d.message);
+                    });
+                }, 0);
             });
         });
     });
