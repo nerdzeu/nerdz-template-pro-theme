@@ -959,7 +959,7 @@ var ProTheme = {
                     check_quotes_into_lists: true,
                     recognize_bbcode: true
                 });
-                $(this).find (".bbcode-enabled").each (function (index) {
+                $(this).find (".bbcode-enabled").each (function() {
                     var $me = $(this);
                     $me.val (converter.makeBBCode ($me.val()));
                 });
