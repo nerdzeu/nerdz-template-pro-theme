@@ -213,9 +213,12 @@ $(document).ready(function() {
     });
 
     $(".preview").on('click',function(){
-        var txt = $($(this).data('refto')).val();
-        if (txt)
-            window.open ('/preview.php?message='+encodeURIComponent (txt + " "));
+        var $me = $(this);
+        setTimeout (function() {
+            var txt = $($me.data('refto')).val();
+            if (txt)
+                window.open ('/preview.php?message='+encodeURIComponent (txt + " "));
+        }, 0);
     });
     
     $("textarea").on('keydown', function(e) {
@@ -233,13 +236,15 @@ $(document).ready(function() {
     });
 
     plist.on('click','.preview',function(){
-        var txtarea = $($(this).data('refto'));
-        txtarea.val(txtarea.val()+' '); //workaround
-        var txt = txtarea.val();
-        txtarea.val($.trim(txtarea.val()));
-        if(undefined !== txt && $.trim(txt) !== '') {
-            window.open('/preview.php?message='+encodeURIComponent(txt));
-        }
+        var $me = $(this);
+        setTimeout (function() {
+            var txtarea = $($me.data('refto'));
+            txtarea.val(txtarea.val()+' '); //workaround
+            var txt = txtarea.val();
+            txtarea.val($.trim(txtarea.val()));
+            if ($.trim(txt) !== '')
+                window.open('/preview.php?message='+encodeURIComponent(txt));
+        }, 0);
     });
 
     plist.on('keydown',"textarea", function(e) {

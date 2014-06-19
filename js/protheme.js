@@ -952,7 +952,7 @@ var ProTheme = {
                           "/src/showdown.min.js"
                 })
             );
-            $(document).on ("submit", "form", function (e) {
+            $(document).on ("submit", "form", function() {
                 if (typeof Showdown !== "object") return;
                 var converter = new Showdown.converter ({
                     multiline_quoting: true,
@@ -964,6 +964,23 @@ var ProTheme = {
                     $me.val (converter.makeBBCode ($me.val()));
                 });
             });
+            // fix markdown on the preview too
+            $(document).on ("click", ".preview", function() {
+                if (typeof Showdown !== "object") return;
+                // TODO: redundant code >:(
+                var converter = new Showdown.converter ({
+                    multiline_quoting: true,
+                    check_quotes_into_lists: true,
+                    recognize_bbcode: true
+                });
+                var $target = $($(this).data ("refto")),
+                    oldval  = $target.val();
+                $target.val (converter.makeBBCode (oldval));
+                // restore the original value
+                setTimeout (function() {
+                    $target.val (oldval);
+                }, 250);
+            })
         }
         // autocompletion
         if (PreferencesAPI.getValue ("auto-completion-bb", true) &&
