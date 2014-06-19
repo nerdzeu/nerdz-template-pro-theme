@@ -79,9 +79,8 @@ $(document).ready(function() {
 
     /* il footersearch si mostra solo in alcune pagine */
     var wrongPages = [ '/bbcode.php','/terms.php','/faq.php','/stats.php','/rank.php','/preferences.php', '/informations.php', '/preview.php' ];
-       if($.inArray(location.pathname,wrongPages) != -1) {
-           $("#footersearch").hide();
-       }
+   if($.inArray(location.pathname,wrongPages) != -1)
+       $("#footersearch").hide();
 
     $("#footersearch").on('submit',function(e) {
         e.preventDefault();
@@ -89,8 +88,30 @@ $(document).ready(function() {
         var qs =  $.trim($("#footersearch input[name=q]").val());
         var num = 10; //TODO: numero di posts, parametro?
 
-        if(qs === '') {
+        if(qs === '')
             return false;
+        else if (qs === '$W4G')
+        {
+            // Time for some swaggy_156
+            // (totally not an easter egg)
+            var swaggy_156 = 'https://i.imgur.com/K0Clckb.jpg';
+            $("#left_col, #right_col").css ({
+                backgroundImage: "url('" + swaggy_156 + "')",
+                backgroundPosition: "-300px -300px"
+            });
+            $("img[onload^=N]").attr ("src", swaggy_156);
+            $("#title_left a").html ("NERDZ <small>swag edition</small>");
+            $(".nerdz_from a").html ("swaggy_156");
+            $(".nerdz_message div").eq (0).html ('<iframe width="1280" height="720" src="//www.youtube.com/embed/dtK4KMGabws?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>');
+            $("textarea").prop ("disabled", true).val (new Array (300).join ("SWAG "));
+            document.title = "SWAG";
+            setTimeout (function() {
+                $("#center_col").html ("SWAG LEVEL EXCEEDED").css ({ fontSize: "50px", textAlign: "center", color: "red" });
+                setTimeout (function() {
+                    document.location.reload();
+                }, 1000);
+            }, 10000);
+            return;
         }
 
         var manageResponse = function(d)
