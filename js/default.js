@@ -193,9 +193,8 @@ $(document).ready(function() {
 
     $(".preview").on('click',function(){
         var txt = $($(this).data('refto')).val();
-        if(undefined !== txt && txt !== '') {
-            window.open('/preview.php?message='+encodeURIComponent(txt));
-        }
+        if (txt)
+            window.open ('/preview.php?message='+encodeURIComponent (txt + " "));
     });
     
     $("textarea").on('keydown', function(e) {
@@ -679,13 +678,13 @@ $(document).ready(function() {
             }
         });
     }
-    //end plist into events
-    setInterval(function() {
-        var nc = $("#notifycounter"), val = parseInt(nc.html());
-        nc.css('background-color',val === 0 || isNaN(val) ? '#FFF' : '#FF0000');
-        var pc = $("#pmcounter");
-        val = parseInt(pc.html());
-        pc.css('background-color',val === 0 || isNaN(val) ? '#AFAFAF' : '#FF0000');
-    },200);
-
+    // subscribe to the notification events to change the color of the notifycounter and pmcounter
+    var $notifycounter = $("#notifycounter"), $pmcounter = $("#pmcounter");
+    $(document)
+        .on ("nerdz:notification", function (e, count) {
+            $notifycounter.css ("background-color", count > 0 ? "#FF0000" : "#FFF");
+        })
+        .on ("nerdz:pm", function (e, count) {
+            $pmcounter.css ("background-color", count > 0 ? "#FF0000" : "#AFAFAF");
+        });
 });
