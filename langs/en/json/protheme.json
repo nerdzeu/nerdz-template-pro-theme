@@ -8,13 +8,17 @@
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Enable desktop notifications",
     "ENABLE_MARKDOWN_SUPPORT" : "Enable markdown support",
     "FEATURES" : "Features",
+    "INVALID_FONTS" : "Invalid fonts. It must be a comma-separated list.",
     "INVALID_OPACITY" : "Opacity should be 0 <= val <= 1",
     "INVALID_VAL" : "The value of '%' is invalid: ",
+    "INVALID_VALUE_MUST_BE_DOUBLE" : "The value must be a decimal number.",
     "MISCELLANEOUS" : "Miscellaneous",
     "NEW_NOTIFICATIONS" : "% new notification[s]",
     "NEW_PMS" : "% new private message[s]",
     "NO_PREFERENCE" : "No preference",
+    "PREFERRED_FONTS" : "Preferred fonts",
     "PREFERRED_PROTOCOL" : "Preferred protocol",
     "SAVE" : "Save",
-    "TOP_BAR_FIXED" : "Make the top bar fixed"
+    "TOP_BAR_FIXED" : "Make the top bar fixed",
+    "TOP_BAR_MARGIN" : "Top bar margin"
 }

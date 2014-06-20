@@ -643,6 +643,11 @@
 }(window.CustomLangsAPI = window.CustomLangsAPI || {}));
 
 var ProTheme = {
+    REVISION: "1", // used to clear the language cache if needed
+    defaultFonts: 
+        '"Droid Sans", "Dejavu Sans", "Helvetica Neue", "Helvetica",' +
+        ' "Arial", "lucida grande", "verdana", "arial", "sans-serif"',
+    styleTags: {},
     bbCodes: {
         list: [
             "user", "project", "img", "b", "cur", "small", "big", "del", "u",
@@ -677,6 +682,12 @@ var ProTheme = {
         }
     },
     onLoad: function() {
+        // FIXME: To be replaced with a better solution
+        if (localStorage.getItem ("prothemeRevision") !== ProTheme.REVISION)
+        {
+            localStorage.removeItem ("langsApiCache");
+            localStorage.setItem ("prothemeRevision", ProTheme.REVISION);
+        }
         PreferencesAPI.init ("protheme", "themes", function() {
             // check if our querystring has _ptHttps.
             if (document.location.search.indexOf ("_ptHttps=") !== -1)
@@ -708,10 +719,9 @@ var ProTheme = {
                 }
             }
             CustomLangsAPI.init ("protheme", function() {
-                // contains the key/value mappings of protheme.json
                 var lang, enableBlackOverlay, blackOverlayOpacity, topBarFixed,
-                    enableAutoCompletion, preferredProtocol,
-                    enableDesktopNotifications, enableMarkdown;
+                    enableAutoCompletion, preferredProtocol, enableMarkdown,
+                    enableDesktopNotifications, preferredFonts, topBarMargin;
                 lang = CustomLangsAPI.getLang ("protheme");
                 // Enable black overlay
                 // boolean / checkbox
@@ -725,16 +735,19 @@ var ProTheme = {
                     name: "blackoverlay-opacity",
                     element:
                         $(document.createElement("label"))
-                        .append (lang.BLACK_OVERLAY_OPACITY,
+                        .append (
+                            lang.BLACK_OVERLAY_OPACITY,
                             $(document.createElement("input"))
-                            .attr ("type", "text").val ("0.25")
+                                .attr ("type", "text")
+                                .css ("width", 50)
+                                .val ("0.25")
                         ),
                     onSave: function (obj) {
                         var text = obj.element.find ("input").val();
                         if (!/^\d+(?:\.\d+)?$/.test (text) ||
                             parseFloat (text) > 1)
                             throw lang.INVALID_OPACITY;
-                        return obj.element.find ("input").val();
+                        return text;
                     },
                     onRestore: function (obj, restored) {
                         obj.element.find ("input").val (restored);
@@ -835,6 +848,71 @@ var ProTheme = {
                     name: "enable-markdown",
                     displayName: lang.ENABLE_MARKDOWN_SUPPORT
                 });
+                // Preferred fonts
+                // string / inputbox, comma separated list
+                preferredFonts = {
+                    name: "preferred-fonts",
+                    element:
+                        $(document.createElement ("label"))
+                        .append (lang.PREFERRED_FONTS, ": ",
+                            $(document.createElement ("input"))
+                            .attr ("type", "text")
+                            .css ("width", 300)
+                            .val (ProTheme.defaultFonts)
+                        ),
+                    onSave: function (obj) {
+                        var text = obj.element.find ("input").val(),
+                            saveVal;
+                        try
+                        {
+                            saveVal = JSON.parse (
+                                "[" + text + "]"
+                            );
+                            for (var i = 0; i < saveVal.length; i++)
+                                if (typeof saveVal[i] !== "string")
+                                    throw null;
+                            /*if (saveVal.length !== text.split (",").length)
+                                throw null;*/
+                        }
+                        catch (e)
+                        {
+                            throw lang.INVALID_FONTS;
+                        }
+                        return saveVal;
+                    },
+                    onRestore: function (obj, restored) {
+                        obj.element.find ("input").val (
+                            JSON
+                                .stringify (restored)
+                                .replace (/","/g, '", "')
+                                .slice (1, -1)
+                        );
+                    }
+                };
+                // Top bar margin
+                // integer / inputbox
+                topBarMargin = {
+                    name: "top-bar-margin",
+                    element:
+                        $(document.createElement("label"))
+                        .append (
+                            lang.TOP_BAR_MARGIN, ": ",
+                            $(document.createElement("input"))
+                                .attr ("type", "text")
+                                .css ("width", 50)
+                                .val ("55"),
+                            "px"
+                        ),
+                    onSave: function (obj) {
+                        var text = obj.element.find ("input").val();
+                        if (!/^\d+(?:\.\d+)?$/.test (text))
+                            throw lang.INVALID_VALUE_MUST_BE_DOUBLE;
+                        return parseFloat (text).toString();
+                    },
+                    onRestore: function (obj, restored) {
+                        obj.element.find ("input").val (restored);
+                    }
+                };
                 PreferencesAPI.addSettings (
                     {
                         groupCodeName: "black-overlay",
@@ -855,7 +933,7 @@ var ProTheme = {
                         groupCodeName: "miscellaneous",
                         groupName: lang.MISCELLANEOUS,
                         groupSettings: [
-                            topBarFixed, preferredProtocol
+                            topBarFixed, topBarMargin, preferredFonts
                         ]
                     }
                 );
@@ -885,6 +963,31 @@ var ProTheme = {
     // the boolean flag is used to avoid setting unnecessary CSS rules
     // while not refreshing
     restorePreferences: function (normal_restore) {
+        // prioritize font-related things
+        var fontlist = PreferencesAPI.getValue (
+            "preferred-fonts", ProTheme.defaultFonts
+        ), webfont_loader = "";
+        if (typeof fontlist !== "string")
+        {
+            fontlist = $.extend ([], fontlist); // bad stuff happens otherwise
+            // try to find webfonts
+            for (var q = 0; q < fontlist.length; q++)
+            {
+                var rxp = /^([^|]+)\|((?:https?:)?\/\/.+?)$/.exec (fontlist[q]);
+                if (rxp)
+                {
+                    fontlist[q] = rxp[1];
+                    webfont_loader +=
+                        "@import url(" + JSON.stringify (rxp[2]) + ");\n";
+                }
+            }
+            fontlist = JSON.stringify (fontlist).slice (1, -1);
+        }
+        ProTheme.registerStyleTag (
+            "preferred-fonts",
+            webfont_loader + "html, button, input, textarea { font-family: " +
+            fontlist + "; }"
+        );
         // black overlay stuff
         if ($("#center_col").length)
         {
@@ -922,10 +1025,14 @@ var ProTheme = {
         };
         if (PreferencesAPI.getValue ("fixed-top-bar", true))
         {
+            var baseMargin = PreferencesAPI.getValue (
+                "top-bar-margin", "55"
+            );
             fixed_css.site_title.position       = "fixed",
-            fixed_css.body.marginTop            = "55px",
-            fixed_css.single_comment.paddingTop = "55px",
-            fixed_css.single_comment.marginTop  = "-55px";
+            fixed_css.body.marginTop            = baseMargin + "px",
+            fixed_css.single_comment.paddingTop = baseMargin + "px",
+            fixed_css.single_comment.marginTop  =
+                (-parseFloat (baseMargin)).toString() + "px";
         }
         if (fixed_css.body.marginTop != 0 || !normal_restore)
         {
@@ -933,13 +1040,12 @@ var ProTheme = {
                 .css  (fixed_css.body)
                 .find ("#site_title")
                 .css  (fixed_css.site_title);
-            if ("$singleCommentStyleTag" in ProTheme)
-                ProTheme.$singleCommentStyleTag.remove();
-            ProTheme.$singleCommentStyleTag = $(
-                "<style type='text/css'>.singlecomment { margin-top: " +
+            ProTheme.registerStyleTag (
+                "singlecomment-spacing",
+                ".singlecomment { margin-top: " +
                 fixed_css.single_comment.marginTop + "; padding-top: " +
-                fixed_css.single_comment.paddingTop + "; }</style>"
-            ).appendTo ("head");
+                fixed_css.single_comment.paddingTop + "; }"
+            );
         }
         // markdown support
         if (PreferencesAPI.getValue ("enable-markdown", false) &&
@@ -1157,6 +1263,13 @@ var ProTheme = {
                 count === 1 ? arr.length < 2 ? "" : arr[0] : arr[1] || arr[0]);
         }
         return message;
+    },
+    registerStyleTag: function (identity, content) {
+        if (identity in this.styleTags)
+            this.styleTags[identity].remove();
+        this.styleTags[identity] = $(
+            "<style type='text/css'>" + content + "</style>"
+        ).appendTo ("head");
     }
 };
 

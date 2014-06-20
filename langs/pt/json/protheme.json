@@ -8,13 +8,17 @@
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Habilitar notificações de área de trabalho",
     "ENABLE_MARKDOWN_SUPPORT" : "Habilitar o suporte do markdown",
     "FEATURES" : "Características",
+    "INVALID_FONTS" : "Fontes inválidos. Deve ser uma lista separada por ponto-e-vírgula.",
     "INVALID_OPACITY" : "A opacidade deve ser 0 <= val <= 1",
     "INVALID_VAL" : "O valor de '%' é inválido: ",
+    "INVALID_VALUE_MUST_BE_DOUBLE" : "O valor deve ser um número decimal.",
     "MISCELLANEOUS" : "Diversos",
     "NEW_NOTIFICATIONS" : "% Nova notificação (ões)",
     "NEW_PMS" : "% nova mensagem privada",
     "NO_PREFERENCE" : "Sem preferência",
+    "PREFERRED_FONTS" : "Fontes preferenciais",
     "PREFERRED_PROTOCOL" : "Protocolo preferido",
     "SAVE" : "Salvar",
-    "TOP_BAR_FIXED" : "Fazer a barra superior fixa"
+    "TOP_BAR_FIXED" : "Fazer a barra superior fixa",
+    "TOP_BAR_MARGIN" : "Top bar margem"
 }

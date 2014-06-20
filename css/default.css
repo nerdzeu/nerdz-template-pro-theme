@@ -575,7 +575,7 @@ html, #body
 
 .nerdz_message, .nerdz_comments, .news
 {
-    width: auto;
+    width: 100%;
     background-color: #000;
     border-radius: 2.5px;
     font-size: 95%;

@@ -8,13 +8,17 @@
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Activare notificări desktop",
     "ENABLE_MARKDOWN_SUPPORT" : "Activaţi suportul markdown",
     "FEATURES" : "Caracteristici",
+    "INVALID_FONTS" : "Fonturi nevalid. Trebuie să fie o listă separate prin virgulă.",
     "INVALID_OPACITY" : "Opacitatea ar trebui să fie 0 <= val <= 1",
     "INVALID_VAL" : "Valoarea '%' este invalid: ",
+    "INVALID_VALUE_MUST_BE_DOUBLE" : "Valoarea trebuie să fie un număr zecimal.",
     "MISCELLANEOUS" : "Diverse",
     "NEW_NOTIFICATIONS" : "% noi care",
     "NEW_PMS" : "% mesaje private noi",
     "NO_PREFERENCE" : "Nici o preferinţă",
+    "PREFERRED_FONTS" : "Preferat fonturi",
     "PREFERRED_PROTOCOL" : "Protocolul de preferat",
     "SAVE" : "Salva",
-    "TOP_BAR_FIXED" : "Face bara de sus fixe"
+    "TOP_BAR_FIXED" : "Face bara de sus fixe",
+    "TOP_BAR_MARGIN" : "Top bara marja"
 }

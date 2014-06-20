@@ -8,13 +8,17 @@
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Desktop-Benachrichtigungen aktivieren",
     "ENABLE_MARKDOWN_SUPPORT" : "Markdown-Unterstützung aktivieren",
     "FEATURES" : "Funktionen",
+    "INVALID_FONTS" : "Ungültige Schriftarten. Es muss eine Komma-separierte Liste sein.",
     "INVALID_OPACITY" : "Die Opazität sollte 0 <= val <= 1",
     "INVALID_VAL" : "Der Wert von '%' ist ungültig",
+    "INVALID_VALUE_MUST_BE_DOUBLE" : "Der Wert muss eine Dezimalzahl sein.",
     "MISCELLANEOUS" : "Sonstiges",
     "NEW_NOTIFICATIONS" : "% neue Höchstmengen",
     "NEW_PMS" : "% neue private Nachricht(en)",
     "NO_PREFERENCE" : "Keine Präferenz",
+    "PREFERRED_FONTS" : "Bevorzugte Schriftarten",
     "PREFERRED_PROTOCOL" : "Bevorzugte Protokoll",
     "SAVE" : "Sparen",
-    "TOP_BAR_FIXED" : "Machen Sie die obere Leiste behoben"
+    "TOP_BAR_FIXED" : "Machen Sie die obere Leiste behoben",
+    "TOP_BAR_MARGIN" : "Top bar Marge"
 }

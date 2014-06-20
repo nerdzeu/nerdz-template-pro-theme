@@ -8,13 +8,17 @@
     "ENABLE_DESKTOP_NOTIFICATIONS" : "Omogućili obavijesti radne površine",
     "ENABLE_MARKDOWN_SUPPORT" : "Omogućite markdown podršku",
     "FEATURES" : "Značajke",
+    "INVALID_FONTS" : "Neispravna fontove. To mora biti popis razdvojene zarezom.",
     "INVALID_OPACITY" : "Neprozirnosti treba biti 0 <= val <= 1",
     "INVALID_VAL" : "Vrijednost '%' je nevažeća: ",
+    "INVALID_VALUE_MUST_BE_DOUBLE" : "Dekadski brojevni sustav",
     "MISCELLANEOUS" : "RAZNO",
     "NEW_NOTIFICATIONS" : "% Nova obavijest (i)",
     "NEW_PMS" : "% Nova privatna poruka (i)",
     "NO_PREFERENCE" : "Svejedno",
+    "PREFERRED_FONTS" : "Fontove",
     "PREFERRED_PROTOCOL" : "Željena protokol",
     "SAVE" : "Sačuvati",
-    "TOP_BAR_FIXED" : "Napravite gornju traku fiksni"
+    "TOP_BAR_FIXED" : "Napravite gornju traku fiksni",
+    "TOP_BAR_MARGIN" : "profitna marža"
 }

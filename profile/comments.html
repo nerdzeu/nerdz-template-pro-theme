@@ -19,8 +19,8 @@
                 <span class='thumbs-counter{if="$value.thumbs_n > 0"} nerdz_thumbsNumPos{else}{if="$value.thumbs_n < 0"} nerdz_thumbsNumNeg{/if}{/if}'>{if="$value.thumbs_n > 0"}+{/if}{$value.thumbs_n}</span>
                 &nbsp;&nbsp;
                 <div class="nerdz_thumbs comment" data-refto="{$value.hcid_n}">
-                    <i class='vote up{if="$value.uthumb_n == 1"} voted{/if}'>&#9650;</i>&nbsp;&nbsp;
-                    <i class='vote down{if="$value.uthumb_n ==-1"} voted{/if}'>&#9660;</i>&nbsp;&nbsp;
+                    <span class='vote up{if="$value.uthumb_n == 1"} voted{/if}'>&#9650;</span>&nbsp;&nbsp;
+                    <span class='vote down{if="$value.uthumb_n ==-1"} voted{/if}'>&#9660;</span>&nbsp;&nbsp;
                 </div>
                 |
             </span>
