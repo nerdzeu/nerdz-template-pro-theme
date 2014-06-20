@@ -42,10 +42,11 @@ $(document).ready(function() {
         });
     }).on("submit","#edprojform",function(e){
         e.preventDefault();
+        var $me = $(this);
         setTimeout (function() {
             var r = $("#res");
             r.html(loading);
-            N.json.post('/pages/preferences/projects.html.html.json.php?action=update',$(this).serialize(), function(data) {
+            N.json.post('/pages/preferences/projects.html.html.json.php?action=update',$me.serialize(), function(data) {
                 r.html(data.message);
             });
         }, 0);
