@@ -689,35 +689,6 @@ var ProTheme = {
             localStorage.setItem ("prothemeRevision", ProTheme.REVISION);
         }
         PreferencesAPI.init ("protheme", "themes", function() {
-            // check if our querystring has _ptHttps.
-            if (document.location.search.indexOf ("_ptHttps=") !== -1)
-            {
-                var rxp = /_ptHttps=(whatever|https?)/.exec (
-                    document.location.search
-                );
-                if (rxp != null)
-                {
-                    PreferencesAPI.setValue ("preferred-protocol", rxp[1]);
-                    var scroto = document.location.protocol.slice (0, -1),
-                        proto;
-                    // if we have 'whatever' as the value, it's better to
-                    // redirect back to the other protocol (the user may
-                    // be annoyed otherwise)
-                    if (rxp[1] === "whatever" || rxp[1] !== scroto)
-                    {
-                        proto = rxp[1] === "whatever"
-                                ? (scroto === "http"
-                                    ? "https"
-                                    : "http")
-                                : rxp[1];
-                    }
-                    else
-                        proto = scroto;
-                    document.location.href =
-                            proto + "://" + document.location.host
-                            + "/preferences.php#s-themes";
-                }
-            }
             CustomLangsAPI.init ("protheme", function() {
                 var lang, enableBlackOverlay, blackOverlayOpacity, topBarFixed,
                     enableAutoCompletion, preferredProtocol, enableMarkdown,
@@ -767,49 +738,6 @@ var ProTheme = {
                     displayName: lang.ENABLE_AUTO_COMPLETION,
                     defaultValue: true
                 });
-                // Preferred protocol
-                // string / combobox (whatever, http, https)
-                preferredProtocol = {
-                    name: "preferred-protocol",
-                    element:
-                        $(document.createElement ("label"))
-                        .append (lang.PREFERRED_PROTOCOL, ": ",
-                            $(document.createElement("select"))
-                            .append (
-                                $(document.createElement("option"))
-                                .text (lang.NO_PREFERENCE)
-                                .val ("whatever"),
-                                $(document.createElement("option"))
-                                .text (lang.ALWAYS_USE_HTTP)
-                                .val ("http"),
-                                $(document.createElement("option"))
-                                .text (lang.ALWAYS_USE_HTTPS)
-                                .val ("https")
-                            )
-                            .change (function() {
-                                // hack to avoid messing with the location
-                                // unnecessarily
-                                $(this).data ("has-changed", true);
-                            })
-                        ),
-                    onSave: function (obj) {
-                        var val = obj.element.find ("option:selected").val();
-                        if (obj.element.find ("select").data ("has-changed"))
-                            setTimeout (function() {
-                                document.location.href = 
-                                    (document.location.protocol === 'https:'
-                                        ? 'http'
-                                        : 'https')
-                                    + "://" + document.location.host
-                                    + "/preferences.php?_ptHttps=" + val;
-                            }, 500);
-                        return val;
-                    },
-                    onRestore: function (obj, restored) {
-                        obj.element.find ('option[value="' + restored + '"]')
-                            .prop ('selected', true);
-                    }
-                };
                 // Enable desktop notifications
                 // boolean / checkbox
                 enableDesktopNotifications = PreferencesAPI.createCheckbox ({
@@ -942,23 +870,6 @@ var ProTheme = {
         PreferencesAPI.setOnSaveCallback (ProTheme.restorePreferences);
         // and now apply the real preferences
         ProTheme.restorePreferences (true);
-        // fix the protocol if necessary
-        if (document.location.search.indexOf ("_ptHttps") === -1)
-        {
-            var proto = PreferencesAPI.getValue ("preferred-protocol",
-                "whatever");
-            if (proto !== "whatever" &&
-                document.location.protocol !== (proto + ":"))
-            {
-                // MAGIC!
-                document.write ('<script type="text/undefined">');
-                document.location.href =
-                    proto + "://" + document.location.host
-                    + document.location.pathname
-                    + document.location.search
-                    + document.location.hash;
-            }
-        }
     },
     // the boolean flag is used to avoid setting unnecessary CSS rules
     // while not refreshing
@@ -1058,27 +969,25 @@ var ProTheme = {
                           "/src/showdown.min.js"
                 })
             );
-            $(document).on ("submit", "form", function() {
+            var getConverter = function() {
+                if ("mdConverter" in ProTheme) return ProTheme.mdConverter;
                 if (typeof Showdown !== "object") return;
-                var converter = new Showdown.converter ({
+                return ProTheme.mdConverter = new Showdown.converter ({
                     multiline_quoting: true,
                     check_quotes_into_lists: true,
                     recognize_bbcode: true
                 });
+            };
+            $(document).on ("submit", "form", function() {
+                var converter = getConverter();
+                if (!converter) return;
                 $(this).find (".bbcode-enabled").each (function() {
                     var $me = $(this);
                     $me.val (converter.makeBBCode ($me.val()));
                 });
-            });
-            // fix markdown on the preview too
-            $(document).on ("click", ".preview", function() {
-                if (typeof Showdown !== "object") return;
-                // TODO: redundant code >:(
-                var converter = new Showdown.converter ({
-                    multiline_quoting: true,
-                    check_quotes_into_lists: true,
-                    recognize_bbcode: true
-                });
+            }).on ("click", ".preview", function() {
+                var converter = getConverter();
+                if (!converter) return;
                 var $target = $($(this).data ("refto")),
                     oldval  = $target.val();
                 $target.val (converter.makeBBCode (oldval));
@@ -1086,7 +995,7 @@ var ProTheme = {
                 setTimeout (function() {
                     $target.val (oldval);
                 }, 250);
-            })
+            });
         }
         // autocompletion
         if (PreferencesAPI.getValue ("auto-completion-bb", true) &&
@@ -1173,6 +1082,7 @@ var ProTheme = {
                         }
                     }
                 }).on ("inserted.atwho", function (e, $li) {
+                    if (!$li.data ("final")) return; // not a bbcode
                     var str = $li.data ("final"), $me = $(this),
                         pos = $me.caret ("pos"), v = $me.val(), index;
                     // remove the trailing space from the textbox
@@ -1207,6 +1117,33 @@ var ProTheme = {
                             next_offset = -1, old_len = 0;
                     }
                 });
+                var id = $me.attr ("id");
+                // autocomplete '@nick' with available nicknames in the context
+                if (id === "message" || id.substr (0, 9) === "commentto")
+                {
+                    // determine available nicknames
+                    // time for some path finding (:P)
+                    var nick = $("#nerdz_nick").text(), nicknames = {};
+                    $me
+                        .parents ("div[id^=commentlist], #conversation")
+                        .find (".nerdz_from a[href$='.']")
+                        .each (function() {
+                            var val = $(this).text();
+                            if (val !== nick && !(val in nicknames))
+                                nicknames[val] = null;
+                        });
+                    nicknames = Object.keys (nicknames);
+                    if (nicknames.length === 0) return;
+                    $me.atwho ({
+                        at: "@",
+                        data: nicknames,
+                        callbacks: {
+                            before_insert: function (val, $li) {
+                                return "[user]" + val.substr (1) + "[/user]";
+                            }
+                        }
+                    });
+                }
             });
         }
         // desktop notifications 
@@ -1225,8 +1162,9 @@ var ProTheme = {
         CustomLangsAPI.init ("protheme", function() {
             console.log ("Subscribing to NERDZ notification events");
             var lang                   = CustomLangsAPI.getLang ("protheme"),
+                focusedFlag            = true,
                 notificationEvtHandler = function (e, count) {
-                    if (count <= 0) return;
+                    if (count <= 0 || focusedFlag) return;
                     var isPM = e.type === "nerdz:pm";
                     new Notification ("NERDZ", {
                         body: ProTheme.parseMultiLocalization (
@@ -1239,6 +1177,8 @@ var ProTheme = {
                               document.location.host +
                               "/static/images/winicon.png"
                     }).addEventListener ("click", function() {
+                        // for chrome
+                        window.focus();
                         if (isPM)
                             $("#gotopm").click();
                         else
@@ -1246,10 +1186,23 @@ var ProTheme = {
                     });
                 };
             $(document)
-                .off ("nerdz:notification.protheme")
-                .off ("nerdz:pm.protheme")
-                .on  ("nerdz:notification.protheme", notificationEvtHandler)
-                .on  ("nerdz:pm.protheme", notificationEvtHandler);
+                .off ("nerdz:notification.protheme nerdz:pm.protheme")
+                .on  ("nerdz:notification.protheme nerdz:pm.protheme",
+                    notificationEvtHandler);
+            // Note: Here I'm not using the Page Visibility API for a simple
+            // reason. From the Mozilla documentation:
+            // << When compared with registering onblur/onfocus handlers on
+            //    the window, a key difference [ of the Page Visibility API ]
+            //    is that a page does not become hidden when another window
+            //    is made active and the browser window loses focus. A page
+            //    only becomes hidden when the user switches to a different
+            //    tab or minimizes the browser window. >>
+            // So if I were using the Page Visibility API and a window is
+            // on top of the NERDZ page, the notifications wouldn't be
+            // triggered.
+            $(window).on ("focus blur", function (e) {
+                focusedFlag = e.type === "focus";
+            });
         });
     },
     parseMultiLocalization: function (message, count) {
