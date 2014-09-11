@@ -99,10 +99,10 @@
         <div id="fast_nerdz">
             <div>
                 <form id="stdfrm" data-to="{$id_n}">
-                    <textarea id="frmtxt" name="message" class="bbcode-enabled" style="width: 100%; height: 60px"></textarea>
-                    <input type="submit" value="{$nerdz_it}" style="float: right;margin-top:5px" />
-                    <button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#frmtxt">{$preview}</button>
-                    <button type="button" style="float:left; margin-top:5px" onclick="window.open('/bbcode.php')">BBCode</button>
+                    <textarea id="frmtxt" name="message" class="bbcode-enabled post-control-textarea"></textarea>
+                    <input type="submit"  class="post-control-submit" value="{$nerdz_it}" />
+                    <button type="button" class="post-control-preview" data-refto="#frmtxt">{$preview}</button>
+                    <button type="button" class="post-control-bbcode" onclick="window.open('/bbcode.php')">BBCode</button>
                     <div id="pmessage" class="error"></div>
                 </form>
             </div>

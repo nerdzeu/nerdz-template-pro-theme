@@ -25,58 +25,46 @@
             <div>
                 {$value.message_n}
             </div>
-            <div style="clear:both; padding-top: 5px" class="small">
+            <div class="post-footer">
                 <a href="/{$value.to4link_n}{$value.pid_n}">Link</a>&nbsp;&nbsp;
                 <a class="showcomments" style="width:60%" data-hpid="{$value.hpid_n}" data-refto="commentlist{$value.hpid_n}">
                     {$comments} ({$value.postcomments_n})
                 </a>
-                {if="$value.canremovepost_b || $value.caneditpost_b"}
-                    <span style="float:right">
-                {/if}
-                {if="$value.canremovepost_b"}
-                    <a class="delpost" data-hpid="{$value.hpid_n}" data-refto="post{$value.hpid_n}">{$remove}</a>
-                {/if}
-                {if="$value.canremovepost_b && $value.caneditpost_b"} | {/if}
-                {if="$value.caneditpost_b"}
-                    <a class="editpost" data-hpid="{$value.hpid_n}" data-refto="post{$value.hpid_n}">{$edit}</a>
-                {/if}
-                {if="$value.canremovepost_b || $value.caneditpost_b"}
-                </span>
-                {/if}
-                    {if="$value.canshowlock_b"}
-                        {if="$value.lock_b"}
-                            <span style="margin-right:3px; float: right">
-                                <img class="imglocked" width="16" height="16" data-hpid="{$value.hpid_n}" src="images/lock.png" alt="" title="{$recv_notify}" onclick="" />
-                            </span>
+                <span class="post-icon-holder unspacer">
+                    {if="$value.canshowbookmark_b"}
+                        {if="$value.bookmark_b"}
+                            <a class="unbookmark fa fa-star" data-hpid="{$value.hpid_n}" title="Unbookmark"></a>
                         {else}
-                            <span style="margin-right:3px; float: right">
-                                <img class="imgunlocked" width="16" height="16" data-hpid="{$value.hpid_n}" src="images/unlock.png" alt="" title="{$not_recv_notify}" onclick="" />
-                            </span>
+                            <a class="bookmark fa fa-star-o" data-hpid="{$value.hpid_n}" title="Bookmark"></a>
                         {/if}
+                        <span class="post-icon-spacer"></span>
                     {/if}
                     {if="$value.canshowlurk_b"}
                         {if="$value.lurk_b"}
-                            <span style="margin-right:3px; float: right">
-                                <img class="unlurk" data-hpid="{$value.hpid_n}" src="images/unlurk.png" alt="" width="16" height="16" title="Unlurk" style="float:right; margin-left:5px" onclick="" />
-                            </span>
+                            <a class="unlurk fa fa-eye-slash" data-hpid="{$value.hpid_n}" title="Unlurk"></a>
                         {else}
-                            <span style="margin-right:3px; float: right">
-                                <img class="lurk" data-hpid="{$value.hpid_n}" src="images/lurk.png" alt="" width="16" height="16" title="Lurk" style="float:right; margin-left:5px" onclick="" />
-                            </span>
+                            <a class="lurk fa fa-eye" data-hpid="{$value.hpid_n}" title="Lurk"></a>
                         {/if}
+                        <span class="post-icon-spacer"></span>
                     {/if}
-                    {if="$value.canshowbookmark_b"}
-                        {if="$value.bookmark_b"}
-                            <span style="margin-right:3px; float: right">
-                                <img class="unbookmark" data-hpid="{$value.hpid_n}" src="images/unbookmark.png" alt="" width="16" height="16" title="Unbookmark" style="float:right; margin-left:5px" onclick="" />
-                            </span>
+                    {if="$value.canshowlock_b"}
+                        {if="$value.lock_b"}
+                            <a class="imglocked fa fa-lock" data-hpid="{$value.hpid_n}" title="{$recv_notify}"></a>
                         {else}
-                            <span style="margin-right:3px; float: right">
-                                <img class="bookmark" data-hpid="{$value.hpid_n}" src="images/bookmark.png" alt="" width="16" height="16" title="Bookmark" style="float:right; margin-left:5px" onclick="" />
-                            </span>
+                            <a class="imgunlocked fa fa-unlock-alt" data-hpid="{$value.hpid_n}" title="{$not_recv_notify}"></a>
                         {/if}
+                        <span class="post-icon-spacer"></span>
                     {/if}
-                </div>
+                    {if="$value.canremovepost_b"}
+                        <a class="delpost fa fa-remove" data-hpid="{$value.hpid_n}" data-refto="post{$value.hpid_n}" title="{$remove}"></a>
+                        <span class="post-icon-spacer"></span>
+                    {/if}
+                    {if="$value.caneditpost_b"}
+                        <a class="editpost fa fa-pencil" data-hpid="{$value.hpid_n}" data-refto="post{$value.hpid_n}" title="{$edit}"></a>
+                        <span class="post-icon-spacer"></span>
+                    {/if}
+                </span>
+            </div>
         </div>
         <div>
             <script type="application/javascript">var lnk{$value.hpid_n} = "/{$value.to4link_n}{$value.pid_n}";</script>

@@ -79,8 +79,8 @@ $(document).ready(function() {
 
     /* il footersearch si mostra solo in alcune pagine */
     var wrongPages = [ '/bbcode.php','/terms.php','/faq.php','/stats.php','/rank.php','/preferences.php', '/informations.php', '/preview.php' ];
-   if($.inArray(location.pathname,wrongPages) != -1)
-       $("#footersearch").hide();
+    if ($.inArray (location.pathname, wrongPages) !== -1)
+        $("#footersearch").hide();
 
     $("#footersearch").on('submit',function(e) {
         e.preventDefault();
@@ -212,7 +212,7 @@ $(document).ready(function() {
         });
     });
 
-    $(".preview").on('click',function(){
+    $(".post-control-preview").on('click',function(){
         var $me = $(this);
         setTimeout (function() {
             var txt = $($me.data('refto')).val();
@@ -227,7 +227,7 @@ $(document).ready(function() {
         }
     });
 
-    //begin plist into events (common to: homepage, projects, profiles)
+    // handle events on the post list
     var plist = $("#postlist");
 
     plist.on('click', ".yt_frame", function(e) {
@@ -235,7 +235,7 @@ $(document).ready(function() {
         N.yt($(this), $(this).data("vid"));
     });
 
-    plist.on('click','.preview',function(){
+    plist.on('click','.post-control-preview',function(){
         var $me = $(this);
         setTimeout (function() {
             var txtarea = $($me.data('refto'));
@@ -361,8 +361,6 @@ $(document).ready(function() {
                     $refto.find ('.frmcomment textarea[name=message]').focus();
                 else if (/^#c\d+/.test (document.location.hash))
                 {
-                    // note: the variables prefixed with $ are jquery objects
-                    // (someone may think that I'm doin' shit like php)
                     var such_cb = function() {
                             var $new_comment = $(document.location.hash);
                             if ($new_comment.length > 0)
@@ -524,139 +522,115 @@ $(document).ready(function() {
 
     plist.on('click',".editpost", function(e) {
         e.preventDefault();
-        var refto = $('#' + $(this).data('refto')), hpid = $(this).data('hpid'),
-            editlang = $(this).html(),
-            form = function (fid, hpid, message, edlang, prev) {
-                return '<form style="margin-bottom:40px" id="' +fid+ '" data-hpid="'+hpid+'">' +
-                    '<textarea id="'+fid+'abc" autofocus class="bbcode-enabled" style="width:100%; height:125px">' +message+ '</textarea><br />' +
-                    '<input type="submit" value="' + edlang +'" style="float: right; margin-top:5px" />' +
-                    '<button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#'+fid+'abc">'+prev+'</button>'+
-                    '<button type="button" style="float:left; margin-top:5px" onclick="window.open(\'/bbcode.php\')">BBCode</button>' +
-                    '</form>';
-            };
-        N.json[plist.data('type')].getPost ({ hpid: hpid }, function(d) {
-            var fid = refto.attr ('id') + 'editform';
-            refto.html (form (fid, hpid, d.message, editlang, $(".preview").html()));
-            $('#' + fid).on ('submit', function(e) {
-                e.preventDefault();
-                var $me = $(this);
+        var $this        = $(this),
+            editBtnLabel = $this.attr ("title"),
+            hpid         = $this.data ("hpid"),
+            $post        = $("#" + $this.data ("refto")),
+            formFieldId  = $post.attr ("id") + "-textarea";
+        N.json[plist.data ("type")].getPost ({ hpid: hpid }, function (d) {
+            $post.html ("");
+            // generate the edit form (the proper way)
+            $(document.createElement ("form")).data ("hpid", hpid).append (
+                $(document.createElement ("textarea"))
+                    .attr ("id", formFieldId)
+                    .prop ("autofocus", true)
+                    .addClass ("bbcode-enabled post-control-textarea bigger")
+                    .html (d.message), // required instead of .val() otherwise things explode
+                $(document.createElement ("input"))
+                    .attr ("type", "submit")
+                    .addClass ("post-control-submit")
+                    .val (editBtnLabel),
+                $(document.createElement ("button"))
+                    .attr ("type", "button")
+                    .addClass ("post-control-preview")
+                    .data ("refto", "#" + formFieldId)
+                    .html ($(".post-control-preview").html()),
+                $(document.createElement ("button"))
+                    .attr ("type", "button")
+                    .addClass ("post-control-bbcode")
+                    .html ("BBCode")
+                    .on ("click", function() { window.open ("/bbcode.php") })
+            ).on ("submit", function (evt) {
+                evt.preventDefault();
+                var $this = $(this);
                 setTimeout (function() {
-                    N.json[plist.data('type')].editPost ({
-                        hpid: $me.data('hpid'),
-                        message: $me.children('textarea').val()
-                    }, function (d) {
-                        if(d.status == 'ok')
-                        {
-                            refto.hide();
-                            N.html[plist.data('type')].getPost({ hpid: hpid }, function(o) {
-                                refto.html(o);
-                                refto.slideToggle("slow");
-                                var separator = refto.find (".delpost") ? "|&nbsp;" : "";
-                                if(refto.data("hide").length)
-                                    $(refto.find("div.small")[0]).prepend (
-                                        '<a class="hide" style="float:right; margin-left:3px" data-postid="post'+hpid+'">'
-                                        + separator
-                                        + refto.data("hide")
-                                        + '</a>'
-                                    );
-                            });
-                        }
-                        else
-                            alert(d.message);
-                    });
-                }, 0);
-            });
+                    N.json[plist.data ("type")].editPost ({
+                        hpid:    $this.data ("hpid"),
+                        message: $this.find ("textarea").val()
+                    }, function (res) {
+                        if (res.status !== "ok")
+                            return alert (res.message);
+                        $post.hide();
+                        N.html[plist.data ("type")].getPost ({
+                            hpid: $this.data ("hpid")
+                        }, function (nPost) {
+                            $post.html (nPost).slideToggle ("slow");
+                            if (!$post.data ("hide")) return;
+                            $post.find (".post-icon-holder").removeClass ("unspacer").append (
+                                $(document.createElement ("a"))
+                                    .addClass ("hide fa fa-ban")
+                                    .data ("postid", "post" + $this.data ("hpid"))
+                                    .attr ("title", $post.data ("hide"))
+                            );
+                        })
+                    })
+                })
+            }).css ("margin-bottom", "40px").appendTo ($post);
         });
     });
-
-    plist.on('click',".imglocked",function() {
-        var me = $(this);
-        var tog = function(d) {
-            if(d.status == 'ok') {
-                var newsrc = me.attr('src');
-                me.attr('class','imgunlocked');
-                me.attr('src',newsrc.replace('/lock.png','/unlock.png'));
-                me.attr('title',d.message);
+    var toggle_controls = [
+        {
+            on: {
+                ".imglocked":   "reNotify",
+                ".imgunlocked": "noNotify"
+            },
+            classes: "fa-lock fa-unlock-alt imglocked imgunlocked",
+            handler: function (context, funcName, callback) {
+                var $this = $(this), obj = { hpid: $this.data ("hpid") };
+                if ($this.data ("silent"))
+                    context[funcName + "FromUserInPost"]($.extend ({}, obj, { from: $this.data ("silent") }), callback);
+                else
+                    context[funcName + "ForThisPost"](obj, callback);
             }
-        };
-          
-        if($(this).data('silent')) { //nei commenti
-            N.json[plist.data('type')].reNotifyFromUserInPost({ hpid: $(this).data('hpid'), from: $(this).data('silent') },function(d) {tog(d);});
+        },
+        {
+            on: {
+                ".lurk":   "lurkPost",
+                ".unlurk": "unlurkPost"
+            },
+            classes: "fa-eye fa-eye-slash lurk unlurk"
+        },
+        {
+            on: {
+                ".bookmark":   "bookmarkPost",
+                ".unbookmark": "unbookmarkPost"
+            },
+            classes: "fa-star fa-star-o bookmark unbookmark"
         }
-        else {
-            N.json[plist.data('type')].reNotifyForThisPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-        }
-    });
-
-    plist.on('click',".imgunlocked",function() {
-        var me = $(this);
-        var tog = function(d) {
-            if(d.status == 'ok') {
-                var newsrc = me.attr('src');
-                me.attr('class','imglocked');
-                me.attr('src',newsrc.replace('/unlock.png','/lock.png'));
-                me.attr('title',d.message);
-            }
-        };
-
-        if($(this).data('silent'))
-            N.json[plist.data('type')].noNotifyFromUserInPost({ hpid: $(this).data('hpid'), from: $(this).data('silent') },function(d) {tog(d);});
-        else
-            N.json[plist.data('type')].noNotifyForThisPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-    });
-
-    plist.on('click',".lurk",function() {
-        var me = $(this);
-        var tog = function(d) {
-            if(d.status == 'ok') {
-                var newsrc = me.attr('src');
-                me.attr('class','unlurk');
-                me.attr('src',newsrc.replace('/lurk.png','/unlurk.png'));
-                me.attr('title',d.message);
-            }
-        };
-        N.json[plist.data('type')].lurkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-    });
-
-    plist.on('click',".unlurk",function() {
-        var me = $(this);
-        var tog = function(d) {
-            if(d.status == 'ok') {
-                var newsrc = me.attr('src');
-                me.attr('class','lurk');
-                me.attr('src',newsrc.replace('/unlurk.png','/lurk.png'));
-                me.attr('title',d.message);
-            }
-        };
-          
-        N.json[plist.data('type')].unlurkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-    });
-
-    plist.on('click',".bookmark",function() {
-        var me = $(this);
-        var tog = function(d) {
-            if(d.status == 'ok') {
-                var newsrc = me.attr('src');
-                me.attr('class','unbookmark');
-                me.attr('src',newsrc.replace('/bookmark.png','/unbookmark.png'));
-                me.attr('title',d.message);
-            }
-        };  
-        N.json[plist.data('type')].bookmarkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-    });
-
-    plist.on('click',".unbookmark",function() {
-        var me = $(this);
-        var tog = function(d) {
-            if(d.status == 'ok') {
-                var newsrc = me.attr('src');
-                me.attr('class','bookmark');
-                me.attr('src',newsrc.replace('/unbookmark.png','/bookmark.png'));
-                me.attr('title',d.message);
-            }
-        };
-        N.json[plist.data('type')].unbookmarkPost({hpid: $(this).data('hpid') },function(d) {tog(d);});
-    });
+    ], find_toggle = function (query) {
+        for (var i = 0; i < toggle_controls.length; i++)
+            if (query in toggle_controls[i].on)
+                return toggle_controls[i];
+        throw "can't find " + query + " in toggle_controls";
+    };
+    for (var x = 0; x < toggle_controls.length; x++)
+    {
+        // no need for .hasOwnProperty :>
+        for (var selector in toggle_controls[x].on)
+            plist.on ("click", selector, function (e) {
+                var elm = this, toggle = find_toggle (e.handleObj.selector);
+                if (!("handler" in toggle))
+                    toggle.handler = function (context, funcName, callback) {
+                        context[funcName]({ hpid: $(this).data ("hpid") }, callback);
+                    };
+                toggle.handler.call (elm, N.json[plist.data ("type")], toggle.on[e.handleObj.selector], function (d) {
+                    if (d.status === "ok")
+                        $(elm).attr ("title", d.message).toggleClass (toggle.classes);
+                    else
+                        alert (d.message);
+                });
+            });
+    }
 
     plist.on ('click', '.nerdz-code-title', function() {
         localStorage.setItem ('has-light-theme', ( localStorage.getItem ('has-light-theme') == 'yep' ? 'nope' : 'yep' ));

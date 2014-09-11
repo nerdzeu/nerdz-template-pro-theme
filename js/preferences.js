@@ -5,7 +5,7 @@ $(document).ready(function() {
     $("#prefbar").click(function(event) {
         c.html(loading);
         N.html.post('/pages/preferences/'+ event.target.id +'.html.php',{},function(data) {
-                c.html(data);
+            c.html(data);
         });
     });
 
@@ -16,7 +16,7 @@ $(document).ready(function() {
         N.json.post('/pages/preferences/account.html.json.php',$(this).serialize(), function(data) {
             c.html(data.message);
             if(data.status == 'error')
-                    N.reloadCaptcha();
+                N.reloadCaptcha();
         });
     }).on("submit","#edprofrm", function(e){
         e.preventDefault();

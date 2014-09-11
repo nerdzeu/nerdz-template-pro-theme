@@ -572,7 +572,7 @@
         // the ?api is used to avoid the triggering of the global
         // AJAX handler in the PreferencesAPI
         $.get ("/pages/preferences/language.html.php?api", function (res) {
-            var lang = $(res).find ("#boardfrm option:selected");
+            var lang = $("<div>" + res + "</div>").find ("#boardfrm option:selected");
             if (lang.length)
             {
                 _currLang = lang.val();
@@ -650,9 +650,9 @@ var ProTheme = {
     styleTags: {},
     bbCodes: {
         list: [
-            "user", "project", "img", "b", "cur", "small", "big", "del", "u",
-            "gist", "youtube", "yt",  "m", "math", "quote", "spoiler", "url",
-            "video", "twitter", "music",
+            "s", "user", "project", "img", "b", "cur", "small", "big", "del",
+            "u", "gist", "youtube", "yt",  "m", "math", "quote", "spoiler",
+            "url", "video", "twitter", "music",
             { name: "url=", hasParam: true, useQuotes: true, paramDesc: "url"},
             { name: "code", hasParam: true, paramDesc: "lang" },
             { name: "wiki", hasParam: true, paramDesc: "lang" },
@@ -663,6 +663,7 @@ var ProTheme = {
         byName: function (search) {
             // ProTheme: Doing the right thing since 2014. (C)
             if (search === "yt" || search === "youtube") return "video";
+            else if (search == "s") return "del";
             for (var i = 0; i < this.list.length; i++)
             {
                 if ((typeof this.list[i] === 'object' &&
@@ -682,7 +683,6 @@ var ProTheme = {
         }
     },
     onLoad: function() {
-        // FIXME: To be replaced with a better solution
         if (localStorage.getItem ("prothemeRevision") !== ProTheme.REVISION)
         {
             localStorage.removeItem ("langsApiCache");
@@ -774,8 +774,10 @@ var ProTheme = {
                 // boolean / checkbox
                 enableMarkdown = PreferencesAPI.createCheckbox ({
                     name: "enable-markdown",
-                    displayName: lang.ENABLE_MARKDOWN_SUPPORT
+                    displayName: lang.ENABLE_MARKDOWN_SUPPORT,
+                    onRestore: function() {}
                 });
+                enableMarkdown.element.find ("input").prop ("disabled", true);
                 // Preferred fonts
                 // string / inputbox, comma separated list
                 preferredFonts = {
@@ -958,8 +960,8 @@ var ProTheme = {
                 fixed_css.single_comment.paddingTop + "; }"
             );
         }
-        // markdown support
-        if (PreferencesAPI.getValue ("enable-markdown", false) &&
+        // markdown support (temporarily disabled)
+        /*if (PreferencesAPI.getValue ("enable-markdown", false) &&
             !$("script[src$='showdown.min.js']").length)
         {
             $("head").append (
@@ -985,7 +987,7 @@ var ProTheme = {
                     var $me = $(this);
                     $me.val (converter.makeBBCode ($me.val()));
                 });
-            }).on ("click", ".preview", function() {
+            }).on ("click", ".post-control-preview", function() {
                 var converter = getConverter();
                 if (!converter) return;
                 var $target = $($(this).data ("refto")),
@@ -996,15 +998,20 @@ var ProTheme = {
                     $target.val (oldval);
                 }, 250);
             });
-        }
+        }*/
         // autocompletion
         if (PreferencesAPI.getValue ("auto-completion-bb", true) &&
             !$("script[src$='at.js']").length)
         {
             $("head").append (
+                // Temporary -- until jsdelivr caches flush themselves
                 $(document.createElement ("script")).attr ({
                     type: "application/javascript",
-                    src:  "//cdn.jsdelivr.net/g/caret.js,at.js"
+                    src:  "//cdn.jsdelivr.net/at.js/0.5.0/js/jquery.atwho.min.js"
+                }),
+                $(document.createElement ("script")).attr ({
+                    type: "application/javascript",
+                    src:  "//cdn.jsdelivr.net/caret.js/0.1.0/jquery.caret.min.js"
                 })
             );
             $("body").on ("focus", ".bbcode-enabled", function() {
@@ -1020,14 +1027,14 @@ var ProTheme = {
                     callbacks: {
                         before_insert: function (val, $li) {
                             var bbcode = ProTheme.bbCodes
-                                .byName ($li.data ('value')), what, indch;
+                                .byName ($li.data ("value")), what, indch;
                             if (typeof bbcode !== 'object')
-                                what  = '[' + bbcode + '][/' + bbcode + ']',
+                                what  = "[" + bbcode + "][/" + bbcode + "]",
                                 indch = "]";
                             else
                             {
                                 var name = bbcode.name.replace (/=$/, "");
-                                what = '[' + name;
+                                what = "[" + name;
                                 if (bbcode.hasParam)
                                     what += "=" +(bbcode.useQuotes ? '""': ""),
                                     indch = bbcode.useQuotes ? '"' : "=";
@@ -1128,7 +1135,7 @@ var ProTheme = {
                         .parents ("div[id^=commentlist], #conversation")
                         .find (".nerdz_from a[href$='.']")
                         .each (function() {
-                            var val = $(this).text();
+                            var val = $(this).html();
                             if (val !== nick && !(val in nicknames))
                                 nicknames[val] = null;
                         });
@@ -1189,17 +1196,6 @@ var ProTheme = {
                 .off ("nerdz:notification.protheme nerdz:pm.protheme")
                 .on  ("nerdz:notification.protheme nerdz:pm.protheme",
                     notificationEvtHandler);
-            // Note: Here I'm not using the Page Visibility API for a simple
-            // reason. From the Mozilla documentation:
-            // << When compared with registering onblur/onfocus handlers on
-            //    the window, a key difference [ of the Page Visibility API ]
-            //    is that a page does not become hidden when another window
-            //    is made active and the browser window loses focus. A page
-            //    only becomes hidden when the user switches to a different
-            //    tab or minimizes the browser window. >>
-            // So if I were using the Page Visibility API and a window is
-            // on top of the NERDZ page, the notifications wouldn't be
-            // triggered.
             $(window).on ("focus blur", function (e) {
                 focusedFlag = e.type === "focus";
             });

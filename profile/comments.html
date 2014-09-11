@@ -24,19 +24,21 @@
                 </div>
                 |
             </span>
+            <span class="post-icon-spacer"></span>
             {if="$value.canshowlock_b"}
                 {if="$value.lock_b"}
-                    <img class="imglocked" width="16" height="16" data-hpid="{$value.hpid_n}" data-silent="{$value.fromid_n}" src="images/lock.png" alt="" title="{$recv_notify}" onclick="" />
+                    <a class="imglocked fix-align fa fa-lock" data-hpid="{$value.hpid_n}" data-silent="{$value.fromid_n}" title="{$recv_notify}"></a>
                 {else}
-                    <img width="16" height="16" class="imgunlocked" data-hpid="{$value.hpid_n}" data-silent="{$value.fromid_n}" src="images/unlock.png" alt="" title="{$not_recv_notify}" onclick="" />
+                    <a class="imgunlocked fix-align fa fa-unlock-alt" data-hpid="{$value.hpid_n}" data-silent="{$value.fromid_n}" title="{$not_recv_notify}"></a>
                 {/if}
+                <span class="post-icon-spacer longer"></span>
             {/if}
-            <img width="16" height="16" src="images/quote.png" alt="quote" class="qu_ico" data-hcid="{$value.hcid_n}" data-type="u" data-refto="commentto{$value.hpid_n}" onclick="" />
+            <a class="qu_ico fa fa-comment" data-hcid="{$value.hcid_n}" data-type="u" data-refto="commentto{$value.hpid_n}"></a>
         </span>
     </div>
-    <div class="nerdz_comments" style="width:auto">
+    <div class="nerdz_comments" style="width: auto; position: relative">
         {if="$value.canremove_b"}
-            <img alt="" src="images/remove-comment.png" class="delcomment" data-hcid="{$value.hcid_n}" data-refto="{$value.uid_n}" style="float: right; cursor: pointer; margin-top: 3px;">
+            <span class="fa fa-remove delcomment" data-hcid="{$value.hcid_n}" data-refto="{$value.uid_n}"></span>
         {/if}
         {$value.message_n}
     </div>
@@ -50,10 +52,10 @@
         <img src="{$currentusergravatar_n}?s=30#" alt="" onerror="this.src = '{$onerrorimgurl_n}'" class="gravatar gravatar-current-user" />
     </a>
     <form style="overflow:hidden; width:auto" class="frmcomment" data-hpid="{$hpid_n}">
-        <textarea id="commentto{$hpid_n}" name="message" class="bbcode-enabled" style="width: 100%; height: 60px"></textarea>
-        <input type="submit" value="{$nerdz_it}" style="float: right;margin-top:5px" />
-        <button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#commentto{$hpid_n}">{$preview}</button>
-        <button type="button" style="float:left; margin-top:5px" onclick="window.open('/bbcode.php')">BBCode</button>
+        <textarea id="commentto{$hpid_n}" name="message" class="bbcode-enabled post-control-textarea"></textarea>
+        <input type="submit"  class="post-control-submit" value="{$nerdz_it}" />
+        <button type="button" class="post-control-preview" data-refto="#commentto{$hpid_n}">{$preview}</button>
+        <button type="button" class="post-control-bbcode" onclick="window.open('/bbcode.php')">BBCode</button>
     <div class="error"></div>
     </form>
 </div>

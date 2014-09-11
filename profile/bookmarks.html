@@ -10,13 +10,12 @@
         <tr id="tr{$key}">
             <td><a href="{$value.link_n}">{$value.name_n} [{$value.pid_n}]</a></td>
             <td>
-                <div class="nerdz_message">
-                        {$value.preview_n}
-                    <div class="small" style="clear:both; padding-top: 5px">&nbsp;
-                        <span style="margin-right:3px; float: right">
-                            <img class="unbookmark" data-hpid="{$value.hpid_n}" src="images/unbookmark.png" alt="" width="16" height="16" title="Unbookmark" style="float:right; margin-left:5px" onclick="" data-refto="tr{$key}" />
-                        </span>
-                    </div>
+                <div class="nerdz_message post-footer">
+                    {$value.preview_n}
+                    <span class="post-icon-holder" style="top: 1px">
+                        <span class="unbookmark fa fa-remove" data-refto="tr{$key}" data-hpid="{$value.hpid_n}" title="Unbookmark"></span>
+                        <span class="post-icon-spacer"></span>
+                    </span>
                 </div>
             </td>
             <td>

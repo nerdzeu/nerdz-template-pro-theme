@@ -1,0 +1,39 @@
+.atwho-view {
+    position:absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    margin-top: 18px;
+    background: rgba(29,27,27,0.85);
+    border: 1px solid #DDD;
+    border-radius: 3px;
+    box-shadow: 0 0 5px rgba(255,255,255,0.1);
+    min-width: 120px;
+    z-index: 10;
+    .cur {
+        background: #3366FF;
+        color: white;
+        small {
+            color: white;
+        }
+    }
+    strong {
+        color: lightyellow;
+    }
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: auto;
+        li {
+            display: block;
+            padding: 5px 10px;
+            border-bottom: 1px solid #DDD;
+            cursor: pointer;
+        }
+    }
+    small {
+        font-size: smaller;
+        color: #777;
+        font-weight: normal;
+    }
+}
