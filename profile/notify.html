@@ -1,8 +1,10 @@
 {loop="list_a"}
-    <div class="nerdz_comments" style="margin-bottom: 0">
+    <div class="nerdz_comments" style="margin-bottom: -1px">
         <span class="small">{$value.datetime_n}:</span>&nbsp;
     {if="$value.type_n == 'new_follower'"}
         <a href="/{$value.from4link_n}">{$value.from_n} {$following_you}</a>
+    {elseif="$value.type_n == 'new_project_follower'"}
+         <a href="/{$value.from4link_n}">{$value.from_n}</a> {$is_now_following} <a href="/{$value.to4link_n}">{$value.to_n}</a>
     {elseif="$value.type_n == 'profile_comments'"}
         {$new_comments_on} <a class="notref" href="/{$value.to4link_n}#last">{$value.to_n} [{$value.pid_n}]</a>
     {elseif="$value.type_n == 'project_comments'"}
@@ -10,7 +12,13 @@
     {elseif="$value.type_n == 'new_post_on_profile'"}
         <a href="/{$value.to4link_n}">{$value.from_n} {$posted_on_your_board}</a>
     {elseif="$value.type_n == 'news_project'"}
-        <a href="/{$value.to4link_n}">{$news_on_project} - {$value.to_n}</a>
+        <a href="/{$value.to4link_n}">{$news_on_project} - {$value.to_n} [{$value.pid_n}]</a>
+    {elseif="$value.type_n == 'new_project_member'"}
+        {$you_are_now_member_of}&nbsp;<a href="/{$value.to4link_n}">{$value.to_n}</a>
+    {elseif="$value.type_n == 'you_are_the_new_project_owner'"}
+        {$you_are_the_new_owner_of}&nbsp;<a href="/{$value.to4link_n}">{$value.to_n}</a>
+    {elseif="$value.type_n == 'new_mention_on_profile_post' || $value.type_n == 'new_mention_on_project_post'"}
+        <a href="/{$value.from4link_n}">{$value.from_n}</a> {$mentioned_you_on} <a href="/{$value.to4link_n}">{$value.to_n} [{$value.pid_n}]</a>
     {/if}
     </div>
 {/loop}

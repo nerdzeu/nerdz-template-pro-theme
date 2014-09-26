@@ -1,0 +1,37 @@
+<h1 style="margin-top:0px">{$interactions}</h1>
+<ol class="interactions">
+{loop="list_a"}
+<li class="nerdz_comments">
+    <span class="nerdz_date" style="float:left">{$value.datetime_n}</span>&nbsp;
+    <span class="rightarrow" style="margin-left:11px"></span>&nbsp;
+    {if="$value.type_n == 'groups_members'"}
+        {$you_are_now_member_of}&nbsp;
+        <a href="/to4link_n">{$to_n}</a>
+    {else}
+        {if="$value.type_n == 'groups_comments'"}
+            {$you_commented_on}
+        {elseif="$value.type_n == 'groups_posts'"}
+            {$you_posted_on_board}&nbsp;⇒&nbsp;
+        {elseif="$value.type_n == 'groups_thumbs'"}
+            {$you_rated_the_post}
+        {elseif="$value.type_n == 'groups_comment_thumbs'"}
+            {$you_rated_comment_on}
+        {elseif="$value.type_n == 'groups_lurkers'"}
+             {$you_lurked_post}
+        {/if}
+        &nbsp;<a href="/{$value.link_n}">{$value.postto_n} [{$value.pid_n}]</a>
+    {/if}
+</li>
+{/loop}
+</ol>
+{if="!empty($prev_url_n)"}
+<div style="float:left;margin: auto auto 5% 5%">
+    <a href="{$prev_url_n}">&lt;&lt;&lt;</a>
+</div>
+{/if}
+{if="!empty($next_url_n)"}
+<div style="float:right;margin: auto 5% 5% auto">
+    <a href="{$next_url_n}">&gt;&gt;&gt;</a>
+</div>
+{/if}
+<br /><br />

@@ -1,0 +1,20 @@
+<div id="left_col">&nbsp;</div>
+<article id="center_col">
+    <table style="margin: auto" class="page">
+        <tr style="cursor: pointer">
+            <th style="width:5%" id="id">{$id}</th>
+            <th style="width:15%" id="username">{$username}</th>
+            <th style="width:65%" id="motivation">{$motivation}</th>
+            <th style="width:15%" id="when">{$when}</th>
+        </tr>
+    {loop="list_a"}
+        <tr>
+            <td>{$value.id_n}</td>
+            <td>{$value.username_n}</a></td>
+            <td>{$value.motivation_n}</td>
+            <td>{$value.datetime_n}</td>
+        </tr>
+    {/loop}
+    </table>
+    <br /><br /><br />
+</article>

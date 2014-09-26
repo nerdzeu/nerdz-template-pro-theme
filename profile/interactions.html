@@ -1,0 +1,87 @@
+<h1 style="margin-top:0px">{$interactions}</h1>
+<ol class="interactions">
+{loop="list_a"}
+<li class="nerdz_comments">
+    <span class="nerdz_date" style="float:left">{$value.datetime_n}</span>&nbsp;
+    <span class="rightarrow" style="margin-left:11px"></span>&nbsp;
+    {if="$value.type_n == 'blacklist' || $value.type_n == 'followers' || $value.type_n == 'whitelist'"}
+        {if="$value.type_n == 'blacklist'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_blacklisted_this_user}
+            {else}
+                {$you_have_been_blacklisted}
+            {/if}
+        {elseif="$value.type_n == 'followers'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_follow}
+            {else}
+                {$following_you}
+            {/if}
+        {elseif="$value.type_n == 'whitelist'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_whitelisted_this_user}
+            {else}
+                {$you_have_been_whitelisted}
+            {/if}
+        {/if}
+    {else}
+        {if="$value.type_n == 'comments'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_commented_on}
+            {else}
+                <a href="/{$value.from4link_n}">{$value.from_n}</a>&nbsp;
+                {$commented_on}
+            {/if}
+        {elseif="$value.type_n == 'pms'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_sent_pm}
+            {else}
+                <a href="/{$value.from4link_n}">{$value.from_n}</a>&nbsp;
+                {$sent_pm}
+            {/if}
+        {elseif="$value.type_n == 'posts'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_posted_on_board}
+            {else}
+                <a href="/{$value.from4link_n}">{$value.from_n}</a>&nbsp;
+                {$posted_on_your_board}
+            {/if}
+            &nbsp;⇒&nbsp;
+        {elseif="$value.type_n == 'thumbs'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_rated_the_post}
+            {else}
+                <a href="/{$value.from4link_n}">{$value.from_n}</a>&nbsp;
+                {$rated_the_post}
+            {/if}
+        {elseif="$value.type_n == 'comment_thumbs'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_rated_comment_on}
+            {else}
+                <a href="/{$value.from4link_n}">{$value.from_n}</a>&nbsp;
+                {$rated_comment_on}
+            {/if}
+        {elseif="$value.type_n == 'lurkers'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_lurked_post}
+            {else}
+                <a href="/{$value.from4link_n}">{$value.from_n}</a>&nbsp;
+                {$lurked_post}
+            {/if}
+        {/if}
+        &nbsp;<a href="/{$value.link_n}">{$value.postto_n} [{$value.pid_n}]</a>
+    {/if}
+</li>
+{/loop}
+</ol>
+{if="!empty($prev_url_n)"}
+<div style="float:left;margin: auto auto 5% 5%">
+    <a href="{$prev_url_n}">&lt;&lt;&lt;</a>
+</div>
+{/if}
+{if="!empty($next_url_n)"}
+<div style="float:right;margin: auto 5% 5% auto">
+    <a href="{$next_url_n}">&gt;&gt;&gt;</a>
+</div>
+{/if}
+<br /><br />
