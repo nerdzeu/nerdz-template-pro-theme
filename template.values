@@ -26,6 +26,7 @@
         "projectslist": "js/projectslist.js",
         "bookmarks": "js/bookmarks.js",
         "reset": "js/reset.js",
+        "search": "js/search.js",
         "share": "js/share.js"
     },
     // LANGS section - accepts only "default": "path/%lang%/path/to/file.json"
