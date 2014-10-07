@@ -1,0 +1,629 @@
+// Main styling (containers, direct HTML elements, ...)
+body {
+    background-color: #1D1B1B;
+    color: #FFF;
+    font: {
+        size: 80%;
+        weight: 400;
+    }
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    z-index: 0;
+}
+
+img {
+    border: 0 none;
+}
+
+iframe {
+    margin: auto;
+    overflow: hidden;
+}
+
+html, #body {
+    width: 100%;
+    height: 100%;
+}
+
+pre {
+    font-size: 12px;
+    margin-top: 0;
+}
+
+hr {
+    color: #fff;
+    background-color: #fff;
+    height: 1px;
+    border: 0;
+}
+
+#main {
+    margin: auto 0.2% auto auto;
+    width: 99%;
+    word-wrap: break-word;
+}
+
+.page {
+    width: 99%;
+    margin: auto;
+    table {
+        width: 100%;
+    }
+    tr th {
+        width: 10%;
+        text-align: center;
+    }
+    .intable {
+        margin-top: 3%;
+        margin-bottom: 3%;
+        width: 100%;
+    }
+}
+
+.error {
+    color: #FF0000;
+    font: {
+        size: 80%;
+        weight: bold;
+    }
+    margin: 8px 0 -10px 75px;
+}
+
+.small {
+    font-size: 75%;
+}
+
+.light {
+    color: #777;
+    padding-bottom: 2px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.curtext {
+    font-style: italic;
+}
+
+label, .qu_ico, .imglocked, .imgunlocked,
+.lurk, .unlurk, .selectlang, .projlang,
+.more, .bookmark, .unbookmark {
+    cursor: pointer;
+}
+
+// Link styling
+a {
+    #{pt-link-selector(".nerdz_comments")}, #{pt-link-selector("#site_title, #footer_main", true)} {
+        color: #000;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    &:hover, &:visited, &:active, &:link, #{pt-link-selector(".qu_user", true)} {
+        color: #2370B6;
+        cursor: pointer;
+        text-decoration: none;
+    }
+}
+
+// Header
+#site_title {
+    @include box-shadow(2px 2px 5px #000);
+    background-color: #AFAFAF;
+    color: #000;
+    margin: 0 auto 0.5% auto;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+    top: 0;
+    z-index: 2;
+}
+
+// Header controls
+#gotopm {
+    cursor: pointer;
+    font: {
+        weight: bold;
+        style: italic;
+    }
+    text-align: right;
+}
+
+#pmcounter {
+    @include border-radius(3px);
+    padding-left: 1px;
+    padding-right: 1px;
+}
+
+// Columns
+#title_left, #left_col, #center_col, #right_col {
+    display: inline;
+    float: left;
+}
+
+#left_col, #right_col {
+    width: 12.7%;
+    ul {
+        list-style-type: square;
+        list-style-position: inside;
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+}
+
+#title_left {
+    font-size: 200%;
+    margin: 0.5%;
+}
+
+#title_right {
+    display: inline;
+    float: right;
+    margin: 0.5% 1% 0.1% 0.5%;
+}
+
+#left_col {
+    margin-right: 1%;
+}
+
+#center_col {
+    width: 72%;
+    font-size: 105%;
+}
+
+#right_col {
+    margin-left: 1%;
+}
+
+// Icons visible in the home
+.icon-rss-container {
+    float: right;
+    position: relative;
+    margin-right: 2px;
+    .icon-rss-background {
+        position: absolute;
+        background: $pt-rss-icon-bg;
+        right: 15%;
+        top: 15%;
+        width: 70%;
+        height: 70%;
+    }
+    a.icon-rss {
+        color: $pt-rss-icon-color;
+        font-size: 20px;
+        position: relative;
+        z-index: 1;
+    }
+}
+
+span.icon-birthday-cake {
+    @include text-shadow(0 0 15px #f4ff32, 0 0 15px #f4ff32);
+    color: $pt-cake-icon-color;
+    margin-right: 15px;
+    float: right;
+}
+
+// Column menus
+// Contains the list of followed users
+#rightmenu_title {
+    margin-bottom: 1px;
+    border: 0;
+}
+
+#rightmenu {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 310px;
+}
+
+#leftmenu li, #rightmenu li {
+    margin-top: 5px;
+}
+
+// Column boxes
+div.title {
+    cursor: default;
+    text-align: center;
+    width: 100%;
+}
+
+.box {
+    @include border-radius(5.5px);
+    border: 1px solid #2370B6;
+    margin-top: 3px;
+    padding: 3px;
+}
+
+// Footer
+#footer_main {
+    background-color: #AFAFAF;
+    text-align: center;
+    border-top: 1px #000 solid;
+    bottom: 0;
+    clear: both;
+    display: block;
+    height: 23px;
+    overflow: hidden;
+    width: 100%;
+    position: fixed;
+}
+
+// Footer search
+#footersearch
+{
+    text-align: left;
+    margin-left: 32px;
+    margin-top: 1px;
+    input {
+        width: 200px;
+        height: 20px;
+    }
+}
+
+// Only shown to unregistered users
+#footer_left {
+    position: fixed;
+    display: inline;
+    bottom: 2px;
+    left: 2px;
+    text-align: left;
+}
+
+span#html5-powered {
+    right: 60px;
+    font-size: 90%;
+    .fa-html5 {
+        font-weight: normal;
+        color: #e65100;
+        font-size: 120%;
+    }
+}
+
+// Notifications, footer icons
+#notify_list {
+    position: fixed;
+    display: block;
+    bottom: 24px;
+    right: 0;
+    background-color: #000;
+    border: 1px solid #FFF;
+    margin-bottom: -1px;
+}
+
+#notifycounter, #html5-powered, #bug_bar {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background-color: #FFF;
+    padding-top: 4px;
+    padding-bottom: 1px;
+    color: #000;
+    margin: 0;
+    border-left: solid 1.5px #000;
+    height: 22px;
+    width: 60px;
+    text-align: center;
+}
+
+#bug_bar {
+    left: 0;
+    border: 0;
+    width: 30px;
+    a.icon-nerdzilla {
+        color: $pt-bug-icon-color;
+        text-shadow: 0 0 15px #333;
+        font-weight: normal;
+    }
+}
+
+// User controls
+input, textarea, button, .page th, .title {
+    @include border-radius(2.5px);
+    border: 0.5px #000 solid;
+    text-align: left;
+    background-color: #FFF; 
+    color: #000;
+    font-size: 100%;
+}
+
+button, input[type=submit], .page th, .title {
+    font-weight: bold;
+    white-space: nowrap;
+    word-wrap: normal;
+    cursor: pointer;
+    margin: 0;
+}
+
+select {
+    color: #000;
+    border: 0;
+    font-size: 100%;
+}
+
+textarea {
+    font-size: 13px;
+    margin-top: 0;
+}
+
+#fast_nerdz {
+    margin-bottom: 15px;
+}
+
+// Post controls
+.post-control-textarea {
+    width: 100%;
+    height: 60px;
+    &.bigger {
+        height: 150px;
+    }
+}
+
+.post-control-submit, .post-control-preview {
+    float: right;
+}
+
+input.post-control-submit {
+    margin-left: 3px;
+}
+
+.post-control-bbcode, .post-control-container-news {
+    float: left;
+}
+
+// Trimmed messages styling
+.compressed {
+    max-height: 210px;
+    overflow: hidden;
+    width: auto;
+}
+
+.more {
+    position: relative;
+    top: -12px;
+    margin-bottom: -10px;
+    padding-bottom: 5px;
+    text-align: center;
+    box-shadow: 0 0 25px #000;
+}
+
+// Posts, comments, messages
+.nerdz_message, .nerdz_comments, .news {
+    @include border-radius(2.5px);
+    width: 100%;
+    background-color: #000;
+    font-size: 95%;
+    overflow: hidden;
+    padding: 2px;
+    border: 1px #FFFFFF solid;
+    word-wrap: break-word;
+    margin-bottom: 10px;
+}
+
+.news {
+    background-color: #000;
+    color: #FFF;
+    border: 1px solid #FFBB33;
+    clear: left;
+}
+
+.nerdz_comments br, .nerdz_message br {
+    clear: both;
+}
+
+.nerdz_comments hr {
+    color: #666;
+    background-color: #666;
+}
+
+.nerdz_comments, .quote, .spoiler {
+    border-color: #000;
+    background-color: #BDBDBD;
+    color: #000;
+    margin-bottom: 8px;
+}
+
+.quote, .spoiler {
+    border-radius: 3px;
+    padding: 2px;
+    margin: 2px;
+    clear: both;
+}
+
+.quote {
+    background-color: #FFFDD0;
+    overflow: auto;
+}
+
+// Thumbs
+.nerdz_thumbs {
+    font-size: 80%; 
+    margin-bottom: 10px; 
+    display: inline;
+    position: relative;
+    bottom: 1px;
+}
+
+.nerdz_thumbsNumPos {
+    color: #86DC33;
+}
+
+.nerdz_thumbsNumNeg {
+    color: #FF3300;
+}
+
+.vote:hover {
+    color: #FFFFA3;
+    cursor: pointer;
+}
+
+.vote.up.voted {
+    color: #00E600;
+    cursor: pointer;
+}
+
+.vote.down.voted {
+    color: #FF3300;
+    cursor: pointer;
+}
+
+// Post/comments components
+.nerdz_date {
+    display: inline;
+    float: right;
+    font-size: 85%;
+}
+
+.nerdz_from {
+    margin-bottom: 1px;
+}
+
+.post-footer {
+    @extend .small;
+    clear: both;
+    padding-top: 5px;
+    position: relative;
+}
+
+.post-icon-holder {
+    float: right;
+    font-size: 130%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+// used to avoid complex logic in the template code.
+// this simply removes the 3px introduced by the last
+// spacer in the icon chain.
+.post-icon-holder.unspacer {
+    margin-right: -3px;
+}
+
+.post-icon-spacer {
+    margin-right: 3px;
+    &.longer {
+        margin-right: 5px;
+    }
+}
+
+.qu_user {
+    background-color: #333;
+    padding: 1px;
+}
+
+.qu_main {
+    margin: 0 auto;
+    width: 95%;
+    border: solid #AFAFAF 1px;
+    overflow: hidden;
+}
+
+span.delcomment {
+    @include transition(transform 0.8s, color 1s);
+    color: #000;
+    cursor: pointer;
+    position: absolute;
+    right: 4px;
+    top: 3px;
+    &.delcomment-such-transform {
+        @include rotate(90deg);
+        color: red;
+    }
+}
+
+.gravatar {
+    float: left;
+    padding-top: 5px;
+    padding-right: 2px;
+}
+
+.gravatar-current-user {
+    padding-top: 0;
+}
+
+// Image/video containers
+// TODO: fix me
+.img_frame, .yt_frame {
+    clear: both;
+    text-align: center;
+    overflow: hidden;
+    display: block !important; // <- ???
+    background-color: transparent;
+    margin-top: 0.2em; 
+    cursor: pointer; 
+    border: 1px solid #FFF;
+    width: 132px;
+    height: 132px;
+    span {
+        height: 17px;
+        display: block;
+        background-color: #FFF;
+        text-align: center;
+        width: 132px;
+        color: #000;
+        font-weight: bold;
+    }
+    img {
+        display: block;
+        max-height: 115px;
+        max-width: 130px;
+        margin: auto;
+    }
+}
+
+.img_frame-extended {
+    width: auto;
+    height: auto;
+    border: none;
+    overflow: visible;
+    max-width: 100%;
+    max-height: 100%;
+    span {
+        display: none;
+    }
+}
+
+.img_frame.img_frame-extended img {
+    float: left;
+    width: auto;
+    height: auto;
+    max-height: 100%;
+    max-width:100%;
+    margin-top: 0px !important;
+}
+
+// Post related messages
+#pmessage {
+    margin-left: 85px;
+}
+
+// Code blocks
+.nerdz-code-wrapper {
+    border: solid white 1px;
+}
+
+.nerdz-code-title {
+    height: auto;
+    padding-top: 1px;
+    padding-left: 2px;
+    font-weight: bold;
+    cursor: pointer;
+    border-bottom: 1px solid white;
+    margin-bottom: 3px;
+    &:first-letter {
+        text-transform: uppercase;
+    }
+}
+
+.nerdz-code-text-version {
+    float: right;
+    padding-right: 2px;
+}
+
+.prettyprint {
+    padding: 3px;
+    margin-bottom: 0;
+}

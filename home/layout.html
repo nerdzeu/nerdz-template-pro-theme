@@ -6,11 +6,11 @@
             </div>
             <div id="leftmenu">
                 <ul style="color: #AFAFAF">
-                    <li><a id="profilePostList" href="#">NERDZ</a>
-                        <span style="float:right">
-                            <a href="/feed.php">
-                                <img src="images/rss.gif" width="16" height="17" alt="Users RSS" />
-                            </a>
+                    <li>
+                        <a id="profilePostList" href="#">NERDZ</a>
+                        <span class="icon-rss-container">
+                            <a href="/feed.php" class="icon-rss fa fa-rss-square" title="Users RSS"></a>
+                            <span class="icon-rss-background"></span>
                         </span>
                         <br />
                         <span class="small" style="margin-left:15px; cursor:pointer" id="nerdzselect">[{$from}...]</span>
@@ -25,11 +25,11 @@
                             <br />
                         </div>
                     </li>
-                    <li><a id="projectPostList" href="#">{$projects}</a>
-                        <span style="float:right">
-                            <a href="/feed.php?project=1">
-                                <img src="images/rss.gif" width="16" height="17" alt="Project RSS" />
-                            </a>
+                    <li>
+                        <a id="projectPostList" href="#">{$projects}</a>
+                        <span class="icon-rss-container">
+                            <a href="/feed.php?project=1" class="icon-rss fa fa-rss-square" title="Projects RSS"></a>
+                            <span class="icon-rss-background"></span>
                         </span>
                         <br />
                         <span class="small" style="margin-left:15px; cursor:pointer" id="projselect">[{$from}...]</span>
@@ -69,10 +69,10 @@
         <div id="fast_nerdz">
             <div>
                 <form id="stdfrm">
-                    <textarea id="frmtxt" name="message" class="bbcode-enabled" style="width: 100%; height: 60px"></textarea>
-                    <input type="submit" value="{$nerdz_it}" style="float: right; margin-top:5px" />
-                    <button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#frmtxt">{$preview}</button>
-                    <button type="button" style="float:left; margin-top:5px" onclick="window.open('/bbcode.php')">BBCode</button>
+                    <textarea id="frmtxt" name="message" class="bbcode-enabled post-control-textarea"></textarea>
+                    <input type="submit"  class="post-control-submit" value="{$nerdz_it}" />
+                    <button type="button" class="post-control-preview" data-refto="#frmtxt">{$preview}</button>
+                    <button type="button" class="post-control-bbcode" onclick="window.open('/bbcode.php')">BBCode</button>
                     <div id="pmessage" class="error"></div>
                 </form>
             </div>
@@ -97,7 +97,7 @@
                 <li>
                     <a href="/{$value.username4link_n}" {if="!$value.online_b"} style="color: #AFAFAF"{/if}>{$value.username_n}</a>
                     {if="$value.birthday_b"}
-                        <img src="images/gift.gif" alt="gift" style="float: right; margin-right: 5px; border: 0px" width="12" height="12" />
+                        <span class="icon-birthday-cake fa fa-birthday-cake" title="THE CAKE IS A LIE!"></span>
                     {/if}
                 </li>
             {/loop}

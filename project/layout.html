@@ -4,8 +4,8 @@
             <div style="text-align: center; margin-bottom:17px">
 {ignore} src="foto#" così facendo il parser di raintpl non sovrascrive l'url{/ignore}
                 <a href="/{$name4link_n}">
-                {if="empty($photo_n)"}
-                    <img src="/images/noImage.jpg" alt="{$name}" style="max-width:100%; max-height:100%" width="180" height="180" />
+                {if="empty($photo_n) || $photo_n === '/static/images/invalidImgUrl.php'"}
+                    <span class="fa fa-question-circle fa-5x"></span>
                 {else}
                     <img src="{$photo_n}#" alt="{$name}" style="max-width:100%; max-height:100%" onerror="this.src='{$onerrorimgurl_n}'" />
                 {/if}
@@ -86,12 +86,12 @@
         <div id="fast_nerdz">
             <div>
                 <form id="stdfrm" data-to="{$id_n}">
-                    <textarea id="frmtxt" name="message" class="bbcode-enabled" style="width: 100%; height: 60px"></textarea>
-                    <input type="submit" value="{$nerdz_it}" style="float: right;margin-top:5px" />
-                    <button type="button" style="float:right; margin-top: 5px" class="preview" data-refto="#frmtxt">{$preview}</button>
-                    <button type="button" style="float:left; margin-top:5px" onclick="window.open('/bbcode.php')">BBCode</button>
+                    <textarea id="frmtxt" name="message" class="bbcode-enabled post-control-textarea"></textarea>
+                    <input type="submit"  class="post-control-submit" value="{$nerdz_it}" />
+                    <button type="button" class="post-control-preview" data-refto="#frmtxt">{$preview}</button>
+                    <button type="button" class="post-control-bbcode" onclick="window.open('/bbcode.php')">BBCode</button>
                     {if="$canwritenews_b"}
-                        <span style="float:left; margin-top:5px"><input type="checkbox" name="news" value="1" id="sendnews" />&nbsp;<label for="sendnews">News</label></span>
+                        <span class="post-control-container-news"><input type="checkbox" name="news" value="1" id="sendnews" />&nbsp;<label for="sendnews">News</label></span>
                     {/if}
                     <div id="pmessage" class="error"></div>
                 </form>

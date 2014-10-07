@@ -1,0 +1,41 @@
+// ProTheme SCSS Base file
+// Config
+$pt-star-icon-color: #ffeb3b !default;
+$pt-lock-icon-color: #039be5 !default;
+$pt-lurk-icon-color: #72d572 !default;
+$pt-del-icon-color:  #e51c23 !default;
+$pt-edit-icon-color: #ffc107 !default;
+$pt-hide-icon-color: #bdbdbd !default;
+$pt-quote-icon-color:#ffffff !default;
+$pt-rss-icon-color:  #ff9800 !default;
+$pt-rss-icon-bg:     #ffffff !default;
+$pt-cake-icon-color: #ea80fc !default;
+$pt-bug-icon-color:  #e51c23 !default;
+
+// Imports
+@import "compass/css3";
+@import "font-awesome-compass";
+@import "font-awesome";
+@import "web-fonts";
+
+// Mixins / Functions
+// Mixes $selectors with the variants of '&' (which is supposed to
+// be an 'a' tag)
+@function pt-link-selector($selectors, $no-hover: false) {
+    @if $no-hover {
+        @return nest($selectors, "&:visited, &:active, &:link");
+    }
+    @return nest($selectors, "&:hover, &:visited, &:active, &:link");
+}
+
+// Creates the .icon and, if requested, the .icon:hover class and
+// gives it the specified color.
+@mixin pt-style-icon($name, $color, $hoverName: null) {
+    $selector: ".#{$name}, .#{$name}:hover";
+    @if $hoverName {
+        $selector: "#{$selector}, .#{$hoverName}:hover";
+    }
+    #{$selector} {
+        color: $color;
+    }
+}

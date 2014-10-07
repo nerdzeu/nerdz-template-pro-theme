@@ -113,7 +113,7 @@ $(document).ready(function() {
         });
     });
 
-    c.on('click','.preview',function(){
+    c.on('click','.post-control-preview',function(){
         var $me = $(this);
         setTimeout (function() {
             var txtarea = $($me.data('refto'));

@@ -1,0 +1,38 @@
+// import droid sans
+@include web-fonts(("Droid Sans": ("400", "700")));
+// apply droid sans
+html, button, input, textarea {
+    font-family: "Droid Sans", "Dejavu Sans", "Helvetica Neue", Helvetica, Arial, "lucida grande", verdana, arial, sans-serif;
+}
+// apply box-sizing: border-box to EVERYTHING!!1!
+html
+{
+    @include box-sizing(border-box);
+}
+
+*, *:before, *:after
+{
+    @include box-sizing(inherit);
+}
+
+// Icon styling
+.fa
+{
+    color: #fff;
+    transition: color 1s;
+    &.fix-align {
+        position: relative;
+        top: 2px;
+    }
+}
+
+
+@include pt-style-icon("imglocked",  $pt-lock-icon-color, "imgunlocked");
+@include pt-style-icon("unlurk",     $pt-lurk-icon-color, "lurk");
+@include pt-style-icon("unbookmark", $pt-star-icon-color, "bookmark");
+@include pt-style-icon("delpost",    $pt-del-icon-color);
+@include pt-style-icon("editpost",   $pt-edit-icon-color);
+@include pt-style-icon("hide",       $pt-hide-icon-color);
+@include pt-style-icon("qu_ico",     $pt-quote-icon-color);
+// Special rule for the /bookmarks.php page
+@include pt-style-icon("unbookmark.fa-remove", $pt-del-icon-color);
