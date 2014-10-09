@@ -4,7 +4,7 @@
 <li class="nerdz_comments">
     <span class="nerdz_date" style="float:left">{$value.datetime_n}</span>&nbsp;
     <span class="rightarrow" style="margin-left:11px"></span>&nbsp;
-    {if="$value.type_n == 'blacklist' || $value.type_n == 'followers' || $value.type_n == 'whitelist' || $value.type_n == 'mentions'"}
+    {if="$value.type_n == 'blacklist' || $value.type_n == 'followers' || $value.type_n == 'whitelist' || $value.type_n == 'mentions' || $value.type_n == 'pms'"}
         {if="$value.type_n == 'blacklist'"}
             {if="$value.fromid_n == $me_n"}
                 {$you_blacklisted_this_user}
@@ -29,6 +29,13 @@
             {else}
                 {$you_have_been_mentioned}
             {/if}
+        {elseif="$value.type_n == 'pms'"}
+            {if="$value.fromid_n == $me_n"}
+                {$you_sent_pm}
+            {else}
+                <a href="/{$value.from4link_n}">{$value.from_n}</a>&nbsp;
+                {$sent_pm}
+            {/if}
         {/if}
     {else}
         {if="$value.type_n == 'comments'"}
@@ -37,13 +44,6 @@
             {else}
                 <a href="/{$value.from4link_n}">{$value.from_n}</a>&nbsp;
                 {$commented_on}
-            {/if}
-        {elseif="$value.type_n == 'pms'"}
-            {if="$value.fromid_n == $me_n"}
-                {$you_sent_pm}
-            {else}
-                <a href="/{$value.from4link_n}">{$value.from_n}</a>&nbsp;
-                {$sent_pm}
             {/if}
         {elseif="$value.type_n == 'posts'"}
             {if="$value.fromid_n == $me_n"}
