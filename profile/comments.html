@@ -40,7 +40,7 @@
         {/if}
         {$value.message_n}
     </div>
-    <script type="application/javascript">$("#nd{$value.uid_n}{$value.hcid_n}").attr("href",(typeof(lnk{$hpid_n})=="undefined"?document.location.pathname:lnk{$hpid_n})+"#{$value.uid_n}");</script>
+    <script>$("#nd{$value.uid_n}{$value.hcid_n}").attr("href",(typeof(lnk{$hpid_n})=="undefined"?document.location.pathname:lnk{$hpid_n})+"#{$value.uid_n}");</script>
 </div>
 {/loop}
 {ignore}Il form non viene caricato, quando si gettano i commenti dopo uno specifico hcid{/ignore}

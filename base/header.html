@@ -50,7 +50,7 @@
             </form>
 {ignore} lo metto qui e non in un js esterno (che dovrebbe essere quello di default visto che c'è in tutte la pagine il form)
         affinché gli utenti loggati non debbano avere nel js questo codice che non sarebbe mai usato{/ignore}
-            <script type="application/javascript">
+            <script>
             $("#loginfrm").on('submit',function(event) {
                 event.preventDefault();
                 var t = $("#title_right");
